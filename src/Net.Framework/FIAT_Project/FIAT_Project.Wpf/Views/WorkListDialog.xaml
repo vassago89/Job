@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="FIAT_Project.Wpf.Views.WorkListDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <materialDesign:DialogHost
+        Identifier="WorkListDialog"
+        DialogTheme="Dark">
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Work list"/>
+            <TextBox wpf:HintAssist.Hint="Name" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"                 
+                     Margin="0 6 0 0"
+                     FontSize="18" Grid.Row="1">
+            </TextBox>
+            <TextBox wpf:HintAssist.Hint="Number" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                     Margin="0 8 0 0"
+                     FontSize="16" Grid.Row="2"
+                     />
+            <StackPanel Orientation="Horizontal" Grid.Row="3"
+                        Margin="0 16 0 0">
+                <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"
+                        Command="{Binding SearchCommand}">
+                    <Button.CommandParameter>
+                        <system:Boolean>True</system:Boolean>
+                    </Button.CommandParameter>
+                    ACCEPT
+                </Button>
+                <Button IsCancel="True" Margin="8 0 0 0" Style="{DynamicResource MaterialDesignFlatButton}"
+                        Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
+                    <Button.CommandParameter>
+                        <system:Boolean>False</system:Boolean>
+                    </Button.CommandParameter>
+                    CANCEL
+                </Button>
+            </StackPanel>
+        </Grid>
+    </materialDesign:DialogHost>
+</UserControl>

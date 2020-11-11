@@ -1,0 +1,198 @@
+﻿<UserControl x:Class="FIAT_Project.Wpf.Views.ControlPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"          
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="12"/>
+            </Style>
+            <Style TargetType="GroupBox">
+                <Setter Property="Margin" Value="4"/>
+            </Style>
+            <Style TargetType="Button"  BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                <Setter Property="Margin" Value="4"/>
+            </Style>
+            <Style TargetType="UniformGrid">
+                <Setter Property="Columns" Value="3"/>
+            </Style>
+        </Grid.Resources>
+        <StackPanel>
+            <GroupBox 
+                Header="Import / Export">
+                <UniformGrid>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Open"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Import"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Save"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Print"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Imager"/>
+                        </StackPanel>
+                    </Button>
+                </UniformGrid>
+            </GroupBox>
+            <GroupBox 
+                Header="Image Control" >
+                <UniformGrid>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Live Setting"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Horizontal"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Vertical"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="W / L"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="R. Rotate"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="L  . Rotate"/>
+                        </StackPanel>
+                    </Button>
+                </UniformGrid>
+            </GroupBox>
+            <GroupBox 
+                Header="Display Control" >
+                <UniformGrid>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Zoom"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Pan"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Magnify"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Layout"/>
+                        </StackPanel>
+                    </Button>
+                </UniformGrid>
+            </GroupBox>
+            <GroupBox 
+                            Header="Annotation" >
+                <UniformGrid>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Angle"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Arrow Mark"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Annotation"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Reset"/>
+                        </StackPanel>
+                    </Button>
+                </UniformGrid>
+            </GroupBox>
+        </StackPanel>
+        <Grid
+            VerticalAlignment="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <UniformGrid Columns="2">
+                <CheckBox 
+                    materialDesign:CheckBoxAssist.CheckBoxSize="32"
+                    HorizontalContentAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Text="Light"/>
+                    </StackPanel>
+                </CheckBox>
+                <CheckBox
+                    materialDesign:CheckBoxAssist.CheckBoxSize="32"
+                    HorizontalContentAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Text="Laser"/>
+                    </StackPanel>
+                </CheckBox>
+                <CheckBox
+                    materialDesign:CheckBoxAssist.CheckBoxSize="32"
+                    HorizontalContentAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Text="Record"/>
+                    </StackPanel>
+                </CheckBox>
+                <Button
+                    Margin="4"
+                    BorderThickness="2"
+                    Background="Transparent">
+                    <StackPanel>
+                        <TextBlock
+                            Text="Image Save"
+                            Foreground="{DynamicResource MaterialDesignBody}"/>
+                    </StackPanel>
+                </Button>
+            </UniformGrid>
+            <Button 
+                Grid.Row="1">
+                <StackPanel
+                    Orientation="Horizontal">
+                    <TextBlock 
+                        Text="Performance Setting"/>
+                </StackPanel>
+            </Button>
+            <StackPanel
+                Grid.Row="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Center">
+                <TextBlock
+                    FontSize="24"
+                    Text="C: 4025MB"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

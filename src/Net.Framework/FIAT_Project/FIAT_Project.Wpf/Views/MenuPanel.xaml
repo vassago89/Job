@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="FIAT_Project.Wpf.Views.MenuPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"         
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <materialDesign:ColorZone
+                Mode="Inverted"
+                Padding="12">
+            <DockPanel>
+                <StackPanel 
+                        Orientation="Horizontal"
+                        DockPanel.Dock="Right">
+                    <StackPanel.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="FontSize" Value="12"/>
+                        </Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                            <Setter Property="Margin" Value="8 0 0 0"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Command="{Binding WorkListCommand}">
+                        <TextBlock Text="Work List"/>
+                    </Button>
+                    <Button>
+                        <TextBlock Text="New St"/>
+                    </Button>
+                    <Button>
+                        <TextBlock Text="Close St"/>
+                    </Button>
+                    <materialDesign:PopupBox
+                            PlacementMode="BottomAndAlignRightEdges"
+                            Margin="8 0 0 0">
+                        <StackPanel>
+                            <Button    
+                                Content="Configuration" />
+                            <Button
+                                Content="Change Operator" />
+                            <Button
+                                Content="Exit" />
+                        </StackPanel>
+                    </materialDesign:PopupBox>
+                </StackPanel>
+                <StackPanel
+                    Orientation="Horizontal">
+                    <TextBlock     
+                        VerticalAlignment="Center"    
+                        Margin="16 0 0 0"
+                        Text="FIAT Viewer"
+                        FontSize="24"/>
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:ColorZone>
+    </Grid>
+</UserControl>

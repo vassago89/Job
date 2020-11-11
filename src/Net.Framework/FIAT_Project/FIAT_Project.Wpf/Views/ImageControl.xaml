@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="FIAT_Project.Wpf.Views.ImageControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Border 
+                    BorderThickness="1"
+                    BorderBrush="{DynamicResource MaterialDesignBody}">
+                </Border>
+                <Border 
+                    BorderThickness="1"
+                    BorderBrush="{DynamicResource MaterialDesignBody}"
+                    Grid.Row="1">
+                </Border>
+                <Border 
+                    BorderThickness="1"
+                    BorderBrush="{DynamicResource MaterialDesignBody}"
+                    Grid.Row="2">
+                </Border>
+            </Grid>
+            <Grid
+                Grid.Column="1">
+                <Border 
+                    BorderThickness="1"                
+                    BorderBrush="White">
+                </Border>
+            </Grid>
+        </Grid>
+        <Grid 
+            Grid.Row="1">
+            <ScrollViewer
+                ScrollViewer.HorizontalScrollBarVisibility="Visible">
+                <StackPanel
+                    Orientation="Horizontal">
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

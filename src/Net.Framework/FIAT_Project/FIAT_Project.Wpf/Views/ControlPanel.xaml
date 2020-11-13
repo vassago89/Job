@@ -181,7 +181,7 @@
                 Grid.Row="1">
                 <StackPanel
                     Orientation="Horizontal">
-                    <TextBlock 
+                    <TextBlock
                         Text="Performance Setting"/>
                 </StackPanel>
             </Button>

@@ -3,53 +3,62 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"             
              prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources>
+        <Style TargetType="Border">
+            <Setter Property="CornerRadius" Value="2"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignBody}"/>
+        </Style>
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="4"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
             <RowDefinition/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Border 
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MaterialDesignBody}">
-                </Border>
-                <Border 
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MaterialDesignBody}"
-                    Grid.Row="1">
-                </Border>
-                <Border 
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MaterialDesignBody}"
-                    Grid.Row="2">
-                </Border>
-            </Grid>
+            <UniformGrid 
+                Rows="3">
+                <GroupBox
+                    Header="Ch 1">
+                    <Image/>
+                </GroupBox>
+                <GroupBox
+                    Header="Ch 2">
+                    <Image/>
+                </GroupBox>
+                <GroupBox
+                    Header="Ch 3">
+                    <Image/>
+                </GroupBox>
+            </UniformGrid>
             <Grid
                 Grid.Column="1">
-                <Border 
-                    BorderThickness="1"                
-                    BorderBrush="White">
-                </Border>
+                <GroupBox
+                    Header="Video">
+                    <Image/>
+                </GroupBox>
             </Grid>
         </Grid>
         <Grid 
-            Grid.Row="1">
-            <ScrollViewer
-                ScrollViewer.HorizontalScrollBarVisibility="Visible">
-                <StackPanel
-                    Orientation="Horizontal">
-                </StackPanel>
-            </ScrollViewer>
+            Grid.Row="1"
+            Margin="4">
+            <Border>
+                <ScrollViewer
+                    ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                    ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                    <StackPanel
+                        Margin="4"
+                        Orientation="Horizontal">
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>

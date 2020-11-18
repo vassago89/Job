@@ -194,13 +194,17 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Device\Net.Framework.Device.Matrox\Net.Framework.Device.Matrox.csproj">
+      <Project>{afc64e41-45d5-494b-86a7-4224d2de08ab}</Project>
+      <Name>Net.Framework.Device.Matrox</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Net.Framework.Data\Net.Framework.Data.csproj">
       <Project>{bd4d1ede-ae9f-459b-bf31-0c8fe9808495}</Project>
       <Name>Net.Framework.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Net.Framework.Device\Net.Framework.Device.csproj">
-      <Project>{b496357a-efdf-4b33-a35a-2b1ee3617a73}</Project>
-      <Name>Net.Framework.Device</Name>
+    <ProjectReference Include="..\..\Net.Framework.Matrox\Net.Framework.Matrox.csproj">
+      <Project>{c44eae7c-1bb9-4e65-b3bc-17813fd5a78d}</Project>
+      <Name>Net.Framework.Matrox</Name>
     </ProjectReference>
     <ProjectReference Include="..\FIAT_Project.Core\FIAT_Project.Core.csproj">
       <Project>{d060c229-d89b-4279-9c15-f13bb23ef8e2}</Project>

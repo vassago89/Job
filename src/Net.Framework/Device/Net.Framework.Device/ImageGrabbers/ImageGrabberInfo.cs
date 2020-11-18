@@ -5,7 +5,7 @@ using Net.Framework.Data.ImageDatas;
 
 namespace Net.Framework.Device.ImageDevices
 {
-    public interface IImageDeviceInfo : IDeviceInfo
+    public interface IImageGrabberInfo : IDeviceInfo
     {
 
     }

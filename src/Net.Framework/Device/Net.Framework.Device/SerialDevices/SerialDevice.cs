@@ -18,20 +18,23 @@ namespace Net.Framework.Device.SerialDevices
 
         public SerialPort SerialPort => _serialPort;
 
-
         private Exception lastException;
         public Exception LastException => lastException;
 
-        public bool Initialize(ISerialDeviceInfo serialDeviceInfo)
+        private ISerialDeviceInfo _info;
+        public ISerialDeviceInfo Info => _info;
+
+        public bool Initialize(ISerialDeviceInfo info)
         {
             try
             {
+                _info = info;
                 _serialPort = new SerialPort(
-                    serialDeviceInfo.PortName,
-                    serialDeviceInfo.BaudRate,
-                    serialDeviceInfo.Parity,
-                    serialDeviceInfo.DataBits,
-                    serialDeviceInfo.StopBits);
+                    _info.PortName,
+                    _info.BaudRate,
+                    _info.Parity,
+                    _info.DataBits,
+                    _info.StopBits);
 
                 return true;
             }
@@ -71,6 +74,11 @@ namespace Net.Framework.Device.SerialDevices
             }
 
             return false;
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

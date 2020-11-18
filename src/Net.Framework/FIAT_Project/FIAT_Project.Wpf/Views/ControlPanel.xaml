@@ -22,6 +22,36 @@
         </Grid.Resources>
         <StackPanel>
             <GroupBox 
+                Header="Device Control">
+                <UniformGrid>
+                    <Button Command="{Binding GrabCommand}">
+                        <StackPanel>
+                            <TextBlock Text="Grab"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding StopCommand}">
+                        <StackPanel>
+                            <TextBlock Text="Stop"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Save"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Print"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Imager"/>
+                        </StackPanel>
+                    </Button>
+                </UniformGrid>
+            </GroupBox>
+            <GroupBox 
                 Header="Import / Export">
                 <UniformGrid>
                     <Button>

@@ -1,5 +1,6 @@
 ﻿using FIAT_Project.Wpf.Views;
 using MaterialDesignThemes.Wpf;
+using Net.Framework.Data.ImageDatas;
 using Net.Framework.Device.Matrox;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -12,24 +13,15 @@ namespace FIAT_Project.Wpf.ViewModels
     public class MenuPanelViewModel : BindableBase
     {
         public DelegateCommand WorkListCommand => new DelegateCommand(ShowWorkListDialog);
+        
 
-        public MatroxSystemGateway _gateWay;
-
-        public MenuPanelViewModel(MatroxSystemGateway gateway)
+        public MenuPanelViewModel()
         {
-            _gateWay = gateway;
+
         }
 
         private async void ShowWorkListDialog()
         {
-            foreach (var imageDevice in _gateWay.ImageDevices)
-            {
-                imageDevice.Grabbed += ImageDevice_Grabbed;
-                imageDevice.ContinuousGrab();
-            }
-                
-
-
 
             return;
             var view = new WorkListDialog();
@@ -41,8 +33,10 @@ namespace FIAT_Project.Wpf.ViewModels
             Console.WriteLine("Dialog was closed, the CommandParameter used to close it was: " + (result ?? "NULL"));
         }
 
-        private void ImageDevice_Grabbed(Net.Framework.Data.ImageDatas.IImageData obj)
+        private void ImageDevice_Grabbed(IImageData obj)
         {
+            var data = obj as ImageData<byte>;
+
             //throw new NotImplementedException();
         }
 

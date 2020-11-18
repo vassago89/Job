@@ -70,11 +70,29 @@
     <Compile Include="Models\Patient.cs" />
     <Compile Include="Models\Study.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\GrabService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Net.Framework.Helper\Net.Framework.Helper.csproj">
+      <Project>{F4D74A38-9B1B-47BB-9ED2-3DF725C1C88B}</Project>
+      <Name>Net.Framework.Helper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Device\Net.Framework.Device.Matrox\Net.Framework.Device.Matrox.csproj">
+      <Project>{AFC64E41-45D5-494B-86A7-4224D2DE08AB}</Project>
+      <Name>Net.Framework.Device.Matrox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Net.Framework.Data\Net.Framework.Data.csproj">
+      <Project>{BD4D1EDE-AE9F-459B-BF31-0C8FE9808495}</Project>
+      <Name>Net.Framework.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Net.Framework.Matrox\Net.Framework.Matrox.csproj">
+      <Project>{C44EAE7C-1BB9-4E65-B3BC-17813FD5A78D}</Project>
+      <Name>Net.Framework.Matrox</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

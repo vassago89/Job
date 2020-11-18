@@ -1,4 +1,6 @@
-﻿using Prism.Commands;
+﻿using FIAT_Project.Core.Service;
+using Net.Framework.Device.Matrox;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -8,9 +10,20 @@ namespace FIAT_Project.Wpf.ViewModels
 {
     public class ControlPanelViewModel : BindableBase
     {
-        public ControlPanelViewModel()
-        {
+        public DelegateCommand GrabCommand { get; }
+        public DelegateCommand StopCommand { get; }
 
+        public ControlPanelViewModel(GrabService grabService)
+        {
+            GrabCommand = new DelegateCommand(() =>
+            {
+                grabService.Start();
+            });
+
+            StopCommand = new DelegateCommand(() =>
+            {
+                grabService.Stop();
+            });
         }
     }
 }

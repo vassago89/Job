@@ -27,15 +27,15 @@
                 Rows="3">
                 <GroupBox
                     Header="Ch 1">
-                    <Image/>
+                    <Image Source="{Binding Channel1}"/>
                 </GroupBox>
                 <GroupBox
                     Header="Ch 2">
-                    <Image/>
+                    <Image Source="{Binding Channel2}"/>
                 </GroupBox>
                 <GroupBox
                     Header="Ch 3">
-                    <Image/>
+                    <Image Source="{Binding Channel3}"/>
                 </GroupBox>
             </UniformGrid>
             <Grid

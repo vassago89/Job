@@ -23,7 +23,7 @@ namespace Net.Framework.Data.ImageDatas
             Height = height;
             Channels = channels;
 
-            Data = new TData[width * Height];
+            Data = new TData[width * Height * channels];
         }
     }
 }

@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace Net.Framework.Matrox
 {
-    public class MatroxApplicationHelper : IDisposable
+    public static class MatroxApplicationHelper
     {
-        private MIL_ID _application = -1;
-        public MIL_ID Application => _application;
+        private static MIL_ID _application = -1;
+        public static MIL_ID Application => _application;
         
-        public void Initilize()
+        public static void Initilize()
         {
             if (_application > 0)
                 return;
 
-            MIL.MappAlloc(MIL.M_DEFAULT, ref _application);
+            MIL.MappAlloc("M_DEFAULT", MIL.M_DEFAULT, ref _application);
         }
 
-        public void Dispose()
+        public static void Dispose()
         {
             if (_application < 0)
                 return;

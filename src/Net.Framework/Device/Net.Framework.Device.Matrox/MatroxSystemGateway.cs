@@ -12,7 +12,7 @@ namespace Net.Framework.Device.Matrox
         public List<MatroxImageGrabberInfo> ImageGrabberInfos { get; }
         public List<MatroxImageGrabber> ImageGrabbers { get; }
 
-        public List<MatroxImageDeviceInfo> ImageDeviceInfos;
+        public List<MatroxImageDeviceInfo> ImageDeviceInfos { get; }
         public List<MatroxImageDeviceOnGrabber> ImageDevices { get; }
 
         public MatroxSystemGateway()
@@ -30,11 +30,13 @@ namespace Net.Framework.Device.Matrox
             {
                 var grabber = new MatroxImageGrabber();
                 grabber.Initialize(grabberInfo);
+                ImageGrabbers.Add(grabber);
 
                 foreach (var deviceInfo in ImageDeviceInfos)
                 {
                     var imageDevice = new MatroxImageDeviceOnGrabber();
                     imageDevice.Initialize(deviceInfo, grabber);
+                    ImageDevices.Add(imageDevice);
                 }
             }
         }

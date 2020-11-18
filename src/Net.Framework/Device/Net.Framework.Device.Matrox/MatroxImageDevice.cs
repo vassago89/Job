@@ -13,7 +13,6 @@ namespace Net.Framework.Device.Matrox
     public class MatroxImageDeviceInfo : ImageDeviceInfo
     {
         public int BufferSize { get; set; }
-        public int SystemID { get; set; }
         public int DigitizerNo { get; set; }
         public string DcfPath { get; set; }
 
@@ -30,21 +29,21 @@ namespace Net.Framework.Device.Matrox
 
         private MatroxImageGrabber _grabber;
         public MatroxImageGrabber Grabber => _grabber;
-
-        private IntPtr _handle;
+        
         private MIL_ID _digitizer;
 
-        private int _pitch;
-        private int _height;
-        private int _channels;
+        private MIL_INT _pitch;
+        private MIL_INT _height;
+        private MIL_INT _channels;
 
+        private MIL_DIG_HOOK_FUNCTION_PTR _processingFunctionPtr { get; set; }
         private GCHandle _thisHandle;
 
         public event Action<IImageData> Grabbed;
         MIL_ID[] _buffers;
 
 
-        MIL_INT ProcessingFunction(MIL_INT hookType, MIL_ID hookId, IntPtr hookDataPtr)
+        public MIL_INT ProcessingFunction(MIL_INT hookType, MIL_ID hookId, IntPtr hookDataPtr)
         {
             MIL_ID modifiedBufferId = MIL.M_NULL;
 
@@ -52,14 +51,20 @@ namespace Net.Framework.Device.Matrox
             {
                 MIL.MdigGetHookInfo(hookId, MIL.M_MODIFIED_BUFFER + MIL.M_BUFFER_ID, ref modifiedBufferId);
 
-                var imageData = new ImageData<byte>(_pitch, _height, _channels);
+                var imageData = new ImageData<byte>((int)_pitch, (int)_height, (int)_channels);
 
                 MIL.MbufGet(modifiedBufferId, imageData.Data);
 
-                Grabbed(imageData);
+                Grabbed?.Invoke(imageData);
             }
 
             return 0;
+        }
+
+        private MIL_INT GrabFrameEnd(MIL_INT HookType, MIL_ID EventId, IntPtr UserDataPtr)
+        {
+            
+            return MIL.M_NULL;
         }
 
         public bool Initialize(MatroxImageDeviceInfo info, MatroxImageGrabber grabber)
@@ -67,7 +72,11 @@ namespace Net.Framework.Device.Matrox
             try
             {
                 _info = info;
+                _grabber = grabber;
+
                 _thisHandle = GCHandle.Alloc(this);
+
+                _processingFunctionPtr = new MIL_DIG_HOOK_FUNCTION_PTR(ProcessingFunction);
 
                 MIL.MdigAlloc(grabber.System, _info.DigitizerNo, _info.DcfPath, MIL.M_DEFAULT, ref _digitizer);
 
@@ -77,14 +86,15 @@ namespace Net.Framework.Device.Matrox
 
                 MIL.MdigControl(_digitizer, MIL.M_GRAB_MODE, MIL.M_ASYNCHRONOUS);
                 MIL.MdigControl(_digitizer, MIL.M_GRAB_TIMEOUT, MIL.M_INFINITE);
-
+                
                 _buffers = new MIL_ID[info.BufferSize];
 
                 for (int i = 0; i < info.BufferSize; i++)
                 {
-                    MIL.MbufAlloc2d(grabber.System,
-                        _pitch,
-                        _height,
+                    MIL.MbufAllocColor(grabber.System,
+                        _channels,
+                        (int)_pitch,
+                        (int)_height,
                         8 + MIL.M_UNSIGNED,
                         MIL.M_IMAGE + MIL.M_GRAB,
                         ref _buffers[i]);
@@ -108,7 +118,7 @@ namespace Net.Framework.Device.Matrox
         {
             try
             {
-                MIL.MdigProcess(_digitizer, _buffers, _info.BufferSize, MIL.M_START, MIL.M_DEFAULT, new MIL_DIG_HOOK_FUNCTION_PTR(ProcessingFunction), GCHandle.ToIntPtr(_thisHandle));
+                MIL.MdigProcess(_digitizer, _buffers, _info.BufferSize, MIL.M_START, MIL.M_DEFAULT, _processingFunctionPtr, GCHandle.ToIntPtr(_thisHandle));
             }
             catch (Exception e)
             {
@@ -123,7 +133,8 @@ namespace Net.Framework.Device.Matrox
         {
             try
             {
-                MIL.MdigProcess(_digitizer, _buffers, _info.BufferSize, MIL.M_STOP, MIL.M_DEFAULT, new MIL_DIG_HOOK_FUNCTION_PTR(ProcessingFunction), GCHandle.ToIntPtr(_thisHandle));
+                
+                MIL.MdigProcess(_digitizer, _buffers, _info.BufferSize, MIL.M_STOP, MIL.M_DEFAULT, _processingFunctionPtr, GCHandle.ToIntPtr(_thisHandle));
             }
             catch (Exception e)
             {

@@ -1,5 +1,6 @@
 ﻿using Matrox.MatroxImagingLibrary;
 using Net.Framework.Device.ImageDevices;
+using Net.Framework.Matrox;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Net.Framework.Device.Matrox
     
     public class MatroxImageGrabberInfo : IImageGrabberInfo
     {
-        public int SystemNum { get; set; }
+        public int SystemNo { get; set; }
         public MatroxImageGrabberType Type { get; set; }
     }
 
@@ -47,7 +48,7 @@ namespace Net.Framework.Device.Matrox
 
                 _info = deviceInfo as MatroxImageGrabberInfo;
                 
-                if (MIL.MsysAlloc(GetSystemDescriptor(), _system, MIL.M_DEFAULT, ref _system) == MIL.M_NULL)
+                if (MIL.MsysAlloc(MatroxApplicationHelper.Application, GetSystemDescriptor(), 0, MIL.M_DEFAULT, ref _system) == MIL.M_NULL)
                     return false;
 
                 return true;

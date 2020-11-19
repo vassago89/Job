@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Net.Framework.Helper
+namespace Net.Framework.Helper.Patterns
 {
     public class PipeLine<T>
     {
@@ -35,42 +35,27 @@ namespace Net.Framework.Helper
         }
 
         public Action<T> Job;
-
-        protected virtual void PrevRun()
-        {
-
-        }
-
-        protected virtual void PostRun()
-        {
-
-        }
-
-        protected virtual void PrevCancle()
-        {
-
-        }
-
-        protected virtual void PostCancle()
-        {
-
-        }
-
+        
+        public event Action PrevRun;
+        public event Action PostRun;
+        public event Action PrevCancle;
+        public event Action PostCancle;
+        
         public void Run(CancellationToken token)
         {
             _token = token;
             _token.Register(() =>
             {
-                PrevCancle();
+                PrevCancle?.Invoke();
 
                 _resetEvent.Set();
 
-                PostCancle();
+                PostCancle?.Invoke();
             });
 
             Task.Factory.StartNew(() =>
             {
-                PrevRun();
+                PrevRun?.Invoke();
 
                 while (token.IsCancellationRequested == false)
                 {
@@ -105,7 +90,7 @@ namespace Net.Framework.Helper
 
                 Count = _queue.Count;
 
-                PostRun();
+                PostRun?.Invoke();
             }, TaskCreationOptions.LongRunning);
         }
 

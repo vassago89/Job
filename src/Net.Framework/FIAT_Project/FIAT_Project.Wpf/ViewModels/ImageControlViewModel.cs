@@ -40,27 +40,11 @@ namespace FIAT_Project.Wpf.ViewModels
             grabService.Grabbed += GrabService_Grabbed;
         }
 
-        private void GrabService_Grabbed(int width, int height, byte[][] datas)
+        private void GrabService_Grabbed(int arg1, int arg2, byte[][] arg3)
         {
-            for (int i = 0; i < 3; i++)
-            {
-                var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, datas[i], width);
-                temp.Freeze();
-                switch (i)
-                {
-                    case 2:
-                        Channel3 = temp;
-                        break;
-                    case 1:
-                        Channel2 = temp;
-                        break;
-                    case 0:
-                        Channel1 = temp;
-                        break;
-                    default:
-                        break;
-                }
-            }
+            //Channel1 = obj[2];
+            //Channel2 = obj[1];
+            //Channel3 = obj[0];
         }
     }
 }

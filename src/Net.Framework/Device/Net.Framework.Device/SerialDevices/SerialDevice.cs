@@ -17,10 +17,7 @@ namespace Net.Framework.Device.SerialDevices
         SerialPort _serialPort;
 
         public SerialPort SerialPort => _serialPort;
-
-        private Exception lastException;
-        public Exception LastException => lastException;
-
+        
         private ISerialDeviceInfo _info;
         public ISerialDeviceInfo Info => _info;
 
@@ -40,7 +37,7 @@ namespace Net.Framework.Device.SerialDevices
             }
             catch (Exception e)
             {
-
+                throw e;
             }
 
             return false;
@@ -55,7 +52,7 @@ namespace Net.Framework.Device.SerialDevices
             }
             catch (Exception e)
             {
-
+                throw e;
             }
 
             return false;
@@ -70,7 +67,22 @@ namespace Net.Framework.Device.SerialDevices
             }
             catch (Exception e)
             {
+                throw e;
+            }
 
+            return false;
+        }
+
+        public bool Write(byte[] buffer, int count)
+        {
+            try
+            {
+                _serialPort.Write(buffer, 0, count);
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
 
             return false;

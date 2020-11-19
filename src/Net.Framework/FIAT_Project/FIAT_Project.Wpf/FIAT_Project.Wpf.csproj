@@ -50,10 +50,6 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=3.2.0.1979, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\MaterialDesignThemes.3.2.0\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Matrox.MatroxImagingLibrary, Version=10.40.640.5130, Culture=neutral, PublicKeyToken=5a83d419d44a9d98, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Matrox Imaging\MIL\MIL.NET\Matrox.MatroxImagingLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
@@ -171,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+    <Folder Include="Service\" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\ControlPanel.xaml">
@@ -199,6 +196,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Net.Framework.Helper\Net.Framework.Helper.csproj">
+      <Project>{F4D74A38-9B1B-47BB-9ED2-3DF725C1C88B}</Project>
+      <Name>Net.Framework.Helper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Device\Net.Framework.Device.Matrox\Net.Framework.Device.Matrox.csproj">
       <Project>{afc64e41-45d5-494b-86a7-4224d2de08ab}</Project>
       <Name>Net.Framework.Device.Matrox</Name>
@@ -206,6 +207,10 @@
     <ProjectReference Include="..\..\Net.Framework.Data\Net.Framework.Data.csproj">
       <Project>{bd4d1ede-ae9f-459b-bf31-0c8fe9808495}</Project>
       <Name>Net.Framework.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Net.Framework.Helper.Wpf\Net.Framework.Helper.Wpf.csproj">
+      <Project>{a1fa5c43-f1a4-4771-b3bb-aadeb604e585}</Project>
+      <Name>Net.Framework.Helper.Wpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Net.Framework.Matrox\Net.Framework.Matrox.csproj">
       <Project>{c44eae7c-1bb9-4e65-b3bc-17813fd5a78d}</Project>

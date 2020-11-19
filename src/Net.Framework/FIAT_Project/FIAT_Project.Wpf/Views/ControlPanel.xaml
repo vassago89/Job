@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"          
+             xmlns:conveters="clr-namespace:Net.Framework.Helper.Wpf.Converters;assembly=Net.Framework.Helper.Wpf"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
@@ -9,6 +10,11 @@
             <Style TargetType="TextBlock">
                 <Setter Property="FontWeight" Value="Bold"/>
                 <Setter Property="FontSize" Value="12"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="Slider">
+                <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
             <Style TargetType="GroupBox">
                 <Setter Property="Margin" Value="4"/>
@@ -17,24 +23,35 @@
                 <Setter Property="Margin" Value="4"/>
             </Style>
             <Style TargetType="UniformGrid">
-                <Setter Property="Columns" Value="3"/>
+                <Setter Property="Columns" Value="2"/>
             </Style>
+            <conveters:BooleanInverter x:Key="BooleanInverter"/>
         </Grid.Resources>
         <StackPanel>
             <GroupBox 
-                Header="Device Control">
+                Header="Grab Control">
                 <UniformGrid>
-                    <Button Command="{Binding GrabCommand}">
+                    <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OnGrab, Converter={StaticResource BooleanInverter}}">
                         <StackPanel>
                             <TextBlock Text="Grab"/>
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding StopCommand}">
+                    <Button Command="{Binding StopCommand}" IsEnabled="{Binding OnGrab}">
                         <StackPanel>
                             <TextBlock Text="Stop"/>
                         </StackPanel>
                     </Button>
-                    <Button>
+                    <Button Command="{Binding RecordStartCommand}" IsEnabled="{Binding OnGrab}">
+                        <StackPanel>
+                            <TextBlock Text="Record Start"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding RecordStopCommand}" IsEnabled="{Binding OnGrab, Converter={StaticResource BooleanInverter}}">
+                        <StackPanel>
+                            <TextBlock Text="Record Stop"/>
+                        </StackPanel>
+                    </Button>
+                    <!--<Button>
                         <StackPanel>
                             <TextBlock Text="Save"/>
                         </StackPanel>
@@ -48,10 +65,44 @@
                         <StackPanel>
                             <TextBlock Text="Imager"/>
                         </StackPanel>
-                    </Button>
+                    </Button>-->
                 </UniformGrid>
             </GroupBox>
             <GroupBox 
+                Header="Light">
+                <StackPanel>
+                    <UniformGrid>
+                        <TextBlock Text="{Binding LightValue}"/>
+                        <Slider Value="{Binding LightValue}" Maximum="100"/>
+                        <Button Command="{Binding LightOnCommand}" IsEnabled="{Binding OnLight, Converter={StaticResource BooleanInverter}}">
+                            <StackPanel>
+                                <TextBlock Text="On"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding LightOffCommand}" IsEnabled="{Binding OnLight}">
+                            <StackPanel>
+                                <TextBlock Text="Off"/>
+                            </StackPanel>
+                        </Button>
+                        <!--<Button>
+                        <StackPanel>
+                            <TextBlock Text="Save"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Print"/>
+                        </StackPanel>
+                    </Button>
+                    <Button>
+                        <StackPanel>
+                            <TextBlock Text="Imager"/>
+                        </StackPanel>
+                    </Button>-->
+                    </UniformGrid>
+                </StackPanel>
+            </GroupBox>
+            <!--<GroupBox 
                 Header="Import / Export">
                 <UniformGrid>
                     <Button>
@@ -165,9 +216,9 @@
                         </StackPanel>
                     </Button>
                 </UniformGrid>
-            </GroupBox>
+            </GroupBox>-->
         </StackPanel>
-        <Grid
+        <!--<Grid
             VerticalAlignment="Bottom">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -223,6 +274,6 @@
                     FontSize="24"
                     Text="C: 4025MB"/>
             </StackPanel>
-        </Grid>
+        </Grid>-->
     </Grid>
 </UserControl>

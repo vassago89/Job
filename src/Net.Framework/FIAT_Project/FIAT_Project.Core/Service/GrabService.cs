@@ -1,6 +1,7 @@
 ﻿using Net.Framework.Data.ImageDatas;
 using Net.Framework.Device.Matrox;
 using Net.Framework.Helper;
+using Net.Framework.Helper.Patterns;
 using Net.Framework.Matrox;
 using System;
 using System.Collections.Generic;
@@ -57,27 +58,14 @@ namespace FIAT_Project.Core.Service
 
             foreach (var imageDevice in _gateway.ImageDevices)
                 imageDevice.Grabbed += ImageGrabbed;
-
-            
         }
 
         private void ImageGrabbed(IImageData obj)
         {
             var imageData = obj as ImageData<byte>;
             _pipeLine.Enqueue(imageData);
-            //var datas = new byte[imageData.Channels][];
-            
-            //for (int i = 0; i < imageData.Channels; i++)
-            //{
-            //    datas[i] = new byte[imageData.Width * imageData.Height];
-            //    Buffer.BlockCopy(imageData.Data, i * imageData.Width * imageData.Height, datas[i], 0, imageData.Width * imageData.Height);
-            //}
-
-            //Grabbed?.Invoke(imageData.Width, imageData.Height, datas);
         }
-
-
-
+        
         public void Start()
         {
             foreach (var imageDevice in _gateway.ImageDevices)

@@ -1,4 +1,5 @@
-﻿using FIAT_Project.Core.Service;
+﻿using FIAT_Project.Core;
+using FIAT_Project.Core.Service;
 using FIAT_Project.Wpf.Views;
 using Net.Framework.Device.Matrox;
 using Net.Framework.Matrox;
@@ -33,7 +34,9 @@ namespace FIAT_Project.Wpf
         {
             containerRegistry
                 .RegisterSingleton<GrabService>()
-                .RegisterSingleton<ProtocolService>();
+                .RegisterSingleton<RecordService>()
+                .RegisterSingleton<ProtocolService>()
+                .RegisterInstance(SystemConfig.Load(Environment.CurrentDirectory));
             //throw new NotImplementedException();
         }
     }

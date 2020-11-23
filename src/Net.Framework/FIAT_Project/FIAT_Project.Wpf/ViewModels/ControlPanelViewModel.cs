@@ -1,4 +1,5 @@
-﻿using FIAT_Project.Core.Service;
+﻿using FIAT_Project.Core;
+using FIAT_Project.Core.Service;
 using Net.Framework.Device.Matrox;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -15,6 +16,27 @@ namespace FIAT_Project.Wpf.ViewModels
         {
             get => _onGrab;
             set => SetProperty(ref _onGrab, value);
+        }
+
+        private bool _offGrab;
+        public bool OffGrab
+        {
+            get => _offGrab;
+            set => SetProperty(ref _offGrab, value);
+        }
+
+        private bool _onRecord;
+        public bool OnRecord
+        {
+            get => _onRecord;
+            set => SetProperty(ref _onRecord, value);
+        }
+
+        private bool _offRecord;
+        public bool OffRecord
+        {
+            get => _offRecord;
+            set => SetProperty(ref _offRecord, value);
         }
 
 
@@ -39,11 +61,52 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SetProperty(ref _on760, value);
         }
 
-        private int _lightValue;
-        public int LightValue
+        private double _ledValue;
+        public double LedValue
         {
-            get => _lightValue;
-            set => SetProperty(ref _lightValue, value);
+            get => _ledValue;
+            set
+            {
+                if (value < 0)
+                    value = 0;
+
+                if (value > _systemConfig.LedMax)
+                    value = _systemConfig.LedMax;
+
+                SetProperty(ref _ledValue, value);
+            }
+        }
+
+        private double _lazer660Value;
+        public double Lazer660Value
+        {
+            get => _lazer660Value;
+            set
+            {
+                if (value < 0)
+                    value = 0;
+
+                if (value > _systemConfig.Lazer660Max)
+                    value = _systemConfig.Lazer660Max;
+
+                SetProperty(ref _lazer660Value, value);
+            }
+        }
+
+        private double _lazer760Value;
+        public double Lazer760Value
+        {
+            get => _lazer760Value;
+            set
+            {
+                if (value < 0)
+                    value = 0;
+
+                if (value > _systemConfig.Lazer760Max)
+                    value = _systemConfig.Lazer760Max;
+
+                SetProperty(ref _lazer760Value, value);
+            }
         }
 
         public DelegateCommand GrabCommand { get; }
@@ -54,27 +117,55 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public DelegateCommand OnLedCommand { get; }
         public DelegateCommand OffLedCommand { get; }
+        public DelegateCommand SetLedCommand { get; }
 
         public DelegateCommand On660Command { get; }
         public DelegateCommand Off660Command { get; }
+        public DelegateCommand Set660Command { get; }
 
         public DelegateCommand On760Command { get; }
         public DelegateCommand Off760Command { get; }
+        public DelegateCommand Set760Command { get; }
 
-        public ControlPanelViewModel(GrabService grabService, ProtocolService protocolService, RecordService recordService)
+        SystemConfig _systemConfig;
+
+        public ControlPanelViewModel(GrabService grabService, ProtocolService protocolService, RecordService recordService, SystemConfig systemConfig)
         {
+            _systemConfig = systemConfig;
+
+            _ledValue = _systemConfig.LedMax;
+            _lazer660Value = _systemConfig.Lazer660Max;
+            _lazer760Value = _systemConfig.Lazer760Max;
+
+            _offGrab = true;
+            _offRecord = true;
+
             GrabCommand = new DelegateCommand(() =>
             {
                 grabService.Start();
                 OnGrab = true;
+                OffGrab = false;
             });
 
             StopCommand = new DelegateCommand(() =>
             {
                 grabService.Stop();
                 OnGrab = false;
+                OffGrab = true;
+            });
 
+            RecordStartCommand = new DelegateCommand(() =>
+            {
+                recordService.Start(new string[] { "d:\\1.avi", "d:\\2.avi", "d:\\3.avi" });
+                OnRecord = true;
+                OffRecord = false;
+            });
+
+            RecordStopCommand = new DelegateCommand(() =>
+            {
                 recordService.Stop();
+                OnRecord = false;
+                OffRecord = true;
             });
 
             OnLedCommand = new DelegateCommand(() =>
@@ -113,10 +204,19 @@ namespace FIAT_Project.Wpf.ViewModels
                 On760 = false;
             });
 
-            RecordStartCommand = new DelegateCommand(() =>
+            SetLedCommand = new DelegateCommand(() =>
             {
-                recordService.Start();
+                protocolService.SetLed(LedValue * 1000);
+            });
 
+            Set660Command = new DelegateCommand(() =>
+            {
+                protocolService.Set660(Lazer660Value * 1000);
+            });
+
+            Set660Command = new DelegateCommand(() =>
+            {
+                protocolService.Set760(Lazer760Value * 1000);
             });
         }
     }

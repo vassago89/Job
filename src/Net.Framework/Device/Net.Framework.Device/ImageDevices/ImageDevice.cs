@@ -7,6 +7,11 @@ namespace Net.Framework.Device.ImageDevices
 {
     public interface IImageDevice
     {
+        int Width { get; }
+        int Height { get; }
+        int Channels { get; }
+        double FrameRate { get; }
+
         event Action<IImageData> Grabbed;
 
         Task<IImageData> Grab();
@@ -14,12 +19,12 @@ namespace Net.Framework.Device.ImageDevices
         bool Stop();
     }
 
-    public interface IImageDeviceNonGrabber<TDeviceInfo> : IImageDevice, IDevice
+    public interface IImageDeviceNonGrabber<TDeviceInfo> : IImageDevice, IDevice where TDeviceInfo : ImageDeviceInfo
     {
         TDeviceInfo Info { get; }
     }
 
-    public interface IImageDeviceOnGrabber<TDeviceInfo, TGrabber> : IImageDeviceNonGrabber<TDeviceInfo>
+    public interface IImageDeviceOnGrabber<TDeviceInfo, TGrabber> : IImageDeviceNonGrabber<TDeviceInfo> where TDeviceInfo : ImageDeviceInfo
     {
         TGrabber Grabber { get; }
 

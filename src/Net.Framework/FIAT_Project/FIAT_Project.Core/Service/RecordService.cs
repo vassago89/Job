@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Net.Framework.Data.ImageDatas;
+using Net.Framework.Data.Recorder;
+using Net.Framework.Matrox.Recorder;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -11,40 +14,41 @@ namespace FIAT_Project.Core.Service
     public class RecordService
     {
         private GrabService _grabService;
-
-        private int _width;
-        private int _height;
-
-        private List<byte[]>[] dataLists;
+        
+        private IRecorder<byte>[] recorders;
 
         public RecordService(GrabService grabService)
         {
             _grabService = grabService;
-            dataLists = new List<byte[]>[3];
+            recorders = new IRecorder<byte>[3];
             for (int i = 0; i < 3; i++)
-                dataLists[i] = new List<byte[]>();
-            //FFmpegBinariesHelper.RegisterFFmpegBinaries();
+            {
+                var recorder = new MatroxRecoreder<byte>();
+                recorder.Intialize(grabService.Width, grabService.Height, 1);
+
+                recorders[i] = recorder;
+            }
         }
 
-        public void Start()
+        public void Start(string[] paths)
         {
-            _grabService.Grabbed += _grabService_Grabbed;
+            for (int i = 0; i < 3; i++)
+                recorders[i].Start(paths[i]);
+
+            _grabService.ServiceGrabbed += ServiceGrabbed;
+        }
+
+        private void ServiceGrabbed(int width, int height, byte[][] datas)
+        {
+            for (int i = 0; i < 3; i++)
+                recorders[i].Enqueue(datas[i]);
         }
 
         public void Stop()
         {
-            foreach (var datas in dataLists)
-            {
-               
-                datas.Clear();
-            }
-            
-        }
-
-        private void _grabService_Grabbed(int width, int height, byte[][] datas)
-        {
-            _width = width;
-            _height = height;
+            var frameRate = _grabService.FrameRate;
+            foreach (var recorder in recorders)
+                recorder.Stop(frameRate);
         }
     }
 }

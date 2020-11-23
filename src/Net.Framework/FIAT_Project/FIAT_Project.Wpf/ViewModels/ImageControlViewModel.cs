@@ -37,10 +37,10 @@ namespace FIAT_Project.Wpf.ViewModels
         {
             _channels = new ImageSource[3];
 
-            grabService.Grabbed += GrabService_Grabbed;
+            grabService.ServiceGrabbed += ServiceGrabbed;
         }
 
-        private void GrabService_Grabbed(int width, int height, byte[][] datas)
+        private void ServiceGrabbed(int width, int height, byte[][] datas)
         {
             var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, datas[0], width);
             temp.Freeze();

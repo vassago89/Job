@@ -34,7 +34,7 @@ namespace FIAT_Project.Core.Service
             //throw new NotImplementedException();
         }
 
-        public void SetLed(int value)
+        public void SetLed(double value)
         {
             var buffer = new byte[8];
 
@@ -79,7 +79,7 @@ namespace FIAT_Project.Core.Service
             _device.Write(buffer, 8);
         }
 
-        public void Set660(int value)
+        public void Set660(double value)
         {
             var buffer = new byte[8];
             
@@ -124,7 +124,7 @@ namespace FIAT_Project.Core.Service
             _device.Write(buffer, 8);
         }
 
-        public void Set760(int value)
+        public void Set760(double value)
         {
             var buffer = new byte[8];
 

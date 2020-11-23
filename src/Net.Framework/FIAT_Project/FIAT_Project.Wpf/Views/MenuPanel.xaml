@@ -21,7 +21,7 @@
                             <Setter Property="Margin" Value="8 0 0 0"/>
                         </Style>
                     </StackPanel.Resources>
-                    <Button Command="{Binding WorkListCommand}">
+                    <!--<Button Command="{Binding WorkListCommand}">
                         <TextBlock Text="Work List"/>
                     </Button>
                     <Button>
@@ -41,7 +41,7 @@
                             <Button
                                 Content="Exit" />
                         </StackPanel>
-                    </materialDesign:PopupBox>
+                    </materialDesign:PopupBox>-->
                 </StackPanel>
                 <StackPanel
                     Orientation="Horizontal">

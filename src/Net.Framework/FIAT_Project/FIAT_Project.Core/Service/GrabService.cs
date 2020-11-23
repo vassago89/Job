@@ -1,4 +1,5 @@
 ﻿using Net.Framework.Data.ImageDatas;
+using Net.Framework.Device.ImageDevices;
 using Net.Framework.Device.Matrox;
 using Net.Framework.Helper;
 using Net.Framework.Helper.Patterns;
@@ -13,32 +14,39 @@ namespace FIAT_Project.Core.Service
 {
     public class GrabService
     {
-        public event Action<int, int, byte[][]> Grabbed;
+        public event Action<int, int, byte[][]> ServiceGrabbed;
         private MatroxSystemGateway _gateway;
 
-        private Queue<ImageData<byte>> _queue;
-        private PipeLine<ImageData<byte>> _pipeLine;
+        //private Queue<ImageData<byte>> _queue;
+        //private PipeLine<ImageData<byte>> _pipeLine;
+
+        private IImageDevice _imageDevice;
+
+        public double FrameRate => _imageDevice.FrameRate;
+        public int Width => _imageDevice.Width;
+        public int Height => _imageDevice.Height;
+        public int Channels => _imageDevice.Channels;
 
         public GrabService()
         {
             MatroxApplicationHelper.Initilize();
-            _queue = new Queue<ImageData<byte>>();
-            _pipeLine = new PipeLine<ImageData<byte>>(true);
+            //_queue = new Queue<ImageData<byte>>();
+            //_pipeLine = new PipeLine<ImageData<byte>>(true);
 
-            _pipeLine.Job = new Action<ImageData<byte>>((imageData) =>
-            {
-                var datas = new byte[imageData.Channels][];
+            //_pipeLine.Job = new Action<ImageData<byte>>((imageData) =>
+            //{
+            //    var datas = new byte[imageData.Channels][];
 
-                for (int i = 0; i < imageData.Channels; i++)
-                {
-                    datas[i] = new byte[imageData.Width * imageData.Height];
-                    Buffer.BlockCopy(imageData.Data, i * imageData.Width * imageData.Height, datas[i], 0, imageData.Width * imageData.Height);
-                }
+            //    for (int i = 0; i < imageData.Channels; i++)
+            //    {
+            //        datas[i] = new byte[imageData.Width * imageData.Height];
+            //        Buffer.BlockCopy(imageData.Data, i * imageData.Width * imageData.Height, datas[i], 0, imageData.Width * imageData.Height);
+            //    }
 
-                Grabbed?.Invoke(imageData.Width, imageData.Height, datas);
-            });
+            //    Grabbed?.Invoke(imageData.Width, imageData.Height, datas.Reverse().ToArray());
+            //});
 
-            _pipeLine.Run( new System.Threading.CancellationToken());
+            //_pipeLine.Run(new System.Threading.CancellationToken());
 
             _gateway = new MatroxSystemGateway();
             _gateway.ImageGrabberInfos.Add(new MatroxImageGrabberInfo()
@@ -56,14 +64,25 @@ namespace FIAT_Project.Core.Service
 
             _gateway.Initialize();
 
+            _imageDevice = _gateway.ImageDevices.First();
+
             foreach (var imageDevice in _gateway.ImageDevices)
-                imageDevice.Grabbed += ImageGrabbed;
+                imageDevice.Grabbed += DeviceImageGrabbed;
         }
 
-        private void ImageGrabbed(IImageData obj)
+        private void DeviceImageGrabbed(IImageData obj)
         {
             var imageData = obj as ImageData<byte>;
-            _pipeLine.Enqueue(imageData);
+
+            var datas = new byte[imageData.Channels][];
+
+            for (int i = 0; i < imageData.Channels; i++)
+            {
+                datas[i] = new byte[imageData.Width * imageData.Height];
+                Buffer.BlockCopy(imageData.Data, i * imageData.Width * imageData.Height, datas[i], 0, imageData.Width * imageData.Height);
+            }
+
+            ServiceGrabbed?.Invoke(imageData.Width, imageData.Height, datas.Reverse().ToArray());
         }
         
         public void Start()

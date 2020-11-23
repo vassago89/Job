@@ -13,6 +13,12 @@
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
             </Style>
+            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
             <Style TargetType="Slider">
                 <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
@@ -26,79 +32,67 @@
                 <Setter Property="Columns" Value="2"/>
             </Style>
             <conveters:BooleanInverter x:Key="BooleanInverter"/>
+            <conveters:AllBooleanConverter x:Key="AllBooleanConverter"/>
         </Grid.Resources>
         <StackPanel>
             <GroupBox 
                 Header="Grab Control">
                 <UniformGrid>
-                    <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OnGrab, Converter={StaticResource BooleanInverter}}">
+                    <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OffGrab}">
                         <StackPanel>
                             <TextBlock Text="Grab"/>
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding StopCommand}" IsEnabled="{Binding OnGrab}">
+                    <Button Command="{Binding StopCommand}">
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource AllBooleanConverter}">
+                                <Binding Path="OnGrab"/>
+                                <Binding Path="OffRecord"/>
+                            </MultiBinding>
+                        </Button.IsEnabled>
                         <StackPanel>
                             <TextBlock Text="Stop"/>
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding RecordStartCommand}" IsEnabled="{Binding OnGrab}">
+                    <Button Command="{Binding RecordStartCommand}">
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource AllBooleanConverter}">
+                                <Binding Path="OnGrab"/>
+                                <Binding Path="OffRecord"/>
+                            </MultiBinding>
+                        </Button.IsEnabled>
                         <StackPanel>
                             <TextBlock Text="Record Start"/>
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding RecordStopCommand}" IsEnabled="{Binding OnGrab, Converter={StaticResource BooleanInverter}}">
+                    <Button Command="{Binding RecordStopCommand}" IsEnabled="{Binding OnRecord}">
                         <StackPanel>
                             <TextBlock Text="Record Stop"/>
                         </StackPanel>
                     </Button>
-                    <!--<Button>
-                        <StackPanel>
-                            <TextBlock Text="Save"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Print"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Imager"/>
-                        </StackPanel>
-                    </Button>-->
                 </UniformGrid>
             </GroupBox>
             <GroupBox 
                 Header="Light">
                 <StackPanel>
                     <UniformGrid>
-                        <TextBlock Text="{Binding LightValue}"/>
-                        <Slider Value="{Binding LightValue}" Maximum="100"/>
-                        <Button Command="{Binding OnLedCommand}" IsEnabled="{Binding OnLight, Converter={StaticResource BooleanInverter}}">
+                        <TextBox Text="{Binding LedValue, StringFormat={}{0:0.000}}"
+                                 materialDesign:HintAssist.Hint="Ampere"/>
+                        <Button Command="{Binding SetLedCommand}">
+                            <StackPanel>
+                                <TextBlock Text="Set"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding OnLedCommand}" IsEnabled="{Binding OnLed, Converter={StaticResource BooleanInverter}}">
                             <StackPanel>
                                 <TextBlock Text="On"/>
                             </StackPanel>
                         </Button>
-                        <Button Command="{Binding OffLedCommand}" IsEnabled="{Binding OnLight}">
+                        <Button Command="{Binding OffLedCommand}" IsEnabled="{Binding OnLed}">
                             <StackPanel>
                                 <TextBlock Text="Off"/>
                             </StackPanel>
                         </Button>
-                        <!--<Button>
-                        <StackPanel>
-                            <TextBlock Text="Save"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Print"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Imager"/>
-                        </StackPanel>
-                    </Button>-->
                     </UniformGrid>
                 </StackPanel>
             </GroupBox>
@@ -106,29 +100,22 @@
                 Header="660">
                 <StackPanel>
                     <UniformGrid
-                        Columns="3">
-                        <TextBlock Text="Value"/> 
-                        <TextBox Text="{Binding LedValue}"/>
-                        <Slider TickFrequency="1"
-                                Orientation="Horizontal"
-                                TickPlacement="BottomRight"
-                                Minimum="1"
-                                Maximum="100"
-                                Value="{Binding LedValue}"
-                                IsSelectionRangeEnabled="True"/>
-                        <Button Command="{Binding On660Command}" IsEnabled="{Binding OnLight, Converter={StaticResource BooleanInverter}}">
+                        Columns="2">
+                        <TextBox Text="{Binding Lazer660Value, StringFormat={}{0:0.000}}"
+                                 materialDesign:HintAssist.Hint="Ampere"/>
+                        <Button Command="{Binding Set660Command}">
+                            <StackPanel>
+                                <TextBlock Text="Set"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding On660Command}" IsEnabled="{Binding On660, Converter={StaticResource BooleanInverter}}">
                             <StackPanel>
                                 <TextBlock Text="On"/>
                             </StackPanel>
                         </Button>
-                        <Button Command="{Binding Off660Command}" IsEnabled="{Binding OnLight}">
+                        <Button Command="{Binding Off660Command}" IsEnabled="{Binding On660}">
                             <StackPanel>
                                 <TextBlock Text="Off"/>
-                            </StackPanel>
-                        </Button>
-                        <Button Command="{Binding Set660Command}" IsEnabled="{Binding OnLight}">
-                            <StackPanel>
-                                <TextBlock Text="Set"/>
                             </StackPanel>
                         </Button>
                     </UniformGrid>
@@ -138,12 +125,19 @@
                 Header="760">
                 <StackPanel>
                     <UniformGrid>
-                        <Button Command="{Binding On760Command}" IsEnabled="{Binding OnLight, Converter={StaticResource BooleanInverter}}">
+                        <TextBox Text="{Binding Lazer760Value, StringFormat={}{0:0.000}}"
+                                 materialDesign:HintAssist.Hint="Ampere"/>
+                        <Button Command="{Binding Set760Command}">
+                            <StackPanel>
+                                <TextBlock Text="Set"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding On760Command}" IsEnabled="{Binding On760, Converter={StaticResource BooleanInverter}}">
                             <StackPanel>
                                 <TextBlock Text="On"/>
                             </StackPanel>
                         </Button>
-                        <Button Command="{Binding Off760Command}" IsEnabled="{Binding OnLight}">
+                        <Button Command="{Binding Off760Command}" IsEnabled="{Binding On760}">
                             <StackPanel>
                                 <TextBlock Text="Off"/>
                             </StackPanel>

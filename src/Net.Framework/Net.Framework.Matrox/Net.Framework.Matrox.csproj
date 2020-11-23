@@ -48,9 +48,16 @@
   <ItemGroup>
     <Compile Include="MatroxApplicationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Recorder\MatroxRecoreder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Net.Framework.Data\Net.Framework.Data.csproj">
+      <Project>{BD4D1EDE-AE9F-459B-BF31-0C8FE9808495}</Project>
+      <Name>Net.Framework.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

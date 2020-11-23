@@ -24,6 +24,16 @@ namespace Net.Framework.Device.Matrox
 
     public class MatroxImageDeviceOnGrabber : IImageDeviceOnGrabber<MatroxImageDeviceInfo, MatroxImageGrabber>
     {
+        private double _frameRate;
+        public double FrameRate
+        {
+            get
+            {
+                MIL.MdigInquire(_digitizer, MIL.M_PROCESS_FRAME_RATE, ref _frameRate);
+                return _frameRate;
+            }
+        }
+        
         private MatroxImageDeviceInfo _info;
         public MatroxImageDeviceInfo Info => _info;
 
@@ -33,10 +43,16 @@ namespace Net.Framework.Device.Matrox
         private MIL_ID _digitizer;
 
         private MIL_INT _pitch;
+        public int Width => (int)_pitch;
+
         private MIL_INT _height;
+        public int Height => (int)_height;
+
         private MIL_INT _channels;
+        public int Channels => (int)_channels;
 
         private MIL_DIG_HOOK_FUNCTION_PTR _processingFunctionPtr { get; set; }
+        
         private GCHandle _thisHandle;
 
         public event Action<IImageData> Grabbed;
@@ -142,8 +158,8 @@ namespace Net.Framework.Device.Matrox
         {
             try
             {
-                
                 MIL.MdigProcess(_digitizer, _buffers, _info.BufferSize, MIL.M_STOP, MIL.M_DEFAULT, _processingFunctionPtr, GCHandle.ToIntPtr(_thisHandle));
+                //MIL.MdigInquire(_digitizer, MIL.M_PROCESS_FRAME_RATE, ref _frameRate);
             }
             catch (Exception e)
             {

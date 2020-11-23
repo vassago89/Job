@@ -53,7 +53,16 @@ namespace Net.Framework.Device.Matrox
 
                 var imageData = new ImageData<byte>((int)_pitch, (int)_height, (int)_channels);
 
+                //MIL.MbufExportSequence(saveAviMerged, M_AVI_MJPG, &UserHookDataPtr->MilRedBandSubImage, 1, UserHookDataPtr->m_FrameSet, M_WRITE);
+                //MIL.MbufExportSequence("1.avi", MIL.M_DEFAULT, ref modifiedBufferId, 1, MIL.M_DEFAULT, MIL.M_OPEN);
+                //MIL.MbufExportSequence("1.avi", MIL.M_DEFAULT, ref modifiedBufferId, 1, MIL.M_DEFAULT, MIL.M_WRITE);
+
                 MIL.MbufGet(modifiedBufferId, imageData.Data);
+
+                //MIL.MbufExportSequence("d:\\1.avi", MIL.M_DEFAULT, MIL.M_NULL, MIL.M_NULL, MIL.M_DEFAULT, MIL.M_OPEN);
+                //MIL.MbufExportSequence("d:\\1.avi", MIL.M_DEFAULT, ref modifiedBufferId, 1, MIL.M_DEFAULT, MIL.M_WRITE);
+                //MIL.MbufExportSequence("d:\\1.avi", MIL.M_DEFAULT, MIL.M_NULL, MIL.M_NULL, 20, MIL.M_CLOSE);
+
 
                 Grabbed?.Invoke(imageData);
             }

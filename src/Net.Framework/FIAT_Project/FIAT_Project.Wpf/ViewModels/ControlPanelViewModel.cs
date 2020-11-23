@@ -18,11 +18,25 @@ namespace FIAT_Project.Wpf.ViewModels
         }
 
 
-        private bool _onLight;
-        public bool OnLight
+        private bool _onLed;
+        public bool OnLed
         {
-            get => _onLight;
-            set => SetProperty(ref _onLight, value);
+            get => _onLed;
+            set => SetProperty(ref _onLed, value);
+        }
+
+        private bool _on660;
+        public bool On660
+        {
+            get => _on660;
+            set => SetProperty(ref _on660, value);
+        }
+
+        private bool _on760;
+        public bool On760
+        {
+            get => _on760;
+            set => SetProperty(ref _on760, value);
         }
 
         private int _lightValue;
@@ -38,8 +52,14 @@ namespace FIAT_Project.Wpf.ViewModels
         public DelegateCommand RecordStartCommand { get; }
         public DelegateCommand RecordStopCommand { get; }
 
-        public DelegateCommand LightOnCommand { get; }
-        public DelegateCommand LightOffCommand { get; }
+        public DelegateCommand OnLedCommand { get; }
+        public DelegateCommand OffLedCommand { get; }
+
+        public DelegateCommand On660Command { get; }
+        public DelegateCommand Off660Command { get; }
+
+        public DelegateCommand On760Command { get; }
+        public DelegateCommand Off760Command { get; }
 
         public ControlPanelViewModel(GrabService grabService, ProtocolService protocolService, RecordService recordService)
         {
@@ -57,16 +77,40 @@ namespace FIAT_Project.Wpf.ViewModels
                 recordService.Stop();
             });
 
-            LightOnCommand = new DelegateCommand(() =>
+            OnLedCommand = new DelegateCommand(() =>
             {
-                protocolService.LightOn(LightValue * 10);
-                OnLight = true;
+                protocolService.OnLed();
+                OnLed = true;
             });
 
-            LightOffCommand = new DelegateCommand(() =>
+            OffLedCommand = new DelegateCommand(() =>
             {
-                protocolService.LightOff();
-                OnLight = false;
+                protocolService.OffLed();
+                OnLed = false;
+            });
+
+            On660Command = new DelegateCommand(() =>
+            {
+                protocolService.On660();
+                On660 = true;
+            });
+
+            Off660Command = new DelegateCommand(() =>
+            {
+                protocolService.Off660();
+                On660 = false;
+            });
+
+            On760Command = new DelegateCommand(() =>
+            {
+                protocolService.On760();
+                On760 = true;
+            });
+
+            Off760Command = new DelegateCommand(() =>
+            {
+                protocolService.Off760();
+                On760 = false;
             });
 
             RecordStartCommand = new DelegateCommand(() =>

@@ -74,12 +74,12 @@
                     <UniformGrid>
                         <TextBlock Text="{Binding LightValue}"/>
                         <Slider Value="{Binding LightValue}" Maximum="100"/>
-                        <Button Command="{Binding LightOnCommand}" IsEnabled="{Binding OnLight, Converter={StaticResource BooleanInverter}}">
+                        <Button Command="{Binding OnLedCommand}" IsEnabled="{Binding OnLight, Converter={StaticResource BooleanInverter}}">
                             <StackPanel>
                                 <TextBlock Text="On"/>
                             </StackPanel>
                         </Button>
-                        <Button Command="{Binding LightOffCommand}" IsEnabled="{Binding OnLight}">
+                        <Button Command="{Binding OffLedCommand}" IsEnabled="{Binding OnLight}">
                             <StackPanel>
                                 <TextBlock Text="Off"/>
                             </StackPanel>
@@ -99,6 +99,55 @@
                             <TextBlock Text="Imager"/>
                         </StackPanel>
                     </Button>-->
+                    </UniformGrid>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox 
+                Header="660">
+                <StackPanel>
+                    <UniformGrid
+                        Columns="3">
+                        <TextBlock Text="Value"/> 
+                        <TextBox Text="{Binding LedValue}"/>
+                        <Slider TickFrequency="1"
+                                Orientation="Horizontal"
+                                TickPlacement="BottomRight"
+                                Minimum="1"
+                                Maximum="100"
+                                Value="{Binding LedValue}"
+                                IsSelectionRangeEnabled="True"/>
+                        <Button Command="{Binding On660Command}" IsEnabled="{Binding OnLight, Converter={StaticResource BooleanInverter}}">
+                            <StackPanel>
+                                <TextBlock Text="On"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding Off660Command}" IsEnabled="{Binding OnLight}">
+                            <StackPanel>
+                                <TextBlock Text="Off"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding Set660Command}" IsEnabled="{Binding OnLight}">
+                            <StackPanel>
+                                <TextBlock Text="Set"/>
+                            </StackPanel>
+                        </Button>
+                    </UniformGrid>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox 
+                Header="760">
+                <StackPanel>
+                    <UniformGrid>
+                        <Button Command="{Binding On760Command}" IsEnabled="{Binding OnLight, Converter={StaticResource BooleanInverter}}">
+                            <StackPanel>
+                                <TextBlock Text="On"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding Off760Command}" IsEnabled="{Binding OnLight}">
+                            <StackPanel>
+                                <TextBlock Text="Off"/>
+                            </StackPanel>
+                        </Button>
                     </UniformGrid>
                 </StackPanel>
             </GroupBox>

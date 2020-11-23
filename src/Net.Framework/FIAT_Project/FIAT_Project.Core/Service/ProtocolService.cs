@@ -25,13 +25,19 @@ namespace FIAT_Project.Core.Service
 
             _device = new SerialDevice();
             _device.Initialize(serialDeviceInfo);
+            _device.SerialPort.DataReceived += SerialPort_DataReceived;
             _device.Open();
         }
 
-        public void LightOn(int value)
+        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            var buffer = new byte[7];
-            
+            //throw new NotImplementedException();
+        }
+
+        public void SetLed(int value)
+        {
+            var buffer = new byte[8];
+
             buffer[0] = 0x55;
             buffer[1] = 0xAA;
             buffer[2] = 0x05;
@@ -40,12 +46,27 @@ namespace FIAT_Project.Core.Service
             buffer[5] = (byte)(value % 256);
             buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
 
-            
+            _device.Write(buffer, 8);
         }
 
-        public void LightOff()
+        public void OnLed()
         {
-            var buffer = new byte[7];
+            var buffer = new byte[8];
+            
+            buffer[0] = 0x55;
+            buffer[1] = 0xAA;
+            buffer[2] = 0x05;
+            buffer[3] = 0x06;
+            buffer[4] = 0x00;
+            buffer[5] = 0x01;
+            buffer[6] = 0x0C;
+            
+            _device.Write(buffer, 8);
+        }
+
+        public void OffLed()
+        {
+            var buffer = new byte[8];
             
             buffer[0] = 0x55;
             buffer[1] = 0xAA;
@@ -55,7 +76,97 @@ namespace FIAT_Project.Core.Service
             buffer[5] = 0x00;
             buffer[6] = 0x0B;
 
-            _device.Write(buffer, 7);
+            _device.Write(buffer, 8);
+        }
+
+        public void Set660(int value)
+        {
+            var buffer = new byte[8];
+            
+            buffer[0] = 0x55;
+            buffer[1] = 0xAA;
+            buffer[2] = 0x05;
+            buffer[3] = 0x00;
+            buffer[4] = (byte)(value / 256);
+            buffer[5] = (byte)(value % 256);
+            buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
+
+            _device.Write(buffer, 8);
+        }
+
+        public void On660()
+        {
+            var buffer = new byte[8];
+            
+            buffer[0] = 0x55;
+            buffer[1] = 0xAA;
+            buffer[2] = 0x05;
+            buffer[3] = 0x04;
+            buffer[4] = 0x00;
+            buffer[5] = 0x01;
+            buffer[6] = 0x0A;
+
+            _device.Write(buffer, 8);
+        }
+
+        public void Off660()
+        {
+            var buffer = new byte[8];
+            
+            buffer[0] = 0x55;
+            buffer[1] = 0xAA;
+            buffer[2] = 0x05;
+            buffer[3] = 0x04;
+            buffer[4] = 0x00;
+            buffer[5] = 0x00;
+            buffer[6] = 0x09;
+
+            _device.Write(buffer, 8);
+        }
+
+        public void Set760(int value)
+        {
+            var buffer = new byte[8];
+
+            buffer[0] = 0x55;
+            buffer[1] = 0xAA;
+            buffer[2] = 0x05;
+            buffer[3] = 0x01;
+            buffer[4] = (byte)(value / 256);
+            buffer[5] = (byte)(value % 256);
+            buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
+
+            _device.Write(buffer, 8);
+        }
+
+        public void On760()
+        {
+            var buffer = new byte[8];
+            
+            buffer[0] = 0x55;
+            buffer[1] = 0xAA;
+            buffer[2] = 0x05;
+            buffer[3] = 0x05;
+            buffer[4] = 0x00;
+            buffer[5] = 0x01;
+            buffer[6] = 0x0B;
+
+            _device.Write(buffer, 8);
+        }
+
+        public void Off760()
+        {
+            var buffer = new byte[8];
+            
+            buffer[0] = 0x55;
+            buffer[1] = 0xAA;
+            buffer[2] = 0x05;
+            buffer[3] = 0x05;
+            buffer[4] = 0x00;
+            buffer[5] = 0x00;
+            buffer[6] = 0x0A;
+
+            _device.Write(buffer, 8);
         }
     }
 }

@@ -32,7 +32,8 @@ namespace FIAT_Project.Wpf
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry
-                .RegisterSingleton<GrabService>();
+                .RegisterSingleton<GrabService>()
+                .RegisterSingleton<ProtocolService>();
             //throw new NotImplementedException();
         }
     }

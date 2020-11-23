@@ -33,6 +33,9 @@ namespace Net.Framework.Device.SerialDevices
                     _info.DataBits,
                     _info.StopBits);
 
+                _serialPort.DtrEnable = true;
+                _serialPort.RtsEnable = true;
+
                 return true;
             }
             catch (Exception e)
@@ -90,7 +93,7 @@ namespace Net.Framework.Device.SerialDevices
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

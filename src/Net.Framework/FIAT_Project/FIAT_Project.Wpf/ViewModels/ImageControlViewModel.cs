@@ -13,30 +13,29 @@ namespace FIAT_Project.Wpf.ViewModels
 {
     public class ImageControlViewModel : BindableBase
     {
-        private ImageSource[] _channels;
-        public ImageSource Channel1
+        public ImageSource _original;
+        public ImageSource Original
         {
-            get => _channels[0];
-            set => SetProperty(ref _channels[0], value);
-        }
-        
-        public ImageSource Channel2
-        {
-            get => _channels[1];
-            set => SetProperty(ref _channels[1], value);
+            get => _original;
+            set => SetProperty(ref _original, value);
         }
 
-        
-        public ImageSource Channel3
+        private ImageSource _lazer660;
+        public ImageSource Lazer660
         {
-            get => _channels[2];
-            set => SetProperty(ref _channels[2], value);
+            get => _lazer660;
+            set => SetProperty(ref _lazer660, value);
+        }
+
+        private ImageSource _lazer760;
+        public ImageSource Lazer760
+        {
+            get => _lazer760;
+            set => SetProperty(ref _lazer760, value);
         }
 
         public ImageControlViewModel(GrabService grabService)
         {
-            _channels = new ImageSource[3];
-
             grabService.ServiceGrabbed += ServiceGrabbed;
         }
 
@@ -44,19 +43,16 @@ namespace FIAT_Project.Wpf.ViewModels
         {
             var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, datas[0], width);
             temp.Freeze();
-            Channel1 = temp;
+            Original = temp;
 
             temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, datas[1], width);
             temp.Freeze();
-            Channel2 = temp;
+            Lazer660 = temp;
 
 
             temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, datas[2], width);
             temp.Freeze();
-            Channel3 = temp;
-            //Channel1 = obj[2];
-            //Channel2 = obj[1];
-            //Channel3 = obj[0];
+            Lazer760 = temp;
         }
     }
 }

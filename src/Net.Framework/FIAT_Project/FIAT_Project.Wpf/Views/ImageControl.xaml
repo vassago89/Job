@@ -14,39 +14,35 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="3*"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="425"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <UniformGrid 
                 Rows="3">
                 <GroupBox
-                    Header="Ch 1">
-                    <Image Source="{Binding Channel1}"/>
+                    Header="Original">
+                    <Image Source="{Binding Original}"/>
                 </GroupBox>
                 <GroupBox
-                    Header="Ch 2">
-                    <Image Source="{Binding Channel2}"/>
+                    Header="660 Lazer">
+                    <Image Source="{Binding Lazer660}"/>
                 </GroupBox>
                 <GroupBox
-                    Header="Ch 3">
-                    <Image Source="{Binding Channel3}"/>
+                    Header="760 Lazer">
+                    <Image Source="{Binding Lazer760}"/>
                 </GroupBox>
             </UniformGrid>
             <Grid
                 Grid.Column="1">
                 <GroupBox
-                    Header="Video">
-                    <Image/>
+                    Header="Merged">
+                    <Image Source="{Binding Merged}"/>
                 </GroupBox>
             </Grid>
         </Grid>
-        <Grid 
+        <!--<Grid 
             Grid.Row="1"
             Margin="4">
             <Border>
@@ -59,6 +55,6 @@
                     </StackPanel>
                 </ScrollViewer>
             </Border>
-        </Grid>
+        </Grid>-->
     </Grid>
 </UserControl>

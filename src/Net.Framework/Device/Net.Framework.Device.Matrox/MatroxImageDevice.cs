@@ -55,7 +55,7 @@ namespace Net.Framework.Device.Matrox
         
         private GCHandle _thisHandle;
 
-        public event Action<IImageData> Grabbed;
+        public event Action<IImageData> DeviceGrabbed;
         MIL_ID[] _buffers;
 
 
@@ -80,7 +80,7 @@ namespace Net.Framework.Device.Matrox
                 //MIL.MbufExportSequence("d:\\1.avi", MIL.M_DEFAULT, MIL.M_NULL, MIL.M_NULL, 20, MIL.M_CLOSE);
 
 
-                Grabbed?.Invoke(imageData);
+                DeviceGrabbed?.Invoke(imageData);
             }
 
             return 0;

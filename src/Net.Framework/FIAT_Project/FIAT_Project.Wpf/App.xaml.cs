@@ -34,6 +34,7 @@ namespace FIAT_Project.Wpf
         {
             containerRegistry
                 .RegisterSingleton<GrabService>()
+                .RegisterSingleton<ProcessService>()
                 .RegisterSingleton<RecordService>()
                 .RegisterSingleton<ProtocolService>()
                 .RegisterInstance(SystemConfig.Load(Environment.CurrentDirectory));

@@ -60,55 +60,7 @@ namespace FIAT_Project.Wpf.ViewModels
             get => _on760;
             set => SetProperty(ref _on760, value);
         }
-
-        private double _ledValue;
-        public double LedValue
-        {
-            get => _ledValue;
-            set
-            {
-                if (value < 0)
-                    value = 0;
-
-                if (value > _systemConfig.LedMax)
-                    value = _systemConfig.LedMax;
-
-                SetProperty(ref _ledValue, value);
-            }
-        }
-
-        private double _lazer660Value;
-        public double Lazer660Value
-        {
-            get => _lazer660Value;
-            set
-            {
-                if (value < 0)
-                    value = 0;
-
-                if (value > _systemConfig.Lazer660Max)
-                    value = _systemConfig.Lazer660Max;
-
-                SetProperty(ref _lazer660Value, value);
-            }
-        }
-
-        private double _lazer760Value;
-        public double Lazer760Value
-        {
-            get => _lazer760Value;
-            set
-            {
-                if (value < 0)
-                    value = 0;
-
-                if (value > _systemConfig.Lazer760Max)
-                    value = _systemConfig.Lazer760Max;
-
-                SetProperty(ref _lazer760Value, value);
-            }
-        }
-
+        
         public DelegateCommand GrabCommand { get; }
         public DelegateCommand StopCommand { get; }
 
@@ -127,18 +79,77 @@ namespace FIAT_Project.Wpf.ViewModels
         public DelegateCommand Off760Command { get; }
         public DelegateCommand Set760Command { get; }
 
-        SystemConfig _systemConfig;
-
-        public ControlPanelViewModel(GrabService grabService, ProtocolService protocolService, RecordService recordService, SystemConfig systemConfig)
+        private bool _on660Auto;
+        public bool On660Auto
         {
-            _systemConfig = systemConfig;
+            get => _on660Auto;
+            set
+            {
+                SetProperty(ref _on660Auto, value);
+                SystemConfig.AutoDictionary[ELazer.L660] = value;
+            }
+        }
 
-            _ledValue = _systemConfig.LedMax;
-            _lazer660Value = _systemConfig.Lazer660Max;
-            _lazer760Value = _systemConfig.Lazer760Max;
+        private bool _on760Auto;
+        public bool On760Auto
+        {
+            get => _on760Auto;
+            set
+            {
+                SetProperty(ref _on760Auto, value);
+                SystemConfig.AutoDictionary[ELazer.L760] = value;
+            }
+        }
+
+        private bool _on660Manual;
+        public bool On660Manual
+        {
+            get => _on660Manual;
+            set
+            {
+                SetProperty(ref _on660Manual, value);
+                SystemConfig.ManualDictionary[ELazer.L660] = value;
+            }
+        }
+
+        private bool _on760Manual;
+        public bool On760Manual
+        {
+            get => _on760Manual;
+            set
+            {
+                SetProperty(ref _on760Manual, value);
+                SystemConfig.ManualDictionary[ELazer.L760] = value;
+            }
+        }
+
+        public DelegateCommand SaveCommand { get; }
+
+        public SystemConfig SystemConfig { get; }
+        
+        private ProcessService _processService;
+
+        public ControlPanelViewModel(
+            GrabService grabService,
+            ProcessService processService,
+            ProtocolService protocolService, 
+            RecordService recordService, 
+            SystemConfig systemConfig)
+        {
+            _processService = processService;
+
+            SystemConfig = systemConfig;
+
+            _on660Auto = SystemConfig.AutoDictionary[ELazer.L660];
+            _on760Auto = SystemConfig.AutoDictionary[ELazer.L760];
 
             _offGrab = true;
             _offRecord = true;
+
+            SaveCommand = new DelegateCommand(() =>
+            {
+                systemConfig.Save(Environment.CurrentDirectory);
+            });
 
             GrabCommand = new DelegateCommand(() =>
             {
@@ -156,7 +167,7 @@ namespace FIAT_Project.Wpf.ViewModels
 
             RecordStartCommand = new DelegateCommand(() =>
             {
-                recordService.Start(new string[] { "d:\\1.avi", "d:\\2.avi", "d:\\3.avi" });
+                recordService.Start( "d:\\1.avi");
                 OnRecord = true;
                 OffRecord = false;
             });
@@ -206,17 +217,17 @@ namespace FIAT_Project.Wpf.ViewModels
 
             SetLedCommand = new DelegateCommand(() =>
             {
-                protocolService.SetLed(LedValue * 1000);
+                protocolService.SetLed(SystemConfig.ValueLed * 1000);
             });
 
             Set660Command = new DelegateCommand(() =>
             {
-                protocolService.Set660(Lazer660Value * 1000);
+                protocolService.Set660(SystemConfig.ValueDictionary[ELazer.L660] * 1000);
             });
 
             Set660Command = new DelegateCommand(() =>
             {
-                protocolService.Set760(Lazer760Value * 1000);
+                protocolService.Set760(SystemConfig.ValueDictionary[ELazer.L760] * 1000);
             });
         }
     }

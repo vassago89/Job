@@ -72,6 +72,7 @@
     <Compile Include="Models\Study.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\GrabService.cs" />
+    <Compile Include="Service\ProcessService.cs" />
     <Compile Include="Service\ProtocolService.cs" />
     <Compile Include="Service\RecordService.cs" />
     <Compile Include="SystemConfig.cs" />
@@ -81,6 +82,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Net.Framework.Algorithm\Net.Framework.Algorithm.csproj">
+      <Project>{E73FF83D-3D46-4247-BC2D-D8E314D0EB3D}</Project>
+      <Name>Net.Framework.Algorithm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Device\Net.Framework.Device.Matrox\Net.Framework.Device.Matrox.csproj">
       <Project>{AFC64E41-45D5-494B-86A7-4224D2DE08AB}</Project>
       <Name>Net.Framework.Device.Matrox</Name>

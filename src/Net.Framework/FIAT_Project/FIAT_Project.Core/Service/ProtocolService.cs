@@ -12,13 +12,13 @@ namespace FIAT_Project.Core.Service
     {
         public SerialDevice _device;
 
-        public ProtocolService()
+        public ProtocolService(SystemConfig systemConfig)
         {
             var serialDeviceInfo = new SerialDeviceInfo()
             {
                 BaudRate = 9600,
                 DataBits = 8,
-                PortName = "COM6",
+                PortName = systemConfig.ProtocolPort,
                 StopBits = StopBits.One,
                 Parity = Parity.None
             };

@@ -22,8 +22,8 @@
             <views:MenuPanel/>
             <DockPanel
                 Grid.Row="1">
-                <views:ControlPanel
-                    DockPanel.Dock="Left"/>
+                <views:ControlPanel DockPanel.Dock="Left"
+                                    Width="400"/>
                 <views:ImageControl/>
             </DockPanel>
         </Grid>

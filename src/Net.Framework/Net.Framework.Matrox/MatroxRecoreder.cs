@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Net.Framework.Matrox.Recorder
+namespace Net.Framework.Matrox
 {
     public class MatroxRecoreder<TData> : IRecorder<TData>, IDisposable
     {
@@ -42,7 +42,7 @@ namespace Net.Framework.Matrox.Recorder
                         ref _source);
         }
 
-        public void Enqueue(TData[] data)
+        public virtual void Enqueue(TData[] data)
         {
             lock (this)
             {
@@ -51,6 +51,7 @@ namespace Net.Framework.Matrox.Recorder
                 
                 MIL.MbufPut(_source, data.Cast<byte>().ToArray());
                 MIL.MbufExportSequence(_path, MIL.M_AVI_MJPG, ref _source, 1, MIL.M_DEFAULT, MIL.M_WRITE);
+                //MIL.MbufExport("d:\\1.bmp", MIL.M_BMP, _source);
             }
         }
 

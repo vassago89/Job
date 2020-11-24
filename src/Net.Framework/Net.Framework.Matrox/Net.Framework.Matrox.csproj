@@ -46,9 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatroxBayerProcessor.cs" />
     <Compile Include="MatroxApplicationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Recorder\MatroxRecoreder.cs" />
+    <Compile Include="MatroxRecoreder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

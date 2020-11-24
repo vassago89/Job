@@ -12,7 +12,7 @@ namespace Net.Framework.Device.ImageDevices
         int Channels { get; }
         double FrameRate { get; }
 
-        event Action<IImageData> Grabbed;
+        event Action<IImageData> DeviceGrabbed;
 
         Task<IImageData> Grab();
         bool ContinuousGrab();

@@ -14,7 +14,7 @@ namespace FIAT_Project.Core.Service
 {
     public class GrabService
     {
-        public event Action<int, int, byte[][]> ServiceGrabbed;
+        public event Action<int, int, byte[][]> Grabbed;
         private MatroxSystemGateway _gateway;
 
         //private Queue<ImageData<byte>> _queue;
@@ -67,22 +67,26 @@ namespace FIAT_Project.Core.Service
             _imageDevice = _gateway.ImageDevices.First();
 
             foreach (var imageDevice in _gateway.ImageDevices)
-                imageDevice.Grabbed += DeviceImageGrabbed;
+                imageDevice.DeviceGrabbed += DeviceImageGrabbed;
         }
 
         private void DeviceImageGrabbed(IImageData obj)
         {
             var imageData = obj as ImageData<byte>;
 
-            var datas = new byte[imageData.Channels][];
+            var datas = new byte[3][];
 
-            for (int i = 0; i < imageData.Channels; i++)
+            int size = imageData.Width * imageData.Height;
+            for (int i = 0; i < 3; i++)
             {
-                datas[i] = new byte[imageData.Width * imageData.Height];
-                Buffer.BlockCopy(imageData.Data, i * imageData.Width * imageData.Height, datas[i], 0, imageData.Width * imageData.Height);
+                //datas[i] = new byte[imageData.Width * imageData.Height];
+                //Buffer.BlockCopy(imageData.Data, i * size, datas[i], 0, size);
+                datas[i] = new byte[imageData.Width * imageData.Height * 3];
+                for (int j = 0; j < 3; j++)
+                    Buffer.BlockCopy(imageData.Data, i * size, datas[i], j * size, size);
             }
 
-            ServiceGrabbed?.Invoke(imageData.Width, imageData.Height, datas.Reverse().ToArray());
+            Grabbed?.Invoke(imageData.Width, imageData.Height, datas.Reverse().ToArray());
         }
         
         public void Start()

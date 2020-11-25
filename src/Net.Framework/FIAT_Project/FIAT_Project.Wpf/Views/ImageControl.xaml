@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"             
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:converters="clr-namespace:Net.Framework.Helper.Wpf.Converters;assembly=Net.Framework.Helper.Wpf">
     <UserControl.Resources>
         <Style TargetType="Border">
             <Setter Property="CornerRadius" Value="2"/>
@@ -12,33 +15,171 @@
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="4"/>
         </Style>
+        <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="425"/>
+                <ColumnDefinition Width="400"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <UniformGrid 
                 Rows="3">
                 <GroupBox
                     Header="Original">
-                    <Image Source="{Binding Original}"/>
+                    <Canvas>
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="{Binding OriginalZoomService.Scale}" ScaleY="{Binding OriginalZoomService.Scale}"/>
+                                <TranslateTransform X="{Binding OriginalZoomService.TranslateX}" Y="{Binding OriginalZoomService.TranslateY}"/>
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnOriginalLoaded"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <Image Source="{Binding Original}"/>
+                        <Rectangle StrokeThickness="{Binding OriginalZoomService.OverlayThickness}"
+                                   Stroke="Blue"
+                                   StrokeDashArray="2 1"
+                                   Canvas.Left="{Binding SetRectROI.X}"
+                                   Canvas.Top="{Binding SetRectROI.Y}"
+                                   Width="{Binding SetRectROI.Width}"
+                                   Height="{Binding SetRectROI.Height}"
+                                   Visibility="{Binding IsSetROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        <Rectangle StrokeThickness="{Binding OriginalZoomService.OverlayThickness}"
+                                   Stroke="Blue"
+                                   Canvas.Left="{Binding RectROI.X}"
+                                   Canvas.Top="{Binding RectROI.Y}"
+                                   Width="{Binding RectROI.Width}"
+                                   Height="{Binding RectROI.Height}"
+                                   Visibility="{Binding OnROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                    </Canvas>
                 </GroupBox>
                 <GroupBox
                     Header="660 Lazer">
-                    <Image Source="{Binding Lazer660}"/>
+                    <Canvas>
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="{Binding OriginalZoomService.Scale}" ScaleY="{Binding OriginalZoomService.Scale}"/>
+                                <TranslateTransform X="{Binding OriginalZoomService.TranslateX}" Y="{Binding OriginalZoomService.TranslateY}"/>
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                        <Image Source="{Binding Lazer660}"/>
+                        <Rectangle StrokeThickness="{Binding OriginalZoomService.OverlayThickness}"
+                                   Stroke="Blue"
+                                   StrokeDashArray="2 1"
+                                   Canvas.Left="{Binding SetRectROI.X}"
+                                   Canvas.Top="{Binding SetRectROI.Y}"
+                                   Width="{Binding SetRectROI.Width}"
+                                   Height="{Binding SetRectROI.Height}"
+                                   Visibility="{Binding IsSetROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        <Rectangle StrokeThickness="{Binding OriginalZoomService.OverlayThickness}"
+                                   Stroke="Blue"
+                                   Canvas.Left="{Binding RectROI.X}"
+                                   Canvas.Top="{Binding RectROI.Y}"
+                                   Width="{Binding RectROI.Width}"
+                                   Height="{Binding RectROI.Height}"
+                                   Visibility="{Binding OnROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                    </Canvas>
                 </GroupBox>
                 <GroupBox
                     Header="760 Lazer">
-                    <Image Source="{Binding Lazer760}"/>
+                    <Canvas>
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="{Binding OriginalZoomService.Scale}" ScaleY="{Binding OriginalZoomService.Scale}"/>
+                                <TranslateTransform X="{Binding OriginalZoomService.TranslateX}" Y="{Binding OriginalZoomService.TranslateY}"/>
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                        <Image Source="{Binding Lazer760}"/>
+                        <Rectangle StrokeThickness="{Binding OriginalZoomService.OverlayThickness}"
+                                   Stroke="Blue"
+                                   StrokeDashArray="2 2"
+                                   Canvas.Left="{Binding SetRectROI.X}"
+                                   Canvas.Top="{Binding SetRectROI.Y}"
+                                   Width="{Binding SetRectROI.Width}"
+                                   Height="{Binding SetRectROI.Height}"
+                                   Visibility="{Binding IsSetROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        <Rectangle StrokeThickness="{Binding OriginalZoomService.OverlayThickness}"
+                                   Stroke="Blue"
+                                   Canvas.Left="{Binding RectROI.X}"
+                                   Canvas.Top="{Binding RectROI.Y}"
+                                   Width="{Binding RectROI.Width}"
+                                   Height="{Binding RectROI.Height}"
+                                   Visibility="{Binding OnROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                    </Canvas>
                 </GroupBox>
             </UniformGrid>
             <Grid
                 Grid.Column="1">
                 <GroupBox
                     Header="Merged">
-                    <Image Source="{Binding Merged}"/>
+                    <Grid ClipToBounds="True">
+                        <Canvas>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Loaded">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMergedLoaded"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseWheel">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseWheel"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonDown"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonUp"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseRightButtonDown">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseRightButtonDown"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseRightButtonUp">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseRightButtonUp"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseLeave">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeave"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="PreviewMouseMove">
+                                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseMove"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <Canvas.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="{Binding MergedZoomService.Scale}" ScaleY="{Binding MergedZoomService.Scale}"/>
+                                    <TranslateTransform X="{Binding MergedZoomService.TranslateX}" Y="{Binding MergedZoomService.TranslateY}"/>
+                                </TransformGroup>
+                            </Canvas.RenderTransform>
+                            <Image Source="{Binding Merged}"/>
+                            <Rectangle StrokeThickness="{Binding MergedZoomService.OverlayThickness}"
+                                   Stroke="Blue"
+                                   StrokeDashArray="2 2"
+                                   Canvas.Left="{Binding SetRectROI.X}"
+                                   Canvas.Top="{Binding SetRectROI.Y}"
+                                   Width="{Binding SetRectROI.Width}"
+                                   Height="{Binding SetRectROI.Height}"
+                                   Visibility="{Binding IsSetROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                            <Rectangle StrokeThickness="{Binding MergedZoomService.OverlayThickness}"
+                                   Stroke="Blue"
+                                   Canvas.Left="{Binding RectROI.X}"
+                                   Canvas.Top="{Binding RectROI.Y}"
+                                   Width="{Binding RectROI.Width}"
+                                   Height="{Binding RectROI.Height}"
+                                   Visibility="{Binding OnROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        </Canvas>
+                        <ToolBar HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="16">
+                            <CheckBox IsChecked="{Binding OnROI}">
+                                <StackPanel>
+                                    <TextBlock Text="ROI"/>
+                                </StackPanel>
+                            </CheckBox>
+                            <Button Command="{Binding ZoomFitCommand}">
+                                <StackPanel>
+                                    <TextBlock Text="Zoom Fit"/>
+                                </StackPanel>
+                            </Button>
+                        </ToolBar>
+                    </Grid>
                 </GroupBox>
             </Grid>
         </Grid>

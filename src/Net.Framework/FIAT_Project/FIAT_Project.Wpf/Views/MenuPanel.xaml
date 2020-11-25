@@ -21,6 +21,16 @@
                             <Setter Property="Margin" Value="8 0 0 0"/>
                         </Style>
                     </StackPanel.Resources>
+                    <Button Command="{Binding SettingCommand}">
+                        <StackPanel>
+                            <TextBlock Text="Setting"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ExitCommand}">
+                        <StackPanel>
+                            <TextBlock Text="Exit"/>
+                        </StackPanel>
+                    </Button>
                     <!--<Button Command="{Binding WorkListCommand}">
                         <TextBlock Text="Work List"/>
                     </Button>

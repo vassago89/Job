@@ -31,12 +31,15 @@ namespace FIAT_Project.Core.Service
             _buffer = new byte[grabService.Width * grabService.Height * 12];
         }
 
-        public void Start(string path)
+        public void Start(string directory, string fileName)
         {
             lock (this)
             {
+                if (Directory.Exists(directory) == false)
+                    Directory.CreateDirectory(directory);
+
                 Array.Clear(_buffer, 0, _buffer.Length);
-                _recorder.Start(path);
+                _recorder.Start(Path.Combine(directory, fileName));
                 _processService.Processed += Processed;
                 _onRecord = true;
             }

@@ -23,7 +23,7 @@
             <DockPanel
                 Grid.Row="1">
                 <views:ControlPanel DockPanel.Dock="Left"
-                                    Width="400"/>
+                                    Width="300"/>
                 <views:ImageControl/>
             </DockPanel>
         </Grid>

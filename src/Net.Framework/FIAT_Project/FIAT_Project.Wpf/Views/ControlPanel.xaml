@@ -7,45 +7,19 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-            </Style>
-            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
-                <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            </Style>
-            <Style TargetType="Slider">
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-            <Style TargetType="GroupBox">
-                <Setter Property="Margin" Value="4"/>
-            </Style>
-            <Style TargetType="Button"  BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                <Setter Property="Margin" Value="4"/>
-            </Style>
-            <Style TargetType="UniformGrid">
-                <Setter Property="Columns" Value="2"/>
-            </Style>
-            <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
-                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            </Style>
-            <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}">
-                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                <Setter Property="Margin" Value="24 0 24 0"/>
-            </Style>
+           
             <conveters:BooleanInverter x:Key="BooleanInverter"/>
             <conveters:AllBooleanConverter x:Key="AllBooleanConverter"/>
         </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <StackPanel>
             <Expander Header="Device" IsExpanded="True">
                 <StackPanel>
                     <GroupBox Header="Video">
-                        <UniformGrid>
+                        <UniformGrid Columns="2">
                             <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OffGrab}">
                                 <StackPanel>
                                     <TextBlock Text="Grab"/>
@@ -78,6 +52,13 @@
                                     <TextBlock Text="Record Stop"/>
                                 </StackPanel>
                             </Button>
+                            <!--<TextBox Text="{Binding SystemConfig.ExposureTime, StringFormat={}{0:0.000}}"
+                                     materialDesign:HintAssist.Hint="Exposure (ms)"/>
+                            <Button Command="{Binding SetExposureCommand}">
+                                <StackPanel>
+                                    <TextBlock Text="Set"/>
+                                </StackPanel>
+                            </Button>-->
                         </UniformGrid>
                     </GroupBox>
                     <GroupBox Header="Led">
@@ -202,185 +183,15 @@
                             </UniformGrid>
                         </StackPanel>
                     </GroupBox>
-                    <Button Command="{Binding SaveCommand}">
-                        <StackPanel>
-                            <TextBlock Text="Save"/>
-                        </StackPanel>
-                    </Button>
                 </StackPanel>
             </Expander>
-            <!--<GroupBox 
-                Header="Import / Export">
-                <UniformGrid>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Open"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Import"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Save"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Print"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Imager"/>
-                        </StackPanel>
-                    </Button>
-                </UniformGrid>
-            </GroupBox>
-            <GroupBox 
-                Header="Image Control" >
-                <UniformGrid>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Live Setting"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Horizontal"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Vertical"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="W / L"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="R. Rotate"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="L  . Rotate"/>
-                        </StackPanel>
-                    </Button>
-                </UniformGrid>
-            </GroupBox>
-            <GroupBox 
-                Header="Display Control" >
-                <UniformGrid>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Zoom"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Pan"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Magnify"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Layout"/>
-                        </StackPanel>
-                    </Button>
-                </UniformGrid>
-            </GroupBox>
-            <GroupBox 
-                            Header="Annotation" >
-                <UniformGrid>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Angle"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Arrow Mark"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Annotation"/>
-                        </StackPanel>
-                    </Button>
-                    <Button>
-                        <StackPanel>
-                            <TextBlock Text="Reset"/>
-                        </StackPanel>
-                    </Button>
-                </UniformGrid>
-            </GroupBox>-->
         </StackPanel>
-        <!--<Grid
-            VerticalAlignment="Bottom">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <UniformGrid Columns="2">
-                <CheckBox 
-                    materialDesign:CheckBoxAssist.CheckBoxSize="32"
-                    HorizontalContentAlignment="Center">
-                    <StackPanel>
-                        <TextBlock Text="Light"/>
-                    </StackPanel>
-                </CheckBox>
-                <CheckBox
-                    materialDesign:CheckBoxAssist.CheckBoxSize="32"
-                    HorizontalContentAlignment="Center">
-                    <StackPanel>
-                        <TextBlock Text="Laser"/>
-                    </StackPanel>
-                </CheckBox>
-                <CheckBox
-                    materialDesign:CheckBoxAssist.CheckBoxSize="32"
-                    HorizontalContentAlignment="Center">
-                    <StackPanel>
-                        <TextBlock Text="Record"/>
-                    </StackPanel>
-                </CheckBox>
-                <Button
-                    Margin="4"
-                    BorderThickness="2"
-                    Background="Transparent">
-                    <StackPanel>
-                        <TextBlock
-                            Text="Image Save"
-                            Foreground="{DynamicResource MaterialDesignBody}"/>
-                    </StackPanel>
-                </Button>
-            </UniformGrid>
-            <Button 
-                Grid.Row="1">
-                <StackPanel
-                    Orientation="Horizontal">
-                    <TextBlock
-                        Text="Performance Setting"/>
+        <StackPanel Grid.Row="1">
+            <Button Command="{Binding SaveCommand}">
+                <StackPanel>
+                    <TextBlock Text="Save"/>
                 </StackPanel>
             </Button>
-            <StackPanel
-                Grid.Row="2"
-                Orientation="Horizontal"
-                HorizontalAlignment="Center">
-                <TextBlock
-                    FontSize="24"
-                    Text="C: 4025MB"/>
-            </StackPanel>
-        </Grid>-->
+        </StackPanel>
     </Grid>
 </UserControl>

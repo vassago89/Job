@@ -9,6 +9,40 @@
             <ResourceDictionary.MergedDictionaries>
                 <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Grey" SecondaryColor="Lime"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignTextBlock}">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                    </Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="8 0 8 0"/>
+                    </Style>
+                    <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
+                        <Setter Property="Margin" Value="8 0 8 0"/>
+                    </Style>
+                    <Style TargetType="Slider" BasedOn="{StaticResource MaterialDesignSlider}">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                    <Style TargetType="GroupBox">
+                        <Setter Property="Margin" Value="4"/>
+                    </Style>
+                    <Style TargetType="Button"  BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                        <Setter Property="Margin" Value="4"/>
+                    </Style>
+                    <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                    <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="24 0 24 0"/>
+                    </Style>
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

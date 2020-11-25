@@ -5,6 +5,7 @@ using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace FIAT_Project.Wpf.ViewModels
@@ -167,7 +168,7 @@ namespace FIAT_Project.Wpf.ViewModels
 
             RecordStartCommand = new DelegateCommand(() =>
             {
-                recordService.Start( "d:\\1.avi");
+                recordService.Start(systemConfig.ResultPath, "1.avi");
                 OnRecord = true;
                 OffRecord = false;
             });

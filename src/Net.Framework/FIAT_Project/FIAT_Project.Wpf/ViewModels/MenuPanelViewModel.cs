@@ -13,11 +13,23 @@ namespace FIAT_Project.Wpf.ViewModels
     public class MenuPanelViewModel : BindableBase
     {
         public DelegateCommand WorkListCommand => new DelegateCommand(ShowWorkListDialog);
-        
+        public DelegateCommand SettingCommand { get; }
+        public DelegateCommand ExitCommand { get; }
 
         public MenuPanelViewModel()
         {
+            SettingCommand = new DelegateCommand(async () =>
+            {
+                var view = new SettingDialog();
 
+                //show the dialog
+                var result = await DialogHost.Show(view, "RootDialog", ClosingEventHandler);
+
+                //check the result...
+                Console.WriteLine("Dialog was closed, the CommandParameter used to close it was: " + (result ?? "NULL"));
+            });
+
+            ExitCommand = new DelegateCommand(App.Current.Shutdown);
         }
 
         private async void ShowWorkListDialog()

@@ -3,6 +3,7 @@ using Net.Framework.Algorithm.Enums;
 using Net.Framework.Helper.Patterns;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,11 @@ namespace FIAT_Project.Core
 {
     public class SystemConfig : Writable<SystemConfig>
     {
+        public bool OnROI { get; set; }
+        public Rectangle RectROI { get; set; }
+
         public string ProtocolPort { get; set; }
+        public string ResultPath { get; set; }
 
         public double MaxLed { get; set; }
         
@@ -88,6 +93,7 @@ namespace FIAT_Project.Core
         public SystemConfig()
         {
             ProtocolPort = "COM6";
+            ResultPath = "D:\\Result";
 
             ValueLed = MaxLed = 1.000;
             

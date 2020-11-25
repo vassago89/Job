@@ -11,5 +11,10 @@ namespace FIAT_Project.Wpf.Views
         {
             InitializeComponent();
         }
+
+        private void MergedCanvas_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
     }
 }

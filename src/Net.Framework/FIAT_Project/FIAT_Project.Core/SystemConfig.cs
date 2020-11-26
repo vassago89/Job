@@ -12,16 +12,20 @@ namespace FIAT_Project.Core
 {
     public class SystemConfig : Writable<SystemConfig>
     {
+        public bool OnBayer { get; set; }
+
         public bool OnROI { get; set; }
         public Rectangle RectROI { get; set; }
 
         public string ProtocolPort { get; set; }
-        public string ResultPath { get; set; }
+        public string DcfPath { get; set; }
 
         public double MaxLed { get; set; }
         
         public Dictionary<ELazer, double> ValueDictionary { get; set; }
         public Dictionary<ELazer, double> MaxValueDictionary { get; set; }
+
+        public Dictionary<ELazer, bool> UseDictionary { get; set; }
 
         public Dictionary<ELazer, bool> AutoDictionary { get; set; }
         public Dictionary<ELazer, EThresholdMethod> MethodDictionary { get; set; }
@@ -93,7 +97,9 @@ namespace FIAT_Project.Core
         public SystemConfig()
         {
             ProtocolPort = "COM6";
-            ResultPath = "D:\\Result";
+            DcfPath = "MIL10_SOL_BV-C8300NV_re2.dcf";
+
+            OnBayer = true;
 
             ValueLed = MaxLed = 1.000;
             
@@ -101,6 +107,10 @@ namespace FIAT_Project.Core
             MaxValueDictionary = new Dictionary<ELazer, double>();
             ValueDictionary[ELazer.L660] = MaxValueDictionary[ELazer.L660] = 1.5;
             ValueDictionary[ELazer.L760] = MaxValueDictionary[ELazer.L760] = 2.5;
+
+            UseDictionary = new Dictionary<ELazer, bool>();
+            UseDictionary[ELazer.L660] = true;
+            UseDictionary[ELazer.L760] = true;
 
             AutoDictionary = new Dictionary<ELazer, bool>();
             AutoDictionary[ELazer.L660] = true;

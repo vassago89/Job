@@ -1,5 +1,6 @@
 ﻿using FIAT_Project.Core;
 using FIAT_Project.Core.Service;
+using Microsoft.Win32;
 using Net.Framework.Device.Matrox;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -168,7 +169,7 @@ namespace FIAT_Project.Wpf.ViewModels
 
             RecordStartCommand = new DelegateCommand(() =>
             {
-                recordService.Start(systemConfig.ResultPath, "1.avi");
+                recordService.Start();
                 OnRecord = true;
                 OffRecord = false;
             });
@@ -178,6 +179,16 @@ namespace FIAT_Project.Wpf.ViewModels
                 recordService.Stop();
                 OnRecord = false;
                 OffRecord = true;
+
+                var dialog = new SaveFileDialog()
+                {
+                    Filter = "AVI (*.avi)|*.avi"
+                };
+
+                if (dialog.ShowDialog(App.Current.MainWindow) == true)
+                {
+                    recordService.CopyTo(dialog.FileName);
+                }
             });
 
             OnLedCommand = new DelegateCommand(() =>

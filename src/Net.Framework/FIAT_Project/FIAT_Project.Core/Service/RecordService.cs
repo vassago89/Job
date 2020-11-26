@@ -21,6 +21,9 @@ namespace FIAT_Project.Core.Service
 
         private byte[] _buffer;
 
+        private string _directoryName = "Temp";
+        private string _fileName = "Temp.avi";
+
         public RecordService(GrabService grabService, ProcessService processService)
         {
             _grabService = grabService;
@@ -31,15 +34,16 @@ namespace FIAT_Project.Core.Service
             _buffer = new byte[grabService.Width * grabService.Height * 12];
         }
 
-        public void Start(string directory, string fileName)
+        public void Start()
         {
             lock (this)
             {
+                var directory = Path.Combine(Environment.CurrentDirectory, _directoryName);
                 if (Directory.Exists(directory) == false)
                     Directory.CreateDirectory(directory);
 
                 Array.Clear(_buffer, 0, _buffer.Length);
-                _recorder.Start(Path.Combine(directory, fileName));
+                _recorder.Start(Path.Combine(directory, _fileName));
                 _processService.Processed += Processed;
                 _onRecord = true;
             }
@@ -92,6 +96,18 @@ namespace FIAT_Project.Core.Service
 
                 var frameRate = _grabService.FrameRate;
                 _recorder.Stop(frameRate);
+            }
+        }
+
+        public void CopyTo(string path)
+        {
+            try
+            {
+                File.Copy(Path.Combine(_directoryName, _fileName), path, true);
+            }
+            catch(Exception e)
+            {
+
             }
         }
     }

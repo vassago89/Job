@@ -32,9 +32,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Matrox.MatroxImagingLibrary, Version=10.35.1011.0, Culture=neutral, PublicKeyToken=5a83d419d44a9d98, processorArchitecture=x86">
+    <Reference Include="Matrox.MatroxImagingLibrary, Version=10.40.640.5130, Culture=neutral, PublicKeyToken=5a83d419d44a9d98, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Matrox Imaging\MIL\MIL.NET\Matrox.MatroxImagingLibrary.dll</HintPath>
+      <HintPath>..\..\Lib\MIL\Matrox.MatroxImagingLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

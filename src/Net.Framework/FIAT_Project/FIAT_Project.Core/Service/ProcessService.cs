@@ -3,6 +3,7 @@ using Net.Framework.Algorithm.Enums;
 using Net.Framework.Matrox;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,8 +17,6 @@ namespace FIAT_Project.Core.Service
 
     public class ProcessService
     {
-        private bool _onBayer;
-
         public Action<int, int, byte[][]> Processed;
 
         private MatroxBayerProcessor _bayerProcessor;
@@ -29,8 +28,6 @@ namespace FIAT_Project.Core.Service
         {
             _systemConfig = systemConfig;
 
-            _onBayer = true;
-
             grabService.Grabbed += ServiceGrabbed;
 
             _bayerProcessor = new MatroxBayerProcessor(grabService.Width, grabService.Height);
@@ -39,66 +36,59 @@ namespace FIAT_Project.Core.Service
 
         private void ServiceGrabbed(int width, int height, byte[][] datas)
         {
-            if (_onBayer)
+            if (_systemConfig.OnBayer)
                 _bayerProcessor.GetCoefficient(datas[0]);
 
             datas[0] = _bayerProcessor.Process(datas[0]);
-            
-            var mergeDatas = new byte[4][];
-            for (int i = 0; i < 3; i++)
-                mergeDatas[i] = datas[i];
 
-            mergeDatas[3] = new byte[datas[0].Length];
-            Merge(mergeDatas);
+            if (_systemConfig.UseDictionary[ELazer.L660] == true)
+                datas[1] = Threshold(ELazer.L660, datas[1], width, height);
+
+            if (_systemConfig.UseDictionary[ELazer.L760] == true)
+                datas[2] = Threshold(ELazer.L760, datas[2], width, height);
+
+            var lengthOfOneChannel = width * height;
+
+            var mergeDatas = new byte[datas.Length + 1][];
+            mergeDatas[0] = datas[0];
+            for (int i = 1; i < 4; i++)
+                mergeDatas[i] = new byte[lengthOfOneChannel * 3];
+
+            if (_systemConfig.UseDictionary[ELazer.L660] == true)
+                Merge(ELazer.L660, datas[1], mergeDatas[1], mergeDatas[3], lengthOfOneChannel, 0);
+
+            if (_systemConfig.UseDictionary[ELazer.L760] == true)
+                Merge(ELazer.L760, datas[2], mergeDatas[2], mergeDatas[3], lengthOfOneChannel, 1);
+
+            for (int redIndex = 0, greenIndex = lengthOfOneChannel, blueIndex = lengthOfOneChannel * 2; redIndex < lengthOfOneChannel; redIndex++, greenIndex++, blueIndex++)
+            {
+                if (mergeDatas[3][redIndex] == 0 && mergeDatas[3][greenIndex] == 0)
+                {
+                    mergeDatas[3][redIndex] = datas[0][redIndex];
+                    mergeDatas[3][greenIndex] = datas[0][greenIndex];
+                    mergeDatas[3][blueIndex] = datas[0][blueIndex];
+                }
+            }
 
             Processed?.Invoke(width, height, mergeDatas);
         }
 
-        private void Merge(byte[][] datas)
+        private void Merge(ELazer lazer, byte[] dataOfSource, byte[] dataOfDestination, byte[] dataOfMerged, int lengthOfOneChannel, int channelIndex)
         {
-            if (_systemConfig.AutoDictionary[ELazer.L660] == true)
-                datas[1] = AutoThreshold(datas[1], 0, _systemConfig.MethodDictionary[ELazer.L660]);
-            if (_systemConfig.AutoDictionary[ELazer.L760] == true)
-                datas[2] = AutoThreshold(datas[2], 1, _systemConfig.MethodDictionary[ELazer.L760]);
-
-            if (_systemConfig.ManualDictionary[ELazer.L660] == true)
-                datas[1] = Threshold(datas[1], 0, _systemConfig.ThresholdDictionary[ELazer.L660]);
-            if (_systemConfig.ManualDictionary[ELazer.L760] == true)
-                datas[2] = Threshold(datas[2], 1, _systemConfig.ThresholdDictionary[ELazer.L760]);
-
-            var length = datas[0].Length / 3;
-
-            if (_systemConfig.AutoDictionary[ELazer.L660] || _systemConfig.ManualDictionary[ELazer.L660])
+            if (_systemConfig.AutoDictionary[lazer] || _systemConfig.ManualDictionary[lazer])
             {
-                for (int i = 0; i < length; i++)
+                for (int indexOfSource = 0, indexOfDestination = channelIndex * lengthOfOneChannel; indexOfSource < lengthOfOneChannel; indexOfSource++, indexOfDestination++)
                 {
-                    if (datas[1][i] == byte.MaxValue)
-                        datas[3][i] = byte.MaxValue;
-                }
-            }
-
-            var doubleLength = length * 2;
-            if (_systemConfig.AutoDictionary[ELazer.L760] || _systemConfig.ManualDictionary[ELazer.L760])
-            {
-                for (int i = length; i < doubleLength; i ++)
-                {
-                    if (datas[2][i] == byte.MaxValue)
-                        datas[3][i] = byte.MaxValue;
-                }
-            }
-
-            for (int ri = 0, gi = length, bi = doubleLength; ri < length; ri++, gi++, bi++)
-            {
-                if (datas[3][ri] == 0 && datas[3][gi] == 0)
-                {
-                    datas[3][ri] = datas[0][ri];
-                    datas[3][gi] = datas[0][gi];
-                    datas[3][bi] = datas[0][bi];
+                    if (dataOfSource[indexOfSource] == byte.MaxValue)
+                    {
+                        dataOfDestination[indexOfDestination] = byte.MaxValue;
+                        dataOfMerged[indexOfDestination] = byte.MaxValue;
+                    }
                 }
             }
         }
 
-        private byte[] AutoThreshold(byte[] data, int channel, EThresholdMethod method)
+        private byte[] AutoThreshold(byte[] data, EThresholdMethod method)
         {
             var histo = _autoThresholder.GetHistogram(data);
             var value = -1.0;
@@ -115,31 +105,43 @@ namespace FIAT_Project.Core.Service
                     break;
             }
             
-            return Threshold(data, channel, value);
+            return Threshold(data, value); ;
         }
 
-        private byte[] Threshold(byte[] data, int channel, double value)
+        private byte[] Threshold(byte[] data, double value)
         {
             var binaryData = new byte[data.Length];
-            var startIndex = channel * data.Length / 3;
-            var endIndex = startIndex + data.Length / 3;
-            for (int i = startIndex; i < endIndex; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 if (data[i] >= value)
-                    binaryData[i] = 255;
+                    binaryData[i] = byte.MaxValue;
             }
 
             return binaryData;
         }
 
-        public void BayerStart()
+        private byte[] Threshold(ELazer eLazer, byte[] data, int width, int height)
         {
-            _onBayer = true;
-        }
+            var dataOfSource = data;
+            var srcRect = new Rectangle(0, 0, width, height);
+            var destRect = _systemConfig.RectROI;
 
-        public void BayerStop()
-        {
-            _onBayer = false;
+            destRect.Intersect(srcRect);
+
+            if (_systemConfig.OnROI && destRect.Width > 0 && destRect.Height > 0)
+                dataOfSource = ImageHelper.GetDataOfROI(dataOfSource, width, _systemConfig.RectROI.X, _systemConfig.RectROI.Y, _systemConfig.RectROI.Width, _systemConfig.RectROI.Height);
+
+            if (_systemConfig.AutoDictionary[eLazer] == true)
+                dataOfSource = AutoThreshold(dataOfSource, _systemConfig.MethodDictionary[eLazer]);
+            else if (_systemConfig.ManualDictionary[eLazer] == true)
+                dataOfSource = Threshold(dataOfSource, _systemConfig.ThresholdDictionary[eLazer]);
+
+            if (_systemConfig.OnROI && destRect.Width > 0 && destRect.Height > 0)
+                ImageHelper.SetROIToSource(data, dataOfSource, width, _systemConfig.RectROI.X, _systemConfig.RectROI.Y, _systemConfig.RectROI.Width, _systemConfig.RectROI.Height);
+            else
+                data = dataOfSource;
+
+            return data;
         }
     }
 }

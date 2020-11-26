@@ -30,7 +30,7 @@ namespace Net.Framework.Matrox
             MIL.MbufPut(_coef, initValues);
 
             MIL.MbufAllocColor(MIL.M_DEFAULT_HOST,
-                        3,
+                        1,
                         _width,
                         _height,
                         8 + MIL.M_UNSIGNED,

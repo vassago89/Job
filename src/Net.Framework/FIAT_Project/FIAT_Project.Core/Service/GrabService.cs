@@ -27,7 +27,7 @@ namespace FIAT_Project.Core.Service
         public int Height => _imageDevice.Height;
         public int Channels => _imageDevice.Channels;
 
-        public GrabService()
+        public GrabService(SystemConfig systemConfig)
         {
             MatroxApplicationHelper.Initilize();
             //_queue = new Queue<ImageData<byte>>();
@@ -58,7 +58,7 @@ namespace FIAT_Project.Core.Service
             _gateway.ImageDeviceInfos.Add(new MatroxImageDeviceInfo()
             {
                 BufferSize = 5,
-                DcfPath = "MIL10_SOL_BV-C8300NV_re2.dcf",
+                DcfPath = systemConfig.DcfPath,
                 DigitizerNo = 0
             });
 
@@ -74,16 +74,16 @@ namespace FIAT_Project.Core.Service
         {
             var imageData = obj as ImageData<byte>;
 
-            var datas = new byte[3][];
+            var datas = new byte[obj.Channels][];
 
             int size = imageData.Width * imageData.Height;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < obj.Channels; i++)
             {
-                //datas[i] = new byte[imageData.Width * imageData.Height];
-                //Buffer.BlockCopy(imageData.Data, i * size, datas[i], 0, size);
-                datas[i] = new byte[imageData.Width * imageData.Height * 3];
-                for (int j = 0; j < 3; j++)
-                    Buffer.BlockCopy(imageData.Data, i * size, datas[i], j * size, size);
+                datas[i] = new byte[imageData.Width * imageData.Height];
+                Buffer.BlockCopy(imageData.Data, i * size, datas[i], 0, size);
+                //datas[i] = new byte[imageData.Width * imageData.Height * 3];
+                //for (int j = 0; j < obj.Channels; j++)
+                //    Buffer.BlockCopy(imageData.Data, i * size, datas[i], j * size, size);
             }
 
             Grabbed?.Invoke(imageData.Width, imageData.Height, datas.Reverse().ToArray());

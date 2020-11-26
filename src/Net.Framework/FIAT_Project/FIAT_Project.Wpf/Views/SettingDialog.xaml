@@ -20,8 +20,8 @@
                 <UniformGrid>
                     <TextBlock Text="Port"/>
                     <ComboBox SelectedItem="{Binding SystemConfig.ProtocolPort}" ItemsSource="{Binding Ports}"/>
-                    <TextBlock Text="Result Path"/>
-                    <TextBox Text="{Binding SystemConfig.ResultPath}"/>
+                    <TextBlock Text="Dcf Path"/>
+                    <TextBox Text="{Binding SystemConfig.DcfPath}"/>
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">

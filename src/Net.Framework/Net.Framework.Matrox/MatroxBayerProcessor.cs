@@ -48,7 +48,19 @@ namespace Net.Framework.Matrox
            
         }
 
-        public void GetCoefficient(byte[] data)
+        public float[] GetCoefficient()
+        {
+            var data = new float[3];
+            MIL.MbufGet(_coef, data);
+            return data;
+        }
+
+        public void SetCoefficient(float[] data)
+        {
+            MIL.MbufPut(_coef, data);
+        }
+
+        public void GenerateCoefficient(byte[] data)
         {
             MIL.MbufPut(_source, data);
             MIL.MbufBayer(_source, MIL.M_NULL, _coef, MIL.M_BAYER_RG + MIL.M_WHITE_BALANCE_CALCULATE);

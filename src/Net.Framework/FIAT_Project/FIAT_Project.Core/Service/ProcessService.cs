@@ -17,7 +17,7 @@ namespace FIAT_Project.Core.Service
 
     public class ProcessService
     {
-        public Action<int, int, byte[][]> Processed;
+        public Action<int, int, byte[][], float[]> Processed;
 
         private MatroxBayerProcessor _bayerProcessor;
         private AutoThresholder _autoThresholder;
@@ -34,10 +34,15 @@ namespace FIAT_Project.Core.Service
             _autoThresholder = new AutoThresholder();
         }
 
+        public void SetCoefficient(float red, float green, float blue)
+        {
+            _bayerProcessor.SetCoefficient(new float[] { red, green, blue });
+        }
+
         private void ServiceGrabbed(int width, int height, byte[][] datas)
         {
             if (_systemConfig.OnBayer)
-                _bayerProcessor.GetCoefficient(datas[0]);
+                _bayerProcessor.GenerateCoefficient(datas[0]);
 
             datas[0] = _bayerProcessor.Process(datas[0]);
 
@@ -70,7 +75,7 @@ namespace FIAT_Project.Core.Service
                 }
             }
 
-            Processed?.Invoke(width, height, mergeDatas);
+            Processed?.Invoke(width, height, mergeDatas, _bayerProcessor.GetCoefficient());
         }
 
         private void Merge(ELazer lazer, byte[] dataOfSource, byte[] dataOfDestination, byte[] dataOfMerged, int lengthOfOneChannel, int channelIndex)

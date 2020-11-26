@@ -15,177 +15,207 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel>
-            <Expander Header="Device" IsExpanded="True">
-                <StackPanel>
-                    <GroupBox Header="Video">
-                        <UniformGrid Columns="2">
-                            <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OffGrab}">
-                                <StackPanel>
-                                    <TextBlock Text="Grab"/>
-                                </StackPanel>
-                            </Button>
-                            <Button Command="{Binding StopCommand}">
-                                <Button.IsEnabled>
-                                    <MultiBinding Converter="{StaticResource AllBooleanConverter}">
-                                        <Binding Path="OnGrab"/>
-                                        <Binding Path="OffRecord"/>
-                                    </MultiBinding>
-                                </Button.IsEnabled>
-                                <StackPanel>
-                                    <TextBlock Text="Stop"/>
-                                </StackPanel>
-                            </Button>
-                            <Button Command="{Binding RecordStartCommand}">
-                                <Button.IsEnabled>
-                                    <MultiBinding Converter="{StaticResource AllBooleanConverter}">
-                                        <Binding Path="OnGrab"/>
-                                        <Binding Path="OffRecord"/>
-                                    </MultiBinding>
-                                </Button.IsEnabled>
-                                <StackPanel>
-                                    <TextBlock Text="Record Start"/>
-                                </StackPanel>
-                            </Button>
-                            <Button Command="{Binding RecordStopCommand}" IsEnabled="{Binding OnRecord}">
-                                <StackPanel>
-                                    <TextBlock Text="Record Stop"/>
-                                </StackPanel>
-                            </Button>
-                            <!--<TextBox Text="{Binding SystemConfig.ExposureTime, StringFormat={}{0:0.000}}"
-                                     materialDesign:HintAssist.Hint="Exposure (ms)"/>
-                            <Button Command="{Binding SetExposureCommand}">
-                                <StackPanel>
-                                    <TextBlock Text="Set"/>
-                                </StackPanel>
-                            </Button>-->
-                        </UniformGrid>
-                    </GroupBox>
-                    <GroupBox Header="Led">
-                        <StackPanel>
-                            <UniformGrid>
-                                <Button Command="{Binding OnLedCommand}" IsEnabled="{Binding OnLed, Converter={StaticResource BooleanInverter}}">
+        <ScrollViewer>
+            <StackPanel>
+                <Expander Header="Device" IsExpanded="True">
+                    <StackPanel>
+                        <GroupBox Header="Video">
+                            <UniformGrid Columns="2">
+                                <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OffGrab}">
                                     <StackPanel>
-                                        <TextBlock Text="On"/>
+                                        <TextBlock Text="Grab"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Command="{Binding OffLedCommand}" IsEnabled="{Binding OnLed}">
+                                <Button Command="{Binding StopCommand}">
+                                    <Button.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource AllBooleanConverter}">
+                                            <Binding Path="OnGrab"/>
+                                            <Binding Path="OffRecord"/>
+                                        </MultiBinding>
+                                    </Button.IsEnabled>
                                     <StackPanel>
-                                        <TextBlock Text="Off"/>
+                                        <TextBlock Text="Stop"/>
                                     </StackPanel>
                                 </Button>
-                                <TextBox Text="{Binding SystemConfig.ValueLed, StringFormat={}{0:0.000}}"
-                                         materialDesign:HintAssist.Hint="Ampere (0 ~ 1A)"/>
-                                <Button Command="{Binding SetLedCommand}">
+                                <Button Command="{Binding RecordStartCommand}">
+                                    <Button.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource AllBooleanConverter}">
+                                            <Binding Path="OnGrab"/>
+                                            <Binding Path="OffRecord"/>
+                                        </MultiBinding>
+                                    </Button.IsEnabled>
+                                    <StackPanel>
+                                        <TextBlock Text="Record Start"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{Binding RecordStopCommand}" IsEnabled="{Binding OnRecord}">
+                                    <StackPanel>
+                                        <TextBlock Text="Record Stop"/>
+                                    </StackPanel>
+                                </Button>
+                                <!--<TextBox Text="{Binding SystemConfig.ExposureTime, StringFormat={}{0:0.000}}"
+                                         materialDesign:HintAssist.Hint="Exposure (ms)"/>
+                                <Button Command="{Binding SetExposureCommand}">
                                     <StackPanel>
                                         <TextBlock Text="Set"/>
                                     </StackPanel>
-                                </Button>
+                                </Button>-->
                             </UniformGrid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="L660">
-                        <StackPanel>
-                            <UniformGrid>
-                                <Button Command="{Binding On660Command}" IsEnabled="{Binding On660, Converter={StaticResource BooleanInverter}}">
-                                    <StackPanel>
-                                        <TextBlock Text="On"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button Command="{Binding Off660Command}" IsEnabled="{Binding On660}">
-                                    <StackPanel>
-                                        <TextBlock Text="Off"/>
-                                    </StackPanel>
-                                </Button>
-                                <TextBox Text="{Binding SystemConfig.Value660, StringFormat={}{0:0.000}}"
-                                         materialDesign:HintAssist.Hint="Ampere (0 ~ 1.5A)"/>
-                                <Button Command="{Binding Set660Command}">
-                                    <StackPanel>
-                                        <TextBlock Text="Set"/>
-                                    </StackPanel>
-                                </Button>
-                            </UniformGrid>
-                        </StackPanel>
-                    </GroupBox>
+                        </GroupBox>
+                        <GroupBox Header="Led">
+                            <StackPanel>
+                                <UniformGrid>
+                                    <Button Command="{Binding OnLedCommand}" IsEnabled="{Binding OnLed, Converter={StaticResource BooleanInverter}}">
+                                        <StackPanel>
+                                            <TextBlock Text="On"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding OffLedCommand}" IsEnabled="{Binding OnLed}">
+                                        <StackPanel>
+                                            <TextBlock Text="Off"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <TextBox Text="{Binding SystemConfig.ValueLed, StringFormat={}{0:0.000}}"
+                                             materialDesign:HintAssist.Hint="Ampere (0 ~ 1A)"/>
+                                    <Button Command="{Binding SetLedCommand}">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
+                                </UniformGrid>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="L660">
+                            <StackPanel>
+                                <UniformGrid>
+                                    <Button Command="{Binding On660Command}" IsEnabled="{Binding On660, Converter={StaticResource BooleanInverter}}">
+                                        <StackPanel>
+                                            <TextBlock Text="On"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding Off660Command}" IsEnabled="{Binding On660}">
+                                        <StackPanel>
+                                            <TextBlock Text="Off"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <TextBox Text="{Binding SystemConfig.Value660, StringFormat={}{0:0.000}}"
+                                             materialDesign:HintAssist.Hint="Ampere (0 ~ 1.5A)"/>
+                                    <Button Command="{Binding Set660Command}">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
+                                </UniformGrid>
+                            </StackPanel>
+                        </GroupBox>
 
-                    <GroupBox Header="L760">
-                        <StackPanel>
-                            <UniformGrid>
-                                <Button Command="{Binding On760Command}" IsEnabled="{Binding On760, Converter={StaticResource BooleanInverter}}">
-                                    <StackPanel>
-                                        <TextBlock Text="On"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button Command="{Binding Off760Command}" IsEnabled="{Binding On760}">
-                                    <StackPanel>
-                                        <TextBlock Text="Off"/>
-                                    </StackPanel>
-                                </Button>
-                                <TextBox Text="{Binding SystemConfig.Value760, StringFormat={}{0:0.000}}"
-                                         materialDesign:HintAssist.Hint="Ampere (0 ~ 2.5A)"/>
-                                <Button Command="{Binding Set760Command}">
-                                    <StackPanel>
-                                        <TextBlock Text="Set"/>
-                                    </StackPanel>
-                                </Button>
-                            </UniformGrid>
-                        </StackPanel>
-                    </GroupBox>
-                </StackPanel>
-            </Expander>
-            <Expander Header="Process">
-                <StackPanel>
-                    <GroupBox Header="L660">
-                        <StackPanel>
-                            <UniformGrid>
-                                <RadioButton IsChecked="True">
-                                    <StackPanel>
-                                        <TextBlock Text="None"/>
-                                    </StackPanel>
-                                </RadioButton>
-                                <RadioButton IsChecked="{Binding On660Auto}">
-                                    <StackPanel>
-                                        <TextBlock Text="Auto"/>
-                                    </StackPanel>
-                                </RadioButton>
-                                <RadioButton IsChecked="{Binding On660Manual}">
-                                    <StackPanel>
-                                        <TextBlock Text="Manual"/>
-                                    </StackPanel>
-                                </RadioButton>
-                                <TextBox Text="{Binding SystemConfig.Threshold660}"
-                                         materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
-                                         IsEnabled="{Binding On660Manual}"/>
-                            </UniformGrid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="L760">
-                        <StackPanel>
-                            <UniformGrid>
-                                <RadioButton IsChecked="True">
-                                    <StackPanel>
-                                        <TextBlock Text="None"/>
-                                    </StackPanel>
-                                </RadioButton>
-                                <RadioButton IsChecked="{Binding On760Auto}">
-                                    <StackPanel>
-                                        <TextBlock Text="Auto"/>
-                                    </StackPanel>
-                                </RadioButton>
-                                <RadioButton IsChecked="{Binding On760Manual}">
-                                    <StackPanel>
-                                        <TextBlock Text="Manual"/>
-                                    </StackPanel>
-                                </RadioButton>
-                                <TextBox Text="{Binding SystemConfig.Threshold760}"
-                                         materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
-                                         IsEnabled="{Binding On760Manual}"/>
-                            </UniformGrid>
-                        </StackPanel>
-                    </GroupBox>
-                </StackPanel>
-            </Expander>
-        </StackPanel>
+                        <GroupBox Header="L760">
+                            <StackPanel>
+                                <UniformGrid>
+                                    <Button Command="{Binding On760Command}" IsEnabled="{Binding On760, Converter={StaticResource BooleanInverter}}">
+                                        <StackPanel>
+                                            <TextBlock Text="On"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding Off760Command}" IsEnabled="{Binding On760}">
+                                        <StackPanel>
+                                            <TextBlock Text="Off"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <TextBox Text="{Binding SystemConfig.Value760, StringFormat={}{0:0.000}}"
+                                             materialDesign:HintAssist.Hint="Ampere (0 ~ 2.5A)"/>
+                                    <Button Command="{Binding Set760Command}">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
+                                </UniformGrid>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="Image Processing">
+                    <StackPanel>
+                        <GroupBox Header="L660">
+                            <StackPanel>
+                                <UniformGrid>
+                                    <RadioButton IsChecked="True">
+                                        <StackPanel>
+                                            <TextBlock Text="None"/>
+                                        </StackPanel>
+                                    </RadioButton>
+                                    <RadioButton IsChecked="{Binding On660Auto}">
+                                        <StackPanel>
+                                            <TextBlock Text="Auto"/>
+                                        </StackPanel>
+                                    </RadioButton>
+                                    <RadioButton IsChecked="{Binding On660Manual}">
+                                        <StackPanel>
+                                            <TextBlock Text="Manual"/>
+                                        </StackPanel>
+                                    </RadioButton>
+                                    <TextBox Text="{Binding SystemConfig.Threshold660}"
+                                             materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
+                                             IsEnabled="{Binding On660Manual}"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="L760">
+                            <StackPanel>
+                                <UniformGrid>
+                                    <RadioButton IsChecked="True">
+                                        <StackPanel>
+                                            <TextBlock Text="None"/>
+                                        </StackPanel>
+                                    </RadioButton>
+                                    <RadioButton IsChecked="{Binding On760Auto}">
+                                        <StackPanel>
+                                            <TextBlock Text="Auto"/>
+                                        </StackPanel>
+                                    </RadioButton>
+                                    <RadioButton IsChecked="{Binding On760Manual}">
+                                        <StackPanel>
+                                            <TextBlock Text="Manual"/>
+                                        </StackPanel>
+                                    </RadioButton>
+                                    <TextBox Text="{Binding SystemConfig.Threshold760}"
+                                             materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
+                                             IsEnabled="{Binding On760Manual}"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="White Blance">
+                    <StackPanel>
+                        <GroupBox Header="R">
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Left" 
+                                         Text="{Binding CoefficientRed}"
+                                         materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
+                                <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientRed}"/>
+                            </DockPanel>
+                        </GroupBox>
+                        <GroupBox Header="G">
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Left" 
+                                         Text="{Binding CoefficientGreen}"
+                                         materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
+                                <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientGreen}"/>
+                            </DockPanel>
+                        </GroupBox>
+                        <GroupBox Header="B">
+                            <DockPanel>
+                                <TextBox DockPanel.Dock="Left" 
+                                         Text="{Binding CoefficientBlue}"
+                                         materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
+                                <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientBlue}"/>
+                            </DockPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
         <StackPanel Grid.Row="1">
             <Button Command="{Binding SaveCommand}">
                 <StackPanel>

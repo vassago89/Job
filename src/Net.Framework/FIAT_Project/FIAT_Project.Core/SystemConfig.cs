@@ -33,6 +33,8 @@ namespace FIAT_Project.Core
         public Dictionary<ELazer, bool> ManualDictionary { get; set; }
         public Dictionary<ELazer, byte> ThresholdDictionary { get; set; }
 
+        public float[] CoefficientValues { get; set; }
+
         private double _valueLed;
         public double ValueLed
         {
@@ -98,11 +100,12 @@ namespace FIAT_Project.Core
         {
             ProtocolPort = "COM6";
             DcfPath = "MIL10_SOL_BV-C8300NV_re2.dcf";
+            
+            ValueLed = MaxLed = 1.000;
 
             OnBayer = true;
+            CoefficientValues = new float[3];
 
-            ValueLed = MaxLed = 1.000;
-            
             ValueDictionary = new Dictionary<ELazer, double>();
             MaxValueDictionary = new Dictionary<ELazer, double>();
             ValueDictionary[ELazer.L660] = MaxValueDictionary[ELazer.L660] = 1.5;

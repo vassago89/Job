@@ -23,6 +23,13 @@ namespace FIAT_Project.Wpf
         protected override void OnInitialized()
         {
             base.OnInitialized();
+
+            var systemConfig = Container.Resolve<SystemConfig>();
+            var protocolService = Container.Resolve<ProtocolService>();
+
+            protocolService.SetLed(systemConfig.ValueLed * 1000.0);
+            protocolService.Set660(systemConfig.Value660 * 1000.0);
+            protocolService.Set760(systemConfig.Value760 * 1000.0);
         }
         
         protected override Window CreateShell()
@@ -39,6 +46,35 @@ namespace FIAT_Project.Wpf
                 .RegisterSingleton<ProtocolService>()
                 .RegisterInstance(SystemConfig.Load(Environment.CurrentDirectory));
             //throw new NotImplementedException();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            if (e.ApplicationExitCode == 0)
+            {
+                var protocolService = Container.Resolve<ProtocolService>();
+                protocolService.OffLed();
+                protocolService.Off660();
+                protocolService.Off760();
+
+                //MatroxHelper.FreeApplication();
+                //try
+                //{
+                //    c
+                //    Container.Resolve<IoService>().Stop();
+                //    Container.Resolve<IoService>().Cancle();
+                //}
+                //catch
+                //{
+                //    var pm = new PatternMatching();
+                //    pm.AddPattern
+                //}
+            }
+
+            //MatroxHelper.FreeApplication();
+            //CudaMethods.CUDA_RELEASE();
+
+            base.OnExit(e);
         }
     }
 }

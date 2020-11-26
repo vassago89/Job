@@ -173,7 +173,7 @@ namespace FIAT_Project.Wpf.ViewModels
             ZoomFitCommand = new DelegateCommand(ZoomFit);
         }
 
-        private void Processed(int width, int height, byte[][] datas)
+        private void Processed(int width, int height, byte[][] datas, float[] coefficientValues)
         {
             if (Merged == null)
             {

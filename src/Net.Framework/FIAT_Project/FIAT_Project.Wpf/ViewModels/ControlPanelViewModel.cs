@@ -125,6 +125,48 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
+        private float _coefficientRed;
+        public float CoefficientRed
+        {
+            get => _coefficientBlue;
+            set
+            {
+                if (value < 0 || value > 5.5)
+                    return;
+
+                SetProperty(ref _coefficientRed, value);
+                SystemConfig.CoefficientValues[0] = value;
+            }
+        }
+
+        private float _coefficientGreen;
+        public float CoefficientGreen
+        {
+            get => _coefficientBlue;
+            set
+            {
+                if (value < 0 || value > 5.5)
+                    return;
+
+                SetProperty(ref _coefficientGreen, value);
+                SystemConfig.CoefficientValues[1] = value;
+            }
+        }
+
+        private float _coefficientBlue;
+        public float CoefficientBlue
+        {
+            get => _coefficientBlue;
+            set
+            {
+                if (value < 0 || value > 5.5)
+                    return;
+
+                SetProperty(ref _coefficientBlue, value);
+                SystemConfig.CoefficientValues[2] = value;
+            }
+        }
+
         public DelegateCommand SaveCommand { get; }
 
         public SystemConfig SystemConfig { get; }
@@ -241,6 +283,15 @@ namespace FIAT_Project.Wpf.ViewModels
             {
                 protocolService.Set760(SystemConfig.ValueDictionary[ELazer.L760] * 1000);
             });
+
+            processService.Processed += Processed;
+        }
+
+        private void Processed(int width, int height, byte[][] datas, float[] coefficientValues)
+        {
+            CoefficientRed = coefficientValues[0];
+            CoefficientGreen = coefficientValues[1];
+            CoefficientBlue = coefficientValues[2];
         }
     }
 }

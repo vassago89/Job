@@ -1,4 +1,5 @@
-﻿using FIAT_Project.Wpf.Views;
+﻿using FIAT_Project.Core.Enums;
+using FIAT_Project.Wpf.Views;
 using MaterialDesignThemes.Wpf;
 using Prism.Commands;
 using Prism.Mvvm;

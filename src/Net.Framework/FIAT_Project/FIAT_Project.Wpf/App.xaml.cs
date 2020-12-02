@@ -76,5 +76,12 @@ namespace FIAT_Project.Wpf
 
             base.OnExit(e);
         }
+
+        private void PrismApplication_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.Exception.Message);
+            e.Handled = true;
+            return;
+        }
     }
 }

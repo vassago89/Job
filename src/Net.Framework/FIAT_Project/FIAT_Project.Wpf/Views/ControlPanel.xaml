@@ -4,6 +4,8 @@
              xmlns:prism="http://prismlibrary.com/"          
              xmlns:conveters="clr-namespace:Net.Framework.Helper.Wpf.Converters;assembly=Net.Framework.Helper.Wpf"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.Resources>
@@ -158,6 +160,13 @@
                                              materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
                                              IsEnabled="{Binding On660Manual}"/>
                                 </UniformGrid>
+                                <!--<materialDesign:ColorPicker x:Name="Color660" Height="150" Margin="4" Color="{Binding Color660, Mode=TwoWay}">
+                                    --><!--<i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="ColorChanged">
+                                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="ColorChanged660"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>--><!--
+                                </materialDesign:ColorPicker>-->
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Header="L760">
@@ -188,26 +197,32 @@
                 </Expander>
                 <Expander Header="White Blance">
                     <StackPanel>
-                        <GroupBox Header="R">
+                        <Border BorderThickness="3" CornerRadius="4" Margin="4 0 4 0"  BorderBrush="{DynamicResource MaterialDesignBody}">
+                            <UniformGrid Rows="1">
+                                <TextBlock Text="Auto"/>
+                                <ToggleButton IsChecked="{Binding AutoWhiteBalance}"/>
+                            </UniformGrid>
+                        </Border>
+                        <GroupBox Header="R" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
                             <DockPanel>
                                 <TextBox DockPanel.Dock="Left" 
-                                         Text="{Binding CoefficientRed}"
+                                         Text="{Binding CoefficientRed, StringFormat={}{0:0.00}}"
                                          materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
                                 <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientRed}"/>
                             </DockPanel>
                         </GroupBox>
-                        <GroupBox Header="G">
+                        <GroupBox Header="G" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
                             <DockPanel>
                                 <TextBox DockPanel.Dock="Left" 
-                                         Text="{Binding CoefficientGreen}"
+                                         Text="{Binding CoefficientGreen, StringFormat={}{0:0.00}}"
                                          materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
                                 <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientGreen}"/>
                             </DockPanel>
                         </GroupBox>
-                        <GroupBox Header="B">
+                        <GroupBox Header="B" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
                             <DockPanel>
                                 <TextBox DockPanel.Dock="Left" 
-                                         Text="{Binding CoefficientBlue}"
+                                         Text="{Binding CoefficientBlue, StringFormat={}{0:0.00}}"
                                          materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
                                 <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientBlue}"/>
                             </DockPanel>

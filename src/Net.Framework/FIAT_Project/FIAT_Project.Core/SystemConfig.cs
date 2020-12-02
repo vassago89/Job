@@ -1,4 +1,5 @@
-﻿using FIAT_Project.Core.Service;
+﻿using FIAT_Project.Core.Enums;
+using FIAT_Project.Core.Service;
 using Net.Framework.Algorithm.Enums;
 using Net.Framework.Helper.Patterns;
 using System;
@@ -12,16 +13,17 @@ namespace FIAT_Project.Core
 {
     public class SystemConfig : Writable<SystemConfig>
     {
-        public bool OnBayer { get; set; }
-
-        public bool OnROI { get; set; }
-        public Rectangle RectROI { get; set; }
-
+        public bool OnAutoBayer { get; set; }
+        
         public string ProtocolPort { get; set; }
         public string DcfPath { get; set; }
 
         public double MaxLed { get; set; }
         
+        public Dictionary<ELazer, bool> OnROIDictionary { get; set; }
+        public Dictionary<ELazer, Rectangle> ROIDictionary { get; set; }
+
+
         public Dictionary<ELazer, double> ValueDictionary { get; set; }
         public Dictionary<ELazer, double> MaxValueDictionary { get; set; }
 
@@ -35,6 +37,8 @@ namespace FIAT_Project.Core
 
         public float[] CoefficientValues { get; set; }
 
+        public Dictionary<ELazer, byte[]> ColorDictionary { get; set; }
+        
         private double _valueLed;
         public double ValueLed
         {
@@ -103,8 +107,18 @@ namespace FIAT_Project.Core
             
             ValueLed = MaxLed = 1.000;
 
-            OnBayer = true;
+            OnAutoBayer = false;
             CoefficientValues = new float[3];
+            for (int i = 0; i < 3; i++)
+                CoefficientValues[i] = 1;
+
+            OnROIDictionary = new Dictionary<ELazer, bool>();
+            OnROIDictionary[ELazer.L660] = false;
+            OnROIDictionary[ELazer.L760] = false;
+
+            ROIDictionary = new Dictionary<ELazer, Rectangle>();
+            ROIDictionary[ELazer.L660] = Rectangle.Empty;
+            ROIDictionary[ELazer.L760] = Rectangle.Empty;
 
             ValueDictionary = new Dictionary<ELazer, double>();
             MaxValueDictionary = new Dictionary<ELazer, double>();
@@ -130,6 +144,10 @@ namespace FIAT_Project.Core
             ThresholdDictionary = new Dictionary<ELazer, byte>();
             ThresholdDictionary[ELazer.L660] = 127;
             ThresholdDictionary[ELazer.L760] = 127;
+
+            ColorDictionary = new Dictionary<ELazer, byte[]>();
+            ColorDictionary[ELazer.L660] = new byte[3] { 255, 0, 0 };
+            ColorDictionary[ELazer.L760] = new byte[3] { 0, 255, 0 };
         }
     }
 }

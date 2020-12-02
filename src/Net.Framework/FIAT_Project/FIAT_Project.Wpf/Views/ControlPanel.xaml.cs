@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace FIAT_Project.Wpf.Views
 {
@@ -9,7 +10,7 @@ namespace FIAT_Project.Wpf.Views
     {
         public ControlPanel()
         {
-            InitializeComponent();
+            InitializeComponent();  
         }
     }
 }

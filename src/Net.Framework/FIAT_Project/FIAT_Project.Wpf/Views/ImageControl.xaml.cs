@@ -1,4 +1,8 @@
-﻿using System.Windows.Controls;
+﻿using FIAT_Project.Core.Enums;
+using FIAT_Project.Core.Service;
+using FIAT_Project.Wpf.ViewModels;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace FIAT_Project.Wpf.Views
 {
@@ -7,14 +11,35 @@ namespace FIAT_Project.Wpf.Views
     /// </summary>
     public partial class ImageControl : UserControl
     {
-        public ImageControl()
+        private ImageControlViewModel _viewModel => DataContext as ImageControlViewModel;
+
+        public int ImageIndex
         {
-            InitializeComponent();
+            get => _viewModel.ImageIndex;
+            set => _viewModel.ImageIndex = value;
         }
 
-        private void MergedCanvas_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        public string Header
         {
+            get => _viewModel.Header;
+            set => _viewModel.Header = value;
+        }
 
+        public bool OnLazer
+        {
+            get => _viewModel.OnLazer;
+            set => _viewModel.OnLazer = value;
+        }
+
+        public ELazer Lazer
+        {
+            get => _viewModel.Lazer;
+            set => _viewModel.Lazer = value;
+        }
+
+    public ImageControl()
+        {
+            InitializeComponent();
         }
     }
 }

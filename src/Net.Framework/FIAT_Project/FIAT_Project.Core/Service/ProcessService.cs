@@ -1,4 +1,5 @@
-﻿using Net.Framework.Algorithm;
+﻿using FIAT_Project.Core.Enums;
+using Net.Framework.Algorithm;
 using Net.Framework.Algorithm.Enums;
 using Net.Framework.Matrox;
 using System;
@@ -10,14 +11,9 @@ using System.Threading.Tasks;
 
 namespace FIAT_Project.Core.Service
 {
-    public enum ELazer
-    {
-        L660, L760
-    }
-
     public class ProcessService
     {
-        public Action<int, int, byte[][], float[]> Processed;
+        public Action<int, int, byte[][]> Processed;
 
         private MatroxBayerProcessor _bayerProcessor;
         private AutoThresholder _autoThresholder;
@@ -41,8 +37,10 @@ namespace FIAT_Project.Core.Service
 
         private void ServiceGrabbed(int width, int height, byte[][] datas)
         {
-            if (_systemConfig.OnBayer)
-                _bayerProcessor.GenerateCoefficient(datas[0]);
+            if (_systemConfig.OnAutoBayer)
+                _systemConfig.CoefficientValues = _bayerProcessor.GenerateCoefficient(datas[0]);
+            else
+                _bayerProcessor.SetCoefficient(_systemConfig.CoefficientValues);
 
             datas[0] = _bayerProcessor.Process(datas[0]);
 
@@ -75,7 +73,7 @@ namespace FIAT_Project.Core.Service
                 }
             }
 
-            Processed?.Invoke(width, height, mergeDatas, _bayerProcessor.GetCoefficient());
+            Processed?.Invoke(width, height, mergeDatas);
         }
 
         private void Merge(ELazer lazer, byte[] dataOfSource, byte[] dataOfDestination, byte[] dataOfMerged, int lengthOfOneChannel, int channelIndex)
@@ -129,20 +127,21 @@ namespace FIAT_Project.Core.Service
         {
             var dataOfSource = data;
             var srcRect = new Rectangle(0, 0, width, height);
-            var destRect = _systemConfig.RectROI;
+            var destRect = _systemConfig.ROIDictionary[eLazer];
+            var onROI = _systemConfig.OnROIDictionary[eLazer];
 
             destRect.Intersect(srcRect);
 
-            if (_systemConfig.OnROI && destRect.Width > 0 && destRect.Height > 0)
-                dataOfSource = ImageHelper.GetDataOfROI(dataOfSource, width, _systemConfig.RectROI.X, _systemConfig.RectROI.Y, _systemConfig.RectROI.Width, _systemConfig.RectROI.Height);
+            if (onROI && destRect.Width > 0 && destRect.Height > 0)
+                dataOfSource = ImageHelper.GetDataOfROI(dataOfSource, width, destRect.X, destRect.Y, destRect.Width, destRect.Height);
 
             if (_systemConfig.AutoDictionary[eLazer] == true)
                 dataOfSource = AutoThreshold(dataOfSource, _systemConfig.MethodDictionary[eLazer]);
             else if (_systemConfig.ManualDictionary[eLazer] == true)
                 dataOfSource = Threshold(dataOfSource, _systemConfig.ThresholdDictionary[eLazer]);
 
-            if (_systemConfig.OnROI && destRect.Width > 0 && destRect.Height > 0)
-                ImageHelper.SetROIToSource(data, dataOfSource, width, _systemConfig.RectROI.X, _systemConfig.RectROI.Y, _systemConfig.RectROI.Width, _systemConfig.RectROI.Height);
+            if (onROI && destRect.Width > 0 && destRect.Height > 0)
+                ImageHelper.SetROIToSource(data, dataOfSource, width, destRect.X, destRect.Y, destRect.Width, destRect.Height);
             else
                 data = dataOfSource;
 

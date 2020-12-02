@@ -49,7 +49,7 @@ namespace FIAT_Project.Core.Service
             }
         }
 
-        private void Processed(int width, int height, byte[][] datas, float[] coefficientValues)
+        private void Processed(int width, int height, byte[][] datas)
         {
             lock (this)
             {

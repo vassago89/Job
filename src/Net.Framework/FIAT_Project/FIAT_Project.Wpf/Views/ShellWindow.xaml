@@ -2,9 +2,11 @@
     x:Class="FIAT_Project.Wpf.Views.ShellWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:FIAT_Project.Wpf.Views"
     xmlns:prism="http://prismlibrary.com/"            
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:views="clr-namespace:FIAT_Project.Wpf.Views"
+    xmlns:enums="clr-namespace:FIAT_Project.Core.Enums;assembly=FIAT_Project.Core"
     prism:ViewModelLocator.AutoWireViewModel="True"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     TextElement.FontWeight="Bold"
@@ -24,7 +26,12 @@
                 Grid.Row="1">
                 <views:ControlPanel DockPanel.Dock="Left"
                                     Width="300"/>
-                <views:ImageControl/>
+                <UniformGrid>
+                    <views:ImageControl ImageIndex="0" Header="Original"/>
+                    <views:ImageControl ImageIndex="3" Header="Merged"/>
+                    <views:ImageControl ImageIndex="1" Header="Lazer 660" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
+                    <views:ImageControl ImageIndex="2" Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
+                </UniformGrid>
             </DockPanel>
         </Grid>
     </materialDesign:DialogHost>

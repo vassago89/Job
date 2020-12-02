@@ -1,4 +1,5 @@
 ﻿using FIAT_Project.Core;
+using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
 using Microsoft.Win32;
 using Net.Framework.Device.Matrox;
@@ -8,11 +9,38 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Media;
 
 namespace FIAT_Project.Wpf.ViewModels
 {
     public class ControlPanelViewModel : BindableBase
     {
+        private Color _color660;
+        public Color Color660
+        {
+            get => _color660;
+            set
+            {
+                SetProperty(ref _color660, value);
+                SystemConfig.ColorDictionary[ELazer.L660][0] = _color660.R;
+                SystemConfig.ColorDictionary[ELazer.L660][1] = _color660.G;
+                SystemConfig.ColorDictionary[ELazer.L660][2] = _color660.B;
+            }
+        }
+
+        private Color _color760;
+        public Color Color760
+        {
+            get => _color760;
+            set
+            {
+                SetProperty(ref _color760, value);
+                SystemConfig.ColorDictionary[ELazer.L760][0] = _color760.R;
+                SystemConfig.ColorDictionary[ELazer.L760][1] = _color760.G;
+                SystemConfig.ColorDictionary[ELazer.L760][2] = _color760.B;
+            }
+        }
+
         private bool _onGrab;
         public bool OnGrab
         {
@@ -62,7 +90,7 @@ namespace FIAT_Project.Wpf.ViewModels
             get => _on760;
             set => SetProperty(ref _on760, value);
         }
-        
+
         public DelegateCommand GrabCommand { get; }
         public DelegateCommand StopCommand { get; }
 
@@ -128,7 +156,7 @@ namespace FIAT_Project.Wpf.ViewModels
         private float _coefficientRed;
         public float CoefficientRed
         {
-            get => _coefficientBlue;
+            get => _coefficientRed;
             set
             {
                 if (value < 0 || value > 5.5)
@@ -142,7 +170,7 @@ namespace FIAT_Project.Wpf.ViewModels
         private float _coefficientGreen;
         public float CoefficientGreen
         {
-            get => _coefficientBlue;
+            get => _coefficientGreen;
             set
             {
                 if (value < 0 || value > 5.5)
@@ -167,6 +195,17 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
+        private bool _autoWhiteBalance;
+        public bool AutoWhiteBalance
+        {
+            get => _autoWhiteBalance;
+            set
+            {
+                SetProperty(ref _autoWhiteBalance, value);
+                SystemConfig.OnAutoBayer = value;
+            }
+        }
+
         public DelegateCommand SaveCommand { get; }
 
         public SystemConfig SystemConfig { get; }
@@ -183,6 +222,15 @@ namespace FIAT_Project.Wpf.ViewModels
             _processService = processService;
 
             SystemConfig = systemConfig;
+            
+            _color660 = Color.FromRgb(SystemConfig.ColorDictionary[ELazer.L660][0], SystemConfig.ColorDictionary[ELazer.L660][1], SystemConfig.ColorDictionary[ELazer.L660][2]);
+            _color760 = Color.FromRgb(SystemConfig.ColorDictionary[ELazer.L760][0], SystemConfig.ColorDictionary[ELazer.L760][1], SystemConfig.ColorDictionary[ELazer.L760][2]);
+
+            CoefficientRed = SystemConfig.CoefficientValues[0];
+            CoefficientGreen = SystemConfig.CoefficientValues[1];
+            CoefficientBlue = SystemConfig.CoefficientValues[2];
+
+            AutoWhiteBalance = SystemConfig.OnAutoBayer;
 
             _on660Auto = SystemConfig.AutoDictionary[ELazer.L660];
             _on760Auto = SystemConfig.AutoDictionary[ELazer.L760];
@@ -287,11 +335,14 @@ namespace FIAT_Project.Wpf.ViewModels
             processService.Processed += Processed;
         }
 
-        private void Processed(int width, int height, byte[][] datas, float[] coefficientValues)
+        private void Processed(int width, int height, byte[][] datas)
         {
-            CoefficientRed = coefficientValues[0];
-            CoefficientGreen = coefficientValues[1];
-            CoefficientBlue = coefficientValues[2];
+            if (SystemConfig.OnAutoBayer)
+            {
+                CoefficientRed = SystemConfig.CoefficientValues[0];
+                CoefficientGreen = SystemConfig.CoefficientValues[1];
+                CoefficientBlue = SystemConfig.CoefficientValues[2];
+            }
         }
     }
 }

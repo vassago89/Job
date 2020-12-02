@@ -1,4 +1,5 @@
 ﻿using FIAT_Project.Core;
+using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
 using Net.Framework.Data.ImageDatas;
 using Net.Framework.Device.Matrox;
@@ -22,51 +23,38 @@ namespace FIAT_Project.Wpf.ViewModels
 {
     public class ImageControlViewModel : BindableBase
     {
-        public ImageSource _original;
-        public ImageSource Original
+        public int ImageIndex { get; set; }
+        public ELazer Lazer { get; set; }
+
+        private string _header; 
+        public string Header
         {
-            get => _original;
-            set => SetProperty(ref _original, value);
+            get => _header;
+            set => SetProperty(ref _header, value);
         }
 
-        private ImageSource _lazer660;
-        public ImageSource Lazer660
+        private bool _onLazer;
+        public bool OnLazer
         {
-            get => _lazer660;
-            set => SetProperty(ref _lazer660, value);
+            get => _onLazer;
+            set => SetProperty(ref _onLazer, value);
         }
 
-        private ImageSource _lazer760;
-        public ImageSource Lazer760
+        private ImageSource _source;
+        public ImageSource Source
         {
-            get => _lazer760;
-            set => SetProperty(ref _lazer760, value);
-        }
-
-        private ImageSource _merged;
-        public ImageSource Merged
-        {
-            get => _merged;
-            set => SetProperty(ref _merged, value);
+            get => _source;
+            set => SetProperty(ref _source, value);
         }
         
         public DelegateCommand ZoomFitCommand { get; }
 
         private PipeLine<(int, int, byte[][])> _pipeLine;
 
-        public ZoomService OriginalZoomService { get; }
-        public ZoomService MergedZoomService { get; }
+        public ZoomService ZoomService { get; }
 
-        FrameworkElement _originalPresentor;
-        FrameworkElement _mergedPresentor;
-
-        private double _scale;
-        public double Scale
-        {
-            get => _scale;
-            set => SetProperty(ref _scale, value);
-        }
-
+        FrameworkElement _presentor;
+        
         private int _width;
         private int _height;
         
@@ -76,23 +64,42 @@ namespace FIAT_Project.Wpf.ViewModels
         Point _panningStartPos;
 
         Point _setROIStartPos;
+        
+        bool _onROI;
+        public bool OnROI
+        {
+            get
+            {
+                _onROI = SystemConfig.OnROIDictionary[Lazer];
+                return _onROI;
+            }
+            set
+            {
+                SystemConfig.OnROIDictionary[Lazer] = value;
+                SetProperty(ref _onROI, value);                
+            }
+        }
+
+        private Rectangle _rectROI;
+        public Rectangle RectROI
+        {
+            get
+            {
+                _rectROI = SystemConfig.ROIDictionary[Lazer];
+                return _rectROI;
+            }
+            set
+            {
+                SystemConfig.ROIDictionary[Lazer] = value;
+                SetProperty(ref _rectROI, value);
+            }
+        }
 
         bool _isSetROI;
         public bool IsSetROI
         {
             get => _isSetROI;
             set => SetProperty(ref _isSetROI, value);
-        }
-
-        bool _onROI;
-        public bool OnROI
-        {
-            get => _onROI;
-            set
-            {
-                SetProperty(ref _onROI, value);
-                SystemConfig.OnROI = value;
-            }
         }
 
         private Rectangle _setRectROI;
@@ -102,28 +109,13 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SetProperty(ref _setRectROI, value);
         }
 
-        private Rectangle _rectROI;
-        public Rectangle RectROI
-        {
-            get => _rectROI;
-            set
-            {
-                SetProperty(ref _rectROI, value);
-                SystemConfig.RectROI = value;
-            }
-        }
-
         public SystemConfig SystemConfig { get; }
 
         public ImageControlViewModel(ProcessService processService, SystemConfig systemConfig)
         {
             SystemConfig = systemConfig;
-
-            _onROI = systemConfig.OnROI;
-            _rectROI = systemConfig.RectROI;
-
-            OriginalZoomService = new ZoomService();
-            MergedZoomService = new ZoomService();
+            
+            ZoomService = new ZoomService();
 
             processService.Processed += Processed;
 
@@ -136,46 +128,32 @@ namespace FIAT_Project.Wpf.ViewModels
                 var height = tuple.Item2;
                 var datas = tuple.Item3;
 
+                if (datas.Length < ImageIndex)
+                    return;
+
                 var size = width * height;
                 var total = size * 3;
 
-                var sourceDatas = new byte[4][];
-                for (int i = 0; i < 4; i++)
-                    sourceDatas[i] = new byte[total];
+                var sourceData = new byte[total];
 
-                for (int k = 0; k < 4; k++)
+                for (int i = 0, j = 0; i < total; i += 3, j++)
                 {
-                    for (int i = 0, j = 0; i < total; i += 3, j++)
-                    {
-                        sourceDatas[k][i] = datas[k][j];
-                        sourceDatas[k][i + 1] = datas[k][j + size];
-                        sourceDatas[k][i + 2] = datas[k][j + size + size];
-                    }
+                    sourceData[i] = datas[ImageIndex][j];
+                    sourceData[i + 1] = datas[ImageIndex][j + size];
+                    sourceData[i + 2] = datas[ImageIndex][j + size + size];
                 }
 
-                var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceDatas[0], width * 3);
+                var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceData, width * 3);
                 temp.Freeze();
-                Original = temp;
-
-                temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceDatas[1], width * 3);
-                temp.Freeze();
-                Lazer660 = temp;
-
-                temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceDatas[2], width * 3);
-                temp.Freeze();
-                Lazer760 = temp;
-
-                temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceDatas[3], width * 3);
-                temp.Freeze();
-                Merged = temp;
+                Source = temp;
             });
 
             ZoomFitCommand = new DelegateCommand(ZoomFit);
         }
 
-        private void Processed(int width, int height, byte[][] datas, float[] coefficientValues)
+        private void Processed(int width, int height, byte[][] datas)
         {
-            if (Merged == null)
+            if (Source == null)
             {
                 _width = width;
                 _height = height;
@@ -191,31 +169,21 @@ namespace FIAT_Project.Wpf.ViewModels
 
         private void ZoomFit()
         {
-            MergedZoomService.ZoomFit(_mergedPresentor.ActualWidth, _mergedPresentor.ActualHeight, _width, _height);
-            OriginalZoomService.ZoomFit(_originalPresentor.ActualWidth, _originalPresentor.ActualHeight, _width, _height);
+            ZoomService.ZoomFit(_presentor.ActualWidth, _presentor.ActualHeight, _width, _height);
         }
 
-        public void OnOriginalLoaded(object sender, System.Windows.RoutedEventArgs e)
+        public void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            _originalPresentor = sender as FrameworkElement;
-            if (_originalPresentor != null && _mergedPresentor != null)
-                Scale = Math.Min(_originalPresentor.ActualWidth / _mergedPresentor.ActualWidth, _originalPresentor.ActualHeight / _mergedPresentor.ActualHeight);
-        }
-
-        public void OnMergedLoaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            _mergedPresentor = sender as FrameworkElement;
-            if (_originalPresentor != null && _mergedPresentor != null)
-                Scale = Math.Min(_originalPresentor.ActualWidth / _mergedPresentor.ActualWidth, _originalPresentor.ActualHeight / _mergedPresentor.ActualHeight);
+            _presentor = sender as FrameworkElement;
         }
 
         public void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var pos = e.GetPosition(sender as IInputElement);
             if (e.Delta > 0)
-                MergedZoomService.ExecuteZoom(pos.X, pos.Y, 1.1f);
+                ZoomService.ExecuteZoom(pos.X, pos.Y, 1.1f);
             else
-                MergedZoomService.ExecuteZoom(pos.X, pos.Y, 0.9f);
+                ZoomService.ExecuteZoom(pos.X, pos.Y, 0.9f);
         }
         
 
@@ -235,7 +203,7 @@ namespace FIAT_Project.Wpf.ViewModels
             var curPos = e.GetPosition(sender as IInputElement);
             _isPanning = true;
 
-            _panningTranslatePos = new Point(MergedZoomService.TranslateX, MergedZoomService.TranslateY);
+            _panningTranslatePos = new Point(ZoomService.TranslateX, ZoomService.TranslateY);
             _panningStartPos = curPos;
         }
 
@@ -264,8 +232,8 @@ namespace FIAT_Project.Wpf.ViewModels
 
             if (_isPanning)
             {
-                MergedZoomService.TranslateX = _panningTranslatePos.X + curPos.X - _panningStartPos.X;
-                MergedZoomService.TranslateY = _panningTranslatePos.Y + curPos.Y - _panningStartPos.Y;
+                ZoomService.TranslateX = _panningTranslatePos.X + curPos.X - _panningStartPos.X;
+                ZoomService.TranslateY = _panningTranslatePos.Y + curPos.Y - _panningStartPos.Y;
             }
 
             if (_isSetROI)

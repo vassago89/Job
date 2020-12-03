@@ -1,6 +1,7 @@
 ﻿using FIAT_Project.Core;
 using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
+using Net.Framework.Algorithm.Enums;
 using Net.Framework.Data.ImageDatas;
 using Net.Framework.Device.Matrox;
 using Net.Framework.Helper.Patterns;
@@ -9,10 +10,12 @@ using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -23,8 +26,82 @@ namespace FIAT_Project.Wpf.ViewModels
 {
     public class ImageControlViewModel : BindableBase
     {
+        private bool _isPolygon;
+        public bool IsPolygon
+        {
+            get => _isPolygon;
+            set
+            {
+                SetProperty(ref _isPolygon, value);
+
+                if (_isPolygon)
+                {
+                    SystemConfig.ROIShapeDictionary[Lazer] = EShape.Polygon;
+                    SystemConfig.OnROIChangedDictionary[Lazer] = true;
+                }
+            }
+        }
+
+        private bool _isRectangle;
+        public bool IsRectangle
+        {
+            get => _isRectangle;
+            set
+            {
+                SetProperty(ref _isRectangle, value);
+                if (_isRectangle)
+                {
+                    SystemConfig.ROIShapeDictionary[Lazer] = EShape.Rectangle;
+                    SystemConfig.OnROIChangedDictionary[Lazer] = true;
+                }
+            }
+        }
+
+        private bool _isEllipse;
+        public bool IsEllipse
+        {
+            get => _isEllipse;
+            set
+            {
+                SetProperty(ref _isEllipse, value);
+
+                if (_isEllipse)
+                {
+                    SystemConfig.ROIShapeDictionary[Lazer] = EShape.Ellipse;
+                    SystemConfig.OnROIChangedDictionary[Lazer] = true;
+                }
+            }
+        }
+
         public int ImageIndex { get; set; }
-        public ELazer Lazer { get; set; }
+
+        private ELazer lazer;
+        public ELazer Lazer
+        {
+            get => lazer;
+            set
+            {
+                lazer = value;
+                switch (SystemConfig.ROIShapeDictionary[Lazer])
+                {
+                    case EShape.Rectangle:
+                        IsRectangle = true;
+                        break;
+                    case EShape.Ellipse:
+                        IsEllipse = true;
+                        break;
+                    case EShape.Polygon:
+                        IsPolygon = true;
+                        break;
+                }
+
+                OnROI = SystemConfig.OnROIDictionary[Lazer];
+
+                RectangleROI = SystemConfig.ROIRectangleDictionary[Lazer];
+                EllipseROI = SystemConfig.ROIEllipseDictionary[Lazer];
+                PolygonROI = new PointCollection(SystemConfig.ROIPointDictionary[Lazer].ToList().ConvertAll(p => new Point(p.X, p.Y)));
+            }
+        }
 
         private string _header; 
         public string Header
@@ -68,11 +145,7 @@ namespace FIAT_Project.Wpf.ViewModels
         bool _onROI;
         public bool OnROI
         {
-            get
-            {
-                _onROI = SystemConfig.OnROIDictionary[Lazer];
-                return _onROI;
-            }
+            get => _onROI;
             set
             {
                 SystemConfig.OnROIDictionary[Lazer] = value;
@@ -80,18 +153,36 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
-        private Rectangle _rectROI;
-        public Rectangle RectROI
+        private Rectangle _rectangleROI;
+        public Rectangle RectangleROI
         {
-            get
-            {
-                _rectROI = SystemConfig.ROIDictionary[Lazer];
-                return _rectROI;
-            }
+            get => _rectangleROI;
             set
             {
-                SystemConfig.ROIDictionary[Lazer] = value;
-                SetProperty(ref _rectROI, value);
+                SetProperty(ref _rectangleROI, value);
+                SystemConfig.ROIRectangleDictionary[Lazer] = _rectangleROI;
+            }
+        }
+
+        private Rectangle _ellipseROI;
+        public Rectangle EllipseROI
+        {
+            get => _ellipseROI;
+            set
+            {
+                SetProperty(ref _ellipseROI, value);
+                SystemConfig.ROIEllipseDictionary[Lazer] = _ellipseROI;
+            }
+        }
+
+        private PointCollection _polygonROI;
+        public PointCollection PolygonROI
+        {
+            get => _polygonROI;
+            set
+            {
+                SetProperty(ref _polygonROI, value);
+                SystemConfig.ROIPointDictionary[Lazer] = _polygonROI.ToList().ConvertAll(p => new System.Drawing.Point((int)p.X, (int)p.Y)).ToArray();
             }
         }
 
@@ -109,12 +200,23 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SetProperty(ref _setRectROI, value);
         }
 
+        private PointCollection _setPolygonROI;
+        public PointCollection SetPolygonROI
+        {
+            get => _setPolygonROI;
+            set => SetProperty(ref _setPolygonROI, value);
+        }
+
+        private PointCollection _tempPolygonROI;
+
         public SystemConfig SystemConfig { get; }
 
         public ImageControlViewModel(ProcessService processService, SystemConfig systemConfig)
         {
+            SetPolygonROI = new PointCollection();
+            _tempPolygonROI = new PointCollection();
+
             SystemConfig = systemConfig;
-            
             ZoomService = new ZoomService();
 
             processService.Processed += Processed;
@@ -186,16 +288,27 @@ namespace FIAT_Project.Wpf.ViewModels
                 ZoomService.ExecuteZoom(pos.X, pos.Y, 0.9f);
         }
         
-
         public void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (OnROI)
-            {
-                var curPos = e.GetPosition(sender as IInputElement);
-                IsSetROI = true;
+            if (OnROI == false)
+                return;
 
-                _setROIStartPos = curPos;
+            var curPos = e.GetPosition(sender as IInputElement);
+                
+            switch (SystemConfig.ROIShapeDictionary[Lazer])
+            {
+                case EShape.Rectangle:
+                case EShape.Ellipse:
+                    SetRectROI = Rectangle.Empty;
+                    _setROIStartPos = curPos;
+                    break;
+                case EShape.Polygon:
+                    //if (Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.Down)
+                    //    SetPolygonROI = new PointCollection();
+                    break;
             }
+
+            IsSetROI = true;
         }
 
         public void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -212,18 +325,52 @@ namespace FIAT_Project.Wpf.ViewModels
             _isPanning = false;
         }
 
-        public void OnMouseLeftButtonUp()
+        public void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            IsSetROI = false;
+            if (OnROI == false)
+                return;
 
-            if (OnROI)
-                RectROI = SetRectROI;
+            switch (SystemConfig.ROIShapeDictionary[Lazer])
+            {
+                case EShape.Rectangle:
+                    IsSetROI = false;
+                    RectangleROI = SetRectROI;
+                    break;
+                case EShape.Ellipse:
+                    IsSetROI = false;
+                    EllipseROI = SetRectROI;
+                    break;
+                case EShape.Polygon:
+                    var a = Keyboard.GetKeyStates(Key.LeftShift);
+                    if (Keyboard.IsKeyDown(Key.LeftShift))
+                    {
+                        var curPos = e.GetPosition(sender as IInputElement);
+                        _tempPolygonROI.Add(curPos);
+                    }
+                    else
+                    {
+                        if (SetPolygonROI.Count > 2)
+                            PolygonROI = SetPolygonROI;
+
+                        IsSetROI = false;
+                        _tempPolygonROI = new PointCollection();
+                        SetPolygonROI = new PointCollection();
+                    }
+                    break;
+            }
+
+            if (IsSetROI == false)
+                SystemConfig.OnROIChangedDictionary[Lazer] = true;
         }
 
         public void OnMouseLeave()
         {
             _isPanning = false;
             IsSetROI = false;
+
+            SetRectROI = Rectangle.Empty;
+            _tempPolygonROI = new PointCollection();
+            SetPolygonROI = new PointCollection();
         }
 
         public void OnMouseMove(object sender, MouseEventArgs e)
@@ -232,17 +379,32 @@ namespace FIAT_Project.Wpf.ViewModels
 
             if (_isPanning)
             {
-                ZoomService.TranslateX = _panningTranslatePos.X + curPos.X - _panningStartPos.X;
-                ZoomService.TranslateY = _panningTranslatePos.Y + curPos.Y - _panningStartPos.Y;
+                ZoomService.TranslateX += curPos.X - _panningStartPos.X;
+                ZoomService.TranslateY += curPos.Y - _panningStartPos.Y;
             }
-
-            if (_isSetROI)
+            else if (_isSetROI)
             {
-                SetRectROI = new Rectangle(
-                    (int)Math.Min(_setROIStartPos.X, curPos.X),
-                    (int)Math.Min(_setROIStartPos.Y, curPos.Y),
-                    (int)Math.Abs(_setROIStartPos.X - curPos.X),
-                    (int)Math.Abs(_setROIStartPos.Y - curPos.Y));
+                switch (SystemConfig.ROIShapeDictionary[Lazer])
+                {
+                    case EShape.Rectangle:
+                    case EShape.Ellipse:
+                        SetRectROI = new Rectangle(
+                            (int)Math.Min(_setROIStartPos.X, curPos.X),
+                            (int)Math.Min(_setROIStartPos.Y, curPos.Y),
+                            (int)Math.Abs(_setROIStartPos.X - curPos.X),
+                            (int)Math.Abs(_setROIStartPos.Y - curPos.Y));
+                        break;
+                    case EShape.Polygon:
+                        var collection = new PointCollection();
+                        foreach (var point in _tempPolygonROI)
+                            collection.Add(point);
+
+                        collection.Add(curPos);
+
+                        SetPolygonROI = collection;
+                        break;
+                }
+               
             }
         }
     }

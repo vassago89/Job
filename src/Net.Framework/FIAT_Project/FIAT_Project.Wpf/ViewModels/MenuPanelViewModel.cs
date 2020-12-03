@@ -36,13 +36,6 @@ namespace FIAT_Project.Wpf.ViewModels
         {
 
             return;
-            var view = new WorkListDialog();
-
-            //show the dialog
-            var result = await DialogHost.Show(view, "RootDialog", ClosingEventHandler);
-
-            //check the result...
-            Console.WriteLine("Dialog was closed, the CommandParameter used to close it was: " + (result ?? "NULL"));
         }
 
         private void ImageDevice_Grabbed(IImageData obj)

@@ -37,7 +37,7 @@ namespace FIAT_Project.Wpf.Views
             set => _viewModel.Lazer = value;
         }
 
-    public ImageControl()
+        public ImageControl()
         {
             InitializeComponent();
         }

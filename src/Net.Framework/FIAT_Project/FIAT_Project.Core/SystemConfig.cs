@@ -2,6 +2,7 @@
 using FIAT_Project.Core.Service;
 using Net.Framework.Algorithm.Enums;
 using Net.Framework.Helper.Patterns;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,16 +14,22 @@ namespace FIAT_Project.Core
 {
     public class SystemConfig : Writable<SystemConfig>
     {
+        [JsonIgnore]
+        public Dictionary<ELazer, bool> OnROIChangedDictionary { get; set; }
+
         public bool OnAutoBayer { get; set; }
         
         public string ProtocolPort { get; set; }
         public string DcfPath { get; set; }
 
         public double MaxLed { get; set; }
+        public uint CaptureCount { get; set; }
         
         public Dictionary<ELazer, bool> OnROIDictionary { get; set; }
-        public Dictionary<ELazer, Rectangle> ROIDictionary { get; set; }
-
+        public Dictionary<ELazer, EShape> ROIShapeDictionary { get; set; }
+        public Dictionary<ELazer, Point[]> ROIPointDictionary { get; set; }
+        public Dictionary<ELazer, Rectangle> ROIRectangleDictionary { get; set; }
+        public Dictionary<ELazer, Rectangle> ROIEllipseDictionary { get; set; }
 
         public Dictionary<ELazer, double> ValueDictionary { get; set; }
         public Dictionary<ELazer, double> MaxValueDictionary { get; set; }
@@ -106,19 +113,36 @@ namespace FIAT_Project.Core
             DcfPath = "MIL10_SOL_BV-C8300NV_re2.dcf";
             
             ValueLed = MaxLed = 1.000;
+            CaptureCount = 5;
 
             OnAutoBayer = false;
             CoefficientValues = new float[3];
             for (int i = 0; i < 3; i++)
                 CoefficientValues[i] = 1;
 
+            OnROIChangedDictionary = new Dictionary<ELazer, bool>();
+            OnROIChangedDictionary[ELazer.L660] = true;
+            OnROIChangedDictionary[ELazer.L760] = true;
+
             OnROIDictionary = new Dictionary<ELazer, bool>();
             OnROIDictionary[ELazer.L660] = false;
             OnROIDictionary[ELazer.L760] = false;
 
-            ROIDictionary = new Dictionary<ELazer, Rectangle>();
-            ROIDictionary[ELazer.L660] = Rectangle.Empty;
-            ROIDictionary[ELazer.L760] = Rectangle.Empty;
+            ROIShapeDictionary = new Dictionary<ELazer, EShape>();
+            ROIShapeDictionary[ELazer.L660] = EShape.Rectangle;
+            ROIShapeDictionary[ELazer.L760] = EShape.Rectangle;
+
+            ROIRectangleDictionary = new Dictionary<ELazer, Rectangle>();
+            ROIRectangleDictionary[ELazer.L660] = Rectangle.Empty;
+            ROIRectangleDictionary[ELazer.L760] = Rectangle.Empty;
+
+            ROIEllipseDictionary = new Dictionary<ELazer, Rectangle>();
+            ROIEllipseDictionary[ELazer.L660] = Rectangle.Empty;
+            ROIEllipseDictionary[ELazer.L760] = Rectangle.Empty;
+
+            ROIPointDictionary = new Dictionary<ELazer, Point[]>();
+            ROIPointDictionary[ELazer.L660] = new Point[0];
+            ROIPointDictionary[ELazer.L760] = new Point[0];
 
             ValueDictionary = new Dictionary<ELazer, double>();
             MaxValueDictionary = new Dictionary<ELazer, double>();

@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="FIAT_Project.Wpf.Views.StatisticsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"          
+             xmlns:conveters="clr-namespace:Net.Framework.Helper.Wpf.Converters;assembly=Net.Framework.Helper.Wpf"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:liveChart="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <liveChart:CartesianChart LegendLocation="None" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+            <liveChart:CartesianChart.Series>
+                <liveChart:ColumnSeries Values="{Binding ChartValues}" ColumnPadding="1"/>
+            </liveChart:CartesianChart.Series>
+            <liveChart:CartesianChart.AxisX>
+                <liveChart:Axis MinValue="0" MaxValue="255">
+                    <liveChart:Axis.Separator>
+                        <liveChart:Separator Step="15"/>
+                    </liveChart:Axis.Separator>
+                </liveChart:Axis>
+            </liveChart:CartesianChart.AxisX>
+            <liveChart:CartesianChart.AxisY>
+                <liveChart:Axis MinValue="0">
+                    <liveChart:Axis.Separator>
+                        <liveChart:Separator/>
+                    </liveChart:Axis.Separator>
+                </liveChart:Axis>
+            </liveChart:CartesianChart.AxisY>
+        </liveChart:CartesianChart>
+    </Grid>
+</UserControl>

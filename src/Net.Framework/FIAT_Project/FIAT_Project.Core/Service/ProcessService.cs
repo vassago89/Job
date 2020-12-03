@@ -14,11 +14,14 @@ namespace FIAT_Project.Core.Service
     public class ProcessService
     {
         public Action<int, int, byte[][]> Processed;
+        public Action<ELazer, long[]> HistoProcessed;
 
         private MatroxBayerProcessor _bayerProcessor;
         private AutoThresholder _autoThresholder;
-
+        private ShapeDrawer _shapeDrawer;
         private SystemConfig _systemConfig;
+
+        private Dictionary<ELazer, byte[]> _maskDictionary;
 
         public ProcessService(GrabService grabService, SystemConfig systemConfig)
         {
@@ -28,6 +31,11 @@ namespace FIAT_Project.Core.Service
 
             _bayerProcessor = new MatroxBayerProcessor(grabService.Width, grabService.Height);
             _autoThresholder = new AutoThresholder();
+            _shapeDrawer = new ShapeDrawer(grabService.Width, grabService.Height, 1);
+
+            _maskDictionary = new Dictionary<ELazer, byte[]>();
+            _maskDictionary[ELazer.L660] = new byte[grabService.Width * grabService.Height];
+            _maskDictionary[ELazer.L760] = new byte[grabService.Width * grabService.Height];
         }
 
         public void SetCoefficient(float red, float green, float blue)
@@ -90,10 +98,9 @@ namespace FIAT_Project.Core.Service
                 }
             }
         }
-
-        private byte[] AutoThreshold(byte[] data, EThresholdMethod method)
+        
+        private byte[] AutoThreshold(byte[] data, long[] histo, EThresholdMethod method = EThresholdMethod.Li, byte[] mask = null)
         {
-            var histo = _autoThresholder.GetHistogram(data);
             var value = -1.0;
             switch (method)
             {
@@ -107,17 +114,28 @@ namespace FIAT_Project.Core.Service
                     value = _autoThresholder.Triangle(histo);
                     break;
             }
-            
-            return Threshold(data, value); ;
+
+            return Threshold(data, value, mask);
         }
 
-        private byte[] Threshold(byte[] data, double value)
+        private byte[] Threshold(byte[] data, double value, byte[] mask = null)
         {
             var binaryData = new byte[data.Length];
-            for (int i = 0; i < data.Length; i++)
+            if (mask == null)
             {
-                if (data[i] >= value)
-                    binaryData[i] = byte.MaxValue;
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (data[i] >= value)
+                        binaryData[i] = byte.MaxValue;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (mask[i] > 0 && data[i] >= value)
+                        binaryData[i] = byte.MaxValue;
+                }
             }
 
             return binaryData;
@@ -127,25 +145,45 @@ namespace FIAT_Project.Core.Service
         {
             var dataOfSource = data;
             var srcRect = new Rectangle(0, 0, width, height);
-            var destRect = _systemConfig.ROIDictionary[eLazer];
             var onROI = _systemConfig.OnROIDictionary[eLazer];
 
-            destRect.Intersect(srcRect);
+            long[] histo = null;
+            byte[] mask = null;
 
-            if (onROI && destRect.Width > 0 && destRect.Height > 0)
-                dataOfSource = ImageHelper.GetDataOfROI(dataOfSource, width, destRect.X, destRect.Y, destRect.Width, destRect.Height);
+            if (onROI)
+            {
+                if (_systemConfig.OnROIChangedDictionary[eLazer])
+                {
+                    _systemConfig.OnROIChangedDictionary[eLazer] = false;
+
+                    Array.Clear(_maskDictionary[eLazer], 0, _maskDictionary[eLazer].Length);
+                    switch (_systemConfig.ROIShapeDictionary[eLazer])
+                    {
+                        case EShape.Rectangle:
+                            _maskDictionary[eLazer] = _shapeDrawer.DrawRect(_maskDictionary[eLazer], _systemConfig.ROIRectangleDictionary[eLazer], true);
+                            break;
+                        case EShape.Ellipse:
+                            _maskDictionary[eLazer] = _shapeDrawer.DrawEllipse(_maskDictionary[eLazer], _systemConfig.ROIEllipseDictionary[eLazer], true);
+                            break;
+                        case EShape.Polygon:
+                            _maskDictionary[eLazer] = _shapeDrawer.DrawPolygon(_maskDictionary[eLazer], _systemConfig.ROIPointDictionary[eLazer], true);
+                            break;
+                    }
+                }
+
+                mask = _maskDictionary[eLazer];
+            }
+
+            histo = _autoThresholder.GetHistogram(data, mask);
 
             if (_systemConfig.AutoDictionary[eLazer] == true)
-                dataOfSource = AutoThreshold(dataOfSource, _systemConfig.MethodDictionary[eLazer]);
+                dataOfSource = AutoThreshold(dataOfSource, histo, _systemConfig.MethodDictionary[eLazer], mask);
             else if (_systemConfig.ManualDictionary[eLazer] == true)
-                dataOfSource = Threshold(dataOfSource, _systemConfig.ThresholdDictionary[eLazer]);
+                dataOfSource = Threshold(dataOfSource, _systemConfig.ThresholdDictionary[eLazer], mask);
 
-            if (onROI && destRect.Width > 0 && destRect.Height > 0)
-                ImageHelper.SetROIToSource(data, dataOfSource, width, destRect.X, destRect.Y, destRect.Width, destRect.Height);
-            else
-                data = dataOfSource;
+            HistoProcessed?.Invoke(eLazer, histo);
 
-            return data;
+            return dataOfSource;
         }
     }
 }

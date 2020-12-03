@@ -1,4 +1,5 @@
 ﻿using Net.Framework.Algorithm.Enums;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,6 +85,9 @@ namespace Net.Framework.Algorithm
             for (int ih = 0 + 1; ih < 256; ih++)
                 sum += ih * histogram[ih];
 
+            if (sum == 0)
+                return 0;
+
             mean = sum / count;
 
             double sumBack;           /* sum of the background pixels at a given threshold */
@@ -97,7 +101,7 @@ namespace Net.Framework.Algorithm
             double newThreshold = mean;
             double oldThreshold = 0;
             double threshold = 0;
-
+            
             do
             {
                 oldThreshold = newThreshold;

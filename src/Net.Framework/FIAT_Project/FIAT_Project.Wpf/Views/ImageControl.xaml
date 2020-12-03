@@ -18,74 +18,114 @@
         <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter"/>
     </UserControl.Resources>
     <Grid>
-        <GroupBox Header="{Binding Header}">
-            <Grid ClipToBounds="True">
-                <Canvas>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Loaded">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnLoaded"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="PreviewMouseWheel">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseWheel"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonDown"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonUp"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="PreviewMouseRightButtonDown">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseRightButtonDown"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="PreviewMouseRightButtonUp">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseRightButtonUp"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="MouseLeave">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeave"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="PreviewMouseMove">
-                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseMove"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Canvas.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="{Binding ZoomService.Scale}" ScaleY="{Binding ZoomService.Scale}"/>
-                            <TranslateTransform X="{Binding ZoomService.TranslateX}" Y="{Binding ZoomService.TranslateY}"/>
-                        </TransformGroup>
-                    </Canvas.RenderTransform>
-                    <Image Source="{Binding Source}"/>
-                    <Canvas Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}">
+        <Grid ClipToBounds="True">
+            <Canvas>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Loaded">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnLoaded"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseWheel">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseWheel"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonDown"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeftButtonUp"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseRightButtonDown">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseRightButtonDown"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseRightButtonUp">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseRightButtonUp"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseLeave">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseLeave"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseMove">
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseMove"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Canvas.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding ZoomService.Scale}" ScaleY="{Binding ZoomService.Scale}"/>
+                        <TranslateTransform X="{Binding ZoomService.TranslateX}" Y="{Binding ZoomService.TranslateY}"/>
+                    </TransformGroup>
+                </Canvas.RenderTransform>
+                <Image Source="{Binding Source}"/>
+                <Canvas Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}">
+                    <Canvas Visibility="{Binding IsSetROI, Converter={StaticResource BoolToVisibleConverter}}">
                         <Rectangle StrokeThickness="{Binding ZoomService.OverlayThickness}"
-                                   Stroke="Blue"
-                                   StrokeDashArray="2 2"
-                                   Canvas.Left="{Binding SetRectROI.X}"
-                                   Canvas.Top="{Binding SetRectROI.Y}"
-                                   Width="{Binding SetRectROI.Width}"
-                                   Height="{Binding SetRectROI.Height}"
-                                   Visibility="{Binding IsSetROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                                    Stroke="Yellow"
+                                    StrokeDashArray="2 2"
+                                    Canvas.Left="{Binding SetRectROI.X}"
+                                    Canvas.Top="{Binding SetRectROI.Y}"
+                                    Width="{Binding SetRectROI.Width}"
+                                    Height="{Binding SetRectROI.Height}"
+                                    Visibility="{Binding IsRectangle, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        <Ellipse StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                                    Stroke="Yellow"
+                                    StrokeDashArray="2 2"
+                                    Canvas.Left="{Binding SetRectROI.X}"
+                                    Canvas.Top="{Binding SetRectROI.Y}"
+                                    Width="{Binding SetRectROI.Width}"
+                                    Height="{Binding SetRectROI.Height}"
+                                    Visibility="{Binding IsEllipse, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        <Polygon StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                                    Stroke="Yellow"
+                                    StrokeDashArray="2 2"
+                                    Points="{Binding SetPolygonROI}"
+                                    Visibility="{Binding IsPolygon, Converter={StaticResource BoolToVisibleConverter}}"/>
+                    </Canvas>
+                    <Canvas Visibility="{Binding OnROI, Converter={StaticResource BoolToVisibleConverter}}">
                         <Rectangle StrokeThickness="{Binding ZoomService.OverlayThickness}"
-                                   Stroke="Blue"
-                                   Canvas.Left="{Binding RectROI.X}"
-                                   Canvas.Top="{Binding RectROI.Y}"
-                                   Width="{Binding RectROI.Width}"
-                                   Height="{Binding RectROI.Height}"
-                                   Visibility="{Binding OnROI, Converter={StaticResource BoolToVisibleConverter}}"/>
+                                    Stroke="Yellow"
+                                    Canvas.Left="{Binding RectangleROI.X}"
+                                    Canvas.Top="{Binding RectangleROI.Y}"
+                                    Width="{Binding RectangleROI.Width}"
+                                    Height="{Binding RectangleROI.Height}"
+                                    Visibility="{Binding IsRectangle, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        <Ellipse StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                                    Stroke="Yellow"
+                                    Canvas.Left="{Binding EllipseROI.X}"
+                                    Canvas.Top="{Binding EllipseROI.Y}"
+                                    Width="{Binding EllipseROI.Width}"
+                                    Height="{Binding EllipseROI.Height}"
+                                    Visibility="{Binding IsEllipse, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        <Polygon StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                                    Stroke="Yellow"
+                                    Points="{Binding PolygonROI}"
+                                    Visibility="{Binding IsPolygon, Converter={StaticResource BoolToVisibleConverter}}"/>
                     </Canvas>
                 </Canvas>
-                <ToolBar HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="16">
-                    <CheckBox IsChecked="{Binding OnROI}"
-                              Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}">
-                        <StackPanel>
-                            <TextBlock Text="ROI"/>
-                        </StackPanel>
-                    </CheckBox>
-                    <Button Command="{Binding ZoomFitCommand}">
-                        <StackPanel>
-                            <TextBlock Text="Zoom Fit"/>
-                        </StackPanel>
-                    </Button>
-                </ToolBar>
-            </Grid>
-        </GroupBox>
+            </Canvas>
+            <ToolBar HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="16">
+                <CheckBox IsChecked="{Binding OnROI}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}">
+                    <StackPanel>
+                        <TextBlock Text="ROI"/>
+                    </StackPanel>
+                </CheckBox>
+                <RadioButton IsChecked="{Binding IsRectangle}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}">
+                    <StackPanel>
+                        <TextBlock Text="Rectangle"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton IsChecked="{Binding IsEllipse}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}">
+                    <StackPanel>
+                        <TextBlock Text="Ellipse"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton IsChecked="{Binding IsPolygon}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}">
+                    <StackPanel>
+                        <TextBlock Text="Polygon"/>
+                    </StackPanel>
+                </RadioButton>
+                <Button Command="{Binding ZoomFitCommand}">
+                    <StackPanel>
+                        <TextBlock Text="Zoom Fit"/>
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+        </Grid>
     </Grid>
 </UserControl>

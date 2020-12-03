@@ -25,12 +25,28 @@
             <DockPanel
                 Grid.Row="1">
                 <views:ControlPanel DockPanel.Dock="Left"
-                                    Width="300"/>
+                                    Width="400"/>
+                <UniformGrid DockPanel.Dock="Bottom" Rows="1">
+                    <GroupBox Header="Lazer 660 Statistics">
+                        <views:StatisticsPanel Height="125" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
+                    </GroupBox>
+                    <GroupBox Header="Lazer 760 Statistics">
+                        <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer760}"/>
+                    </GroupBox>
+                </UniformGrid>
                 <UniformGrid>
-                    <views:ImageControl ImageIndex="0" Header="Original"/>
-                    <views:ImageControl ImageIndex="3" Header="Merged"/>
-                    <views:ImageControl ImageIndex="1" Header="Lazer 660" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
-                    <views:ImageControl ImageIndex="2" Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
+                    <GroupBox Header="Original">
+                        <views:ImageControl ImageIndex="0"/>
+                    </GroupBox>
+                    <GroupBox Header="Merged">
+                        <views:ImageControl ImageIndex="3"/>
+                    </GroupBox>
+                    <GroupBox Header="Lazer 660">
+                        <views:ImageControl ImageIndex="1" Header="" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
+                    </GroupBox>
+                    <GroupBox Header="Lazer 760">
+                        <views:ImageControl ImageIndex="2" Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
+                    </GroupBox>
                 </UniformGrid>
             </DockPanel>
         </Grid>

@@ -177,6 +177,11 @@ namespace Net.Framework.Device.Matrox
             foreach (var buffer in _buffers)
                 MIL.MbufFree(buffer);
         }
+
+        public void Exposure()
+        {
+
+        }
     }
         
 }

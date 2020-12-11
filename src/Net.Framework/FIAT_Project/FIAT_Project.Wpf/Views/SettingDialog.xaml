@@ -18,10 +18,14 @@
             <TextBlock Text="Setting" Margin="8"/>
             <GroupBox Header="Common" Grid.Row="1">
                 <UniformGrid>
-                    <TextBlock Text="Port"/>
-                    <ComboBox SelectedItem="{Binding SystemConfig.ProtocolPort}" ItemsSource="{Binding Ports}"/>
+                    <TextBlock Text="Lazer Port"/>
+                    <ComboBox SelectedItem="{Binding SystemConfig.LazerProtocolPort}" ItemsSource="{Binding Ports}"/>
+                    <TextBlock Text="Grabber Port"/>
+                    <ComboBox SelectedItem="{Binding SystemConfig.GrabberProtocolPort}" ItemsSource="{Binding Ports}"/>
                     <TextBlock Text="Dcf Path"/>
                     <TextBox Text="{Binding SystemConfig.DcfPath}"/>
+                    <TextBlock Text="Capture Path"/>
+                    <TextBox Text="{Binding SystemConfig.CapturePath}"/>
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">

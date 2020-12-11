@@ -6,6 +6,7 @@
     xmlns:prism="http://prismlibrary.com/"            
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:views="clr-namespace:FIAT_Project.Wpf.Views"
+    xmlns:converters="clr-namespace:Net.Framework.Helper.Wpf.Converters;assembly=Net.Framework.Helper.Wpf"
     xmlns:enums="clr-namespace:FIAT_Project.Core.Enums;assembly=FIAT_Project.Core"
     prism:ViewModelLocator.AutoWireViewModel="True"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -13,6 +14,9 @@
     Background="{DynamicResource MaterialDesignPaper}"
     WindowStyle="None"
     WindowState="Maximized">
+    <Window.Resources>
+        <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter"/>
+    </Window.Resources>
     <materialDesign:DialogHost
         Identifier="RootDialog"
         DialogTheme="Dark">
@@ -26,9 +30,9 @@
                 Grid.Row="1">
                 <views:ControlPanel DockPanel.Dock="Left"
                                     Width="400"/>
-                <UniformGrid DockPanel.Dock="Bottom" Rows="1">
+                <UniformGrid DockPanel.Dock="Bottom" Rows="1" Columns="2">
                     <GroupBox Header="Lazer 660 Statistics">
-                        <views:StatisticsPanel Height="125" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
+                        <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer660}"/>
                     </GroupBox>
                     <GroupBox Header="Lazer 760 Statistics">
                         <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer760}"/>
@@ -49,8 +53,8 @@
                             <views:ImageControl ImageIndex="2" Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
                         </GroupBox>
                     </UniformGrid>
-                    <Border BorderBrush="Yellow" BorderThickness="5" CornerRadius="5" Visibility="Collapsed">
-                        <TextBlock Text="Recoding..." Foreground="Yellow" FontSize="64" />
+                    <Border BorderBrush="Yellow" BorderThickness="5" CornerRadius="5" Visibility="{Binding RecordingStarted, Converter={StaticResource BoolToVisibleConverter}}">
+                        <TextBlock Text="Recording..." Foreground="Yellow" FontSize="64" />
                     </Border>
                 </Grid>
             </DockPanel>

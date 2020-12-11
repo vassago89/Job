@@ -24,8 +24,12 @@ namespace FIAT_Project.Core.Service
         private string _directoryName = "Temp";
         private string _fileName = "Temp.avi";
 
-        public RecordService(GrabService grabService, ProcessService processService)
+        public Action<bool> RecordingStarted;
+        private DrawingService _drawingService;
+
+        public RecordService(GrabService grabService, ProcessService processService, DrawingService drawingService)
         {
+            _drawingService = drawingService;
             _grabService = grabService;
             _processService = processService;
             _recorder = new MatroxRecoreder<byte>();
@@ -46,6 +50,8 @@ namespace FIAT_Project.Core.Service
                 _recorder.Start(Path.Combine(directory, _fileName));
                 _processService.Processed += Processed;
                 _onRecord = true;
+
+                RecordingStarted?.Invoke(true);
             }
         }
 
@@ -53,35 +59,7 @@ namespace FIAT_Project.Core.Service
         {
             lock (this)
             {
-                if (_onRecord == false)
-                    return;
-                
-                for (int i = 0, j = 0; i < height; i++, j += 2)
-                {
-                    Buffer.BlockCopy(datas[0], i * width, _buffer, j * width, width);
-                    Buffer.BlockCopy(datas[3], i * width, _buffer, j * width + width, width);
-                }
-
-                var doubleHeight = height * 2;
-                
-                for (int i = height, j = height * 4; i < height * 2; i++, j += 2)
-                {
-                    Buffer.BlockCopy(datas[0], i * width, _buffer, j * width, width);
-                    Buffer.BlockCopy(datas[3], i * width, _buffer, j * width + width, width);
-                }
-
-                for (int i = height * 2, j = height * 8; i < height * 3; i++, j += 2)
-                {
-                    Buffer.BlockCopy(datas[0], i * width, _buffer, j * width, width);
-                    Buffer.BlockCopy(datas[3], i * width, _buffer, j * width + width, width);
-                }
-
-                for (int i = 0, j = height * 2; i < height; i++, j += 2)
-                    Buffer.BlockCopy(datas[1], i * width, _buffer, j * width, width);
-
-                for (int i = height, j = height * 6; i < height * 2; i++, j += 2)
-                    Buffer.BlockCopy(datas[2], i * width, _buffer, j * width + width, width);
-
+                _drawingService.Drawing(width, height, datas, _buffer);
                 _recorder.Enqueue(_buffer);
             }
         }
@@ -96,6 +74,8 @@ namespace FIAT_Project.Core.Service
 
                 var frameRate = _grabService.FrameRate;
                 _recorder.Stop(frameRate);
+
+                RecordingStarted?.Invoke(false);
             }
         }
 

@@ -43,7 +43,7 @@
                         </GroupBox>
                         <GroupBox Header="Record">
                             <UniformGrid Columns="2">
-                                <Button Command="{Binding CaptureStartCommand}">
+                                <Button Command="{Binding CaptureCommand}">
                                     <Button.IsEnabled>
                                         <MultiBinding Converter="{StaticResource AllBooleanConverter}">
                                             <Binding Path="OnGrab"/>
@@ -91,13 +91,21 @@
                                             <TextBlock Text="Off"/>
                                         </StackPanel>
                                     </Button>
-                                    <TextBox Text="{Binding SystemConfig.ValueLed, StringFormat={}{0:0.000}}"
+                                    <TextBox Text="{Binding ValueLed, StringFormat={}{0:0.000}}"
                                              materialDesign:HintAssist.Hint="Ampere (0 ~ 1A)"/>
                                     <Button Command="{Binding SetLedCommand}">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
                                         </StackPanel>
                                     </Button>
+                                </UniformGrid>
+                                <UniformGrid Columns="3">
+                                    <TextBlock Text="Exp"/>
+                                    <Slider Value="{Binding ExposureLed}" Minimum="1" Maximum="16"/>
+                                    <TextBlock Text="{Binding ExposureLed}"/>
+                                    <TextBlock Text="Gain"/>
+                                    <Slider Value="{Binding GainLed}" Minimum="0" Maximum="100"/>
+                                    <TextBlock Text="{Binding GainLed}"/>
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
@@ -114,13 +122,21 @@
                                             <TextBlock Text="Off"/>
                                         </StackPanel>
                                     </Button>
-                                    <TextBox Text="{Binding SystemConfig.Value660, StringFormat={}{0:0.000}}"
+                                    <TextBox Text="{Binding Value660, StringFormat={}{0:0.000}}"
                                              materialDesign:HintAssist.Hint="Ampere (0 ~ 1.5A)"/>
                                     <Button Command="{Binding Set660Command}">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
                                         </StackPanel>
                                     </Button>
+                                </UniformGrid>
+                                <UniformGrid Columns="3">
+                                    <TextBlock Text="Exp"/>
+                                    <Slider Value="{Binding Exposure660}" Minimum="1" Maximum="16"/>
+                                    <TextBlock Text="{Binding Exposure660}"/>
+                                    <TextBlock Text="Gain"/>
+                                    <Slider Value="{Binding Gain660}" Minimum="0" Maximum="100"/>
+                                    <TextBlock Text="{Binding Gain660}"/>
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
@@ -138,13 +154,21 @@
                                             <TextBlock Text="Off"/>
                                         </StackPanel>
                                     </Button>
-                                    <TextBox Text="{Binding SystemConfig.Value760, StringFormat={}{0:0.000}}"
+                                    <TextBox Text="{Binding Value760, StringFormat={}{0:0.000}}"
                                              materialDesign:HintAssist.Hint="Ampere (0 ~ 2.5A)"/>
                                     <Button Command="{Binding Set760Command}">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
                                         </StackPanel>
                                     </Button>
+                                </UniformGrid>
+                                <UniformGrid Columns="3">
+                                    <TextBlock Text="Exp"/>
+                                    <Slider Value="{Binding Exposure760}" Minimum="1" Maximum="16"/>
+                                    <TextBlock Text="{Binding Exposure760}"/>
+                                    <TextBlock Text="Gain"/>
+                                    <Slider Value="{Binding Gain760}" Minimum="0" Maximum="100"/>
+                                    <TextBlock Text="{Binding Gain760}"/>
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
@@ -154,7 +178,7 @@
                     <StackPanel>
                         <GroupBox Header="L660">
                             <StackPanel>
-                                <UniformGrid>
+                                <UniformGrid Columns="3">
                                     <RadioButton IsChecked="True">
                                         <StackPanel>
                                             <TextBlock Text="None"/>
@@ -170,15 +194,22 @@
                                             <TextBlock Text="Manual"/>
                                         </StackPanel>
                                     </RadioButton>
-                                    <TextBox Text="{Binding SystemConfig.Threshold660}"
+                                </UniformGrid>
+                                <UniformGrid Rows="1">
+                                    <TextBox Text="{Binding Threshold660}"
                                              materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
                                              IsEnabled="{Binding On660Manual}"/>
+                                    <Button Command="{Binding Set660ManualCommand}" IsEnabled="{Binding On660Manual}">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Header="L760">
                             <StackPanel>
-                                <UniformGrid>
+                                <UniformGrid Columns="3">
                                     <RadioButton IsChecked="True">
                                         <StackPanel>
                                             <TextBlock Text="None"/>
@@ -194,9 +225,16 @@
                                             <TextBlock Text="Manual"/>
                                         </StackPanel>
                                     </RadioButton>
-                                    <TextBox Text="{Binding SystemConfig.Threshold760}"
+                                </UniformGrid>
+                                <UniformGrid Rows="1">
+                                    <TextBox Text="{Binding Threshold760}"
                                              materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
                                              IsEnabled="{Binding On760Manual}"/>
+                                    <Button Command="{Binding Set760ManualCommand}" IsEnabled="{Binding On760Manual}">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>

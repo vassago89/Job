@@ -14,9 +14,21 @@ namespace FIAT_Project.Wpf.ViewModels
 {
     public class ShellWindowViewModel : BindableBase
     {
-        public ShellWindowViewModel(StateService stateService)
+        private bool _recordingStarted;
+        public bool RecordingStarted
         {
-            
+            get => _recordingStarted;
+            set => SetProperty(ref _recordingStarted, value);
+        }
+
+        public ShellWindowViewModel(RecordService recordService)
+        {
+            recordService.RecordingStarted += Started;
+        }
+
+        private void Started(bool state)
+        {
+            RecordingStarted = state;
         }
     }
 }

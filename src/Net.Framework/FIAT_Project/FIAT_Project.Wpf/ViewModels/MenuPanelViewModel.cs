@@ -80,7 +80,7 @@ namespace FIAT_Project.Wpf.ViewModels
                 while (true)
                 {
                     CpuUsage = stateService.CpuUsage;
-                    MemoryUsage = stateService.MemoryUsage;
+                    MemoryUsage = stateService.MemoryUsage / 1024;
 
                     foreach (var info in stateService.DriveInfos)
                     {

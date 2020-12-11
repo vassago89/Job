@@ -18,9 +18,9 @@
                 <liveChart:ColumnSeries Values="{Binding ChartValues}" ColumnPadding="1"/>
             </liveChart:CartesianChart.Series>
             <liveChart:CartesianChart.AxisX>
-                <liveChart:Axis MinValue="0" MaxValue="255">
+                <liveChart:Axis MinValue="{Binding AxisMinValue}" MaxValue="{Binding AxisMaxValue}">
                     <liveChart:Axis.Separator>
-                        <liveChart:Separator Step="15"/>
+                        <liveChart:Separator Step="{Binding Step}"/>
                     </liveChart:Axis.Separator>
                 </liveChart:Axis>
             </liveChart:CartesianChart.AxisX>
@@ -32,17 +32,19 @@
                 </liveChart:Axis>
             </liveChart:CartesianChart.AxisY>
         </liveChart:CartesianChart>
-        <GroupBox Header="Stat" Grid.Column="1">
-            <UniformGrid Columns="2">
-                <TextBlock Text="Avg"/>
-                <TextBlock Text="{Binding AvgValue, StringFormat={}{0:0.0}}"/>
-                <TextBlock Text="Min"/>
-                <TextBlock Text="{Binding MinValue, StringFormat={}{0:0}}"/>
-                <TextBlock Text="Max"/>
-                <TextBlock Text="{Binding MaxValue, StringFormat={}{0:0}}"/>
-                <TextBlock Text="Std"/>
-                <TextBlock Text="{Binding StdDevValue, StringFormat={}{0:0.0}}"/>
-            </UniformGrid>
-        </GroupBox>
+        <UniformGrid Columns="2" Grid.Column="1">
+            <TextBlock Text="Avg"/>
+            <TextBlock Text="{Binding AvgValue, StringFormat={}{0:0.0}}"/>
+            <TextBlock Text="Min"/>
+            <TextBlock Text="{Binding MinValue, StringFormat={}{0:0}}"/>
+            <TextBlock Text="Max"/>
+            <TextBlock Text="{Binding MaxValue, StringFormat={}{0:0}}"/>
+            <TextBlock Text="Std"/>
+            <TextBlock Text="{Binding StdDevValue, StringFormat={}{0:0.0}}"/>
+            <TextBlock Text="Scale"/>
+            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsAutoScale}"/>
+            <TextBlock Text="Log"/>
+            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsLogScale}"/>
+        </UniformGrid>
     </Grid>
 </UserControl>

@@ -90,12 +90,51 @@ namespace FIAT_Project.Wpf.ViewModels
             get => _on760;
             set => SetProperty(ref _on760, value);
         }
+        
+        public double ValueLed
+        {
+            get => SystemConfig.ValueLed;
+            set
+            {
+                if (value < 0 || value > SystemConfig.MaxLed)
+                    return;
+
+                SystemConfig.ValueLed = value;
+            }
+        }
+
+        public double Value660
+        {
+            get => SystemConfig.ValueDictionary[ELazer.L660];
+            set
+            {
+                if (value < 0 || value > SystemConfig.MaxValueDictionary[ELazer.L660])
+                    return;
+
+                SystemConfig.ValueDictionary[ELazer.L660] = value;
+            }
+        }
+
+        public double Value760
+        {
+            get => SystemConfig.ValueDictionary[ELazer.L760];
+            set
+            {
+                if (value < 0 || value > SystemConfig.MaxValueDictionary[ELazer.L760])
+                    return;
+
+                SystemConfig.ValueDictionary[ELazer.L760] = value;
+            }
+        }
+
 
         public DelegateCommand GrabCommand { get; }
         public DelegateCommand StopCommand { get; }
-
+        
         public DelegateCommand RecordStartCommand { get; }
         public DelegateCommand RecordStopCommand { get; }
+
+        public DelegateCommand CaptureCommand { get; }
 
         public DelegateCommand OnLedCommand { get; }
         public DelegateCommand OffLedCommand { get; }
@@ -108,6 +147,9 @@ namespace FIAT_Project.Wpf.ViewModels
         public DelegateCommand On760Command { get; }
         public DelegateCommand Off760Command { get; }
         public DelegateCommand Set760Command { get; }
+
+        public DelegateCommand Set660ManualCommand { get; }
+        public DelegateCommand Set760ManualCommand { get; }
 
         private bool _on660Auto;
         public bool On660Auto
@@ -151,6 +193,20 @@ namespace FIAT_Project.Wpf.ViewModels
                 SetProperty(ref _on760Manual, value);
                 SystemConfig.ManualDictionary[ELazer.L760] = value;
             }
+        }
+
+        private byte _threshold660;
+        public byte Threshold660
+        {
+            get => _threshold660;
+            set => SetProperty(ref _threshold660, value);
+        }
+
+        private byte _threshold760;
+        public byte Threshold760
+        {
+            get => _threshold760;
+            set => SetProperty(ref _threshold760, value);
         }
 
         private float _coefficientRed;
@@ -206,25 +262,120 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
+        private int _exposureLed;
+        public int ExposureLed
+        {
+            get => _exposureLed;
+            set
+            {
+                SetProperty(ref _exposureLed, value);
+                _protocolService.SetExposure(value, ELazer.L660, true);
+                SystemConfig.ExposureLed = value;
+            }
+        }
+
+
+        private int _exposure660;
+        public int Exposure660
+        {
+            get => _exposure660;
+            set
+            {
+                SetProperty(ref _exposure660, value);
+                _protocolService.SetExposure(value, ELazer.L660);
+                SystemConfig.ExposureDictionary[ELazer.L660] = value;
+            }
+        }
+
+        private int _exposure760;
+        public int Exposure760
+        {
+            get => _exposure760;
+            set
+            {
+                SetProperty(ref _exposure760, value);
+                _protocolService.SetExposure(value, ELazer.L760);
+                SystemConfig.ExposureDictionary[ELazer.L760] = value;
+            }
+        }
+
+        private int _gainLed;
+        public int GainLed
+        {
+            get => _gainLed;
+            set
+            {
+                SetProperty(ref _gainLed, value);
+                _protocolService.SetGain(value, ELazer.L660, true);
+                SystemConfig.GainLed = value;
+            }
+        }
+
+
+        private int _gain660;
+        public int Gain660
+        {
+            get => _gain660;
+            set
+            {
+                SetProperty(ref _gain660, value);
+                _protocolService.SetGain(value, ELazer.L660);
+                SystemConfig.GainDictionary[ELazer.L660] = value;
+            }
+        }
+
+        private int _gain760;
+        public int Gain760
+        {
+            get => _gain760;
+            set
+            {
+                SetProperty(ref _gain760, value);
+                _protocolService.SetGain(value, ELazer.L760);
+                SystemConfig.GainDictionary[ELazer.L760] = value;
+            }
+        }
+
         public DelegateCommand SaveCommand { get; }
 
         public SystemConfig SystemConfig { get; }
         
         private ProcessService _processService;
+        private ProtocolService _protocolService;
+
+        private CaptureService _captureService;
 
         public ControlPanelViewModel(
             GrabService grabService,
             ProcessService processService,
             ProtocolService protocolService, 
-            RecordService recordService, 
+            RecordService recordService,
+            CaptureService captureService,
             SystemConfig systemConfig)
         {
+            _captureService = captureService;
             _processService = processService;
+            _protocolService = protocolService;
 
             SystemConfig = systemConfig;
             
             _color660 = Color.FromRgb(SystemConfig.ColorDictionary[ELazer.L660][0], SystemConfig.ColorDictionary[ELazer.L660][1], SystemConfig.ColorDictionary[ELazer.L660][2]);
             _color760 = Color.FromRgb(SystemConfig.ColorDictionary[ELazer.L760][0], SystemConfig.ColorDictionary[ELazer.L760][1], SystemConfig.ColorDictionary[ELazer.L760][2]);
+
+            ValueLed = SystemConfig.ValueLed;
+            Value660 = SystemConfig.ValueDictionary[ELazer.L660];
+            Value760 = SystemConfig.ValueDictionary[ELazer.L760];
+
+            Threshold660 = SystemConfig.ThresholdDictionary[ELazer.L660];
+            Threshold760 = SystemConfig.ThresholdDictionary[ELazer.L760];
+
+            ExposureLed = systemConfig.ExposureLed;
+            Exposure660 = systemConfig.ExposureDictionary[ELazer.L660];
+            Exposure760 = systemConfig.ExposureDictionary[ELazer.L760];
+
+            GainLed = systemConfig.GainLed;
+            Gain660 = systemConfig.GainDictionary[ELazer.L660];
+            Gain760 = systemConfig.GainDictionary[ELazer.L760];
 
             CoefficientRed = SystemConfig.CoefficientValues[0];
             CoefficientGreen = SystemConfig.CoefficientValues[1];
@@ -330,6 +481,21 @@ namespace FIAT_Project.Wpf.ViewModels
             Set660Command = new DelegateCommand(() =>
             {
                 protocolService.Set760(SystemConfig.ValueDictionary[ELazer.L760] * 1000);
+            });
+
+            Set660ManualCommand = new DelegateCommand(() =>
+            {
+                systemConfig.ThresholdDictionary[ELazer.L660] = Threshold660;
+            });
+
+            Set760ManualCommand = new DelegateCommand(() =>
+            {
+                systemConfig.ThresholdDictionary[ELazer.L760] = Threshold760;
+            });
+
+            CaptureCommand = new DelegateCommand(() =>
+            {
+                _captureService.Start(SystemConfig.CaptureCount);
             });
 
             processService.Processed += Processed;

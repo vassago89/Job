@@ -19,11 +19,13 @@ namespace FIAT_Project.Core
 
         public bool OnAutoBayer { get; set; }
         
-        public string ProtocolPort { get; set; }
+        public string LazerProtocolPort { get; set; }
+        public string GrabberProtocolPort { get; set; }
         public string DcfPath { get; set; }
+        public string CapturePath { get; set; }
 
         public double MaxLed { get; set; }
-        public uint CaptureCount { get; set; }
+        public int CaptureCount { get; set; }
         
         public Dictionary<ELazer, bool> OnROIDictionary { get; set; }
         public Dictionary<ELazer, EShape> ROIShapeDictionary { get; set; }
@@ -45,76 +47,28 @@ namespace FIAT_Project.Core
         public float[] CoefficientValues { get; set; }
 
         public Dictionary<ELazer, byte[]> ColorDictionary { get; set; }
-        
-        private double _valueLed;
-        public double ValueLed
-        {
-            get => _valueLed;
-            set
-            {
-                if (value < 0 || value > MaxLed)
-                    return;
 
-                _valueLed = value;
-            }
-        }
+        public int ExposureLed { get; set; }
+        public Dictionary<ELazer, int> ExposureDictionary { get; set; }
 
-        public double Value660
-        {
-            get => ValueDictionary[ELazer.L660];
-            set
-            {
-                if (value < 0 || value > MaxValueDictionary[ELazer.L660])
-                    return;
+        public int GainLed { get; set; }
+        public Dictionary<ELazer, int> GainDictionary { get; set; }
 
-                ValueDictionary[ELazer.L660] = value;
-            }
-        }
+        public Dictionary<ELazer, bool> IsAutoScaleDictionary { get; set; }
+        public Dictionary<ELazer, bool> IsLogScaleDictionary { get; set; }
 
-        public double Value760
-        {
-            get => ValueDictionary[ELazer.L760];
-            set
-            {
-                if (value < 0 || value > MaxValueDictionary[ELazer.L760])
-                    return;
-
-                ValueDictionary[ELazer.L760] = value;
-            }
-        }
-
-        public byte Threshold660
-        {
-            get => ThresholdDictionary[ELazer.L660];
-            set
-            {
-                if (value < 0 || value > 255)
-                    return;
-
-                ThresholdDictionary[ELazer.L660] = value;
-            }
-        }
-        
-        public byte Threshold760
-        {
-            get => ThresholdDictionary[ELazer.L760];
-            set
-            {
-                if (value < 0 || value > 255)
-                    return;
-
-                ThresholdDictionary[ELazer.L760] = value;
-            }
-        }
+        public double ValueLed { get; set; }
 
         public SystemConfig()
         {
-            ProtocolPort = "COM6";
+            LazerProtocolPort = "COM6";
+            GrabberProtocolPort = "COM3";
             DcfPath = "MIL10_SOL_BV-C8300NV_re2.dcf";
-            
+            CapturePath = "..\\Capture";
+
             ValueLed = MaxLed = 1.000;
             CaptureCount = 5;
-
+            
             OnAutoBayer = false;
             CoefficientValues = new float[3];
             for (int i = 0; i < 3; i++)
@@ -172,6 +126,24 @@ namespace FIAT_Project.Core
             ColorDictionary = new Dictionary<ELazer, byte[]>();
             ColorDictionary[ELazer.L660] = new byte[3] { 255, 0, 0 };
             ColorDictionary[ELazer.L760] = new byte[3] { 0, 255, 0 };
+
+            ExposureLed = 1;
+            ExposureDictionary = new Dictionary<ELazer, int>();
+            ExposureDictionary[ELazer.L660] = 1;
+            ExposureDictionary[ELazer.L760] = 1;
+
+            GainLed = 0;
+            GainDictionary = new Dictionary<ELazer, int>();
+            GainDictionary[ELazer.L660] = 0;
+            GainDictionary[ELazer.L760] = 0;
+
+            IsAutoScaleDictionary = new Dictionary<ELazer, bool>();
+            IsAutoScaleDictionary[ELazer.L660] = true;
+            IsAutoScaleDictionary[ELazer.L760] = true;
+
+            IsLogScaleDictionary = new Dictionary<ELazer, bool>();
+            IsLogScaleDictionary[ELazer.L660] = false;
+            IsLogScaleDictionary[ELazer.L760] = false;
         }
     }
 }

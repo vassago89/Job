@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Capturer\IRecorder.cs" />
     <Compile Include="ImageDatas\IImageData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recorder\IRecorder.cs" />

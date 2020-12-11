@@ -1,4 +1,5 @@
 ﻿using FIAT_Project.Core;
+using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
 using FIAT_Project.Wpf.Views;
 using Net.Framework.Device.Matrox;
@@ -28,8 +29,16 @@ namespace FIAT_Project.Wpf
             var protocolService = Container.Resolve<ProtocolService>();
 
             protocolService.SetLed(systemConfig.ValueLed * 1000.0);
-            protocolService.Set660(systemConfig.Value660 * 1000.0);
-            protocolService.Set760(systemConfig.Value760 * 1000.0);
+            protocolService.Set660(systemConfig.ValueDictionary[ELazer.L660] * 1000.0);
+            protocolService.Set760(systemConfig.ValueDictionary[ELazer.L760] * 1000.0);
+
+            protocolService.SetExposure(systemConfig.ExposureLed, ELazer.L660, true);
+            protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L660], ELazer.L660);
+            protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L760], ELazer.L760);
+
+            protocolService.SetGain(systemConfig.GainLed, ELazer.L660, true);
+            protocolService.SetGain(systemConfig.GainDictionary[ELazer.L660], ELazer.L660);
+            protocolService.SetGain(systemConfig.GainDictionary[ELazer.L760], ELazer.L760);
         }
         
         protected override Window CreateShell()

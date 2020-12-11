@@ -9,6 +9,10 @@
              xmlns:liveChart="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <liveChart:CartesianChart LegendLocation="None" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
             <liveChart:CartesianChart.Series>
                 <liveChart:ColumnSeries Values="{Binding ChartValues}" ColumnPadding="1"/>
@@ -28,5 +32,17 @@
                 </liveChart:Axis>
             </liveChart:CartesianChart.AxisY>
         </liveChart:CartesianChart>
+        <GroupBox Header="Stat" Grid.Column="1">
+            <UniformGrid Columns="2">
+                <TextBlock Text="Avg"/>
+                <TextBlock Text="{Binding AvgValue, StringFormat={}{0:0.0}}"/>
+                <TextBlock Text="Min"/>
+                <TextBlock Text="{Binding MinValue, StringFormat={}{0:0}}"/>
+                <TextBlock Text="Max"/>
+                <TextBlock Text="{Binding MaxValue, StringFormat={}{0:0}}"/>
+                <TextBlock Text="Std"/>
+                <TextBlock Text="{Binding StdDevValue, StringFormat={}{0:0.0}}"/>
+            </UniformGrid>
+        </GroupBox>
     </Grid>
 </UserControl>

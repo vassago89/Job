@@ -21,6 +21,38 @@
                             <Setter Property="Margin" Value="8 0 0 0"/>
                         </Style>
                     </StackPanel.Resources>
+                    <GroupBox Header="CPU">
+                        <StackPanel VerticalAlignment="Center">
+                            <ProgressBar Value="{Binding CpuUsage}" Width="50"/>
+                            <TextBlock Text="{Binding CpuUsage, StringFormat={}{0:0.0} %}"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Available Memory">
+                        <Grid>
+                            <ProgressBar Value="0" Height="Auto"/>
+                            <TextBlock Text="{Binding MemoryUsage, StringFormat={}{0:0} MB}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Hard Disk">
+                        <ItemsControl ItemsSource="{Binding DriveInfos}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <ProgressBar Value="0" Height="Auto"/>
+                                        <StackPanel Orientation="Horizontal" Margin="4 0 4 0">
+                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="0 0 4 0"/>
+                                            <TextBlock Text="{Binding AvailableFreeSpace, StringFormat={}{0:0.0} GB}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </GroupBox>
                     <Button Command="{Binding SettingCommand}">
                         <StackPanel>
                             <TextBlock Text="Setting"/>
@@ -31,27 +63,6 @@
                             <TextBlock Text="Exit"/>
                         </StackPanel>
                     </Button>
-                    <!--<Button Command="{Binding WorkListCommand}">
-                        <TextBlock Text="Work List"/>
-                    </Button>
-                    <Button>
-                        <TextBlock Text="New St"/>
-                    </Button>
-                    <Button>
-                        <TextBlock Text="Close St"/>
-                    </Button>
-                    <materialDesign:PopupBox
-                            PlacementMode="BottomAndAlignRightEdges"
-                            Margin="8 0 0 0">
-                        <StackPanel>
-                            <Button    
-                                Content="Configuration" />
-                            <Button
-                                Content="Change Operator" />
-                            <Button
-                                Content="Exit" />
-                        </StackPanel>
-                    </materialDesign:PopupBox>-->
                 </StackPanel>
                 <StackPanel
                     Orientation="Horizontal">

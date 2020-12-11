@@ -74,6 +74,7 @@
     <Compile Include="Service\ProcessService.cs" />
     <Compile Include="Service\ProtocolService.cs" />
     <Compile Include="Service\RecordService.cs" />
+    <Compile Include="Service\StateService.cs" />
     <Compile Include="SystemConfig.cs" />
   </ItemGroup>
   <ItemGroup>

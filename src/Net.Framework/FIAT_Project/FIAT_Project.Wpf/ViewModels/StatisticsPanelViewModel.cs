@@ -25,6 +25,34 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SetProperty(ref _chartValues, value);
         }
 
+        private byte _minValue;
+        public byte MinValue
+        {
+            get => _minValue;
+            set => SetProperty(ref _minValue, value);
+        }
+
+        private byte _maxValue;
+        public byte MaxValue
+        {
+            get => _maxValue;
+            set => SetProperty(ref _maxValue, value);
+        }
+
+        private double _avgValue;
+        public double AvgValue
+        {
+            get => _avgValue;
+            set => SetProperty(ref _avgValue, value);
+        }
+
+        private double _stdDevValue;
+        public double StdDevValue
+        {
+            get => _stdDevValue;
+            set => SetProperty(ref _stdDevValue, value);
+        }
+
         public StatisticsPanelViewModel(ProcessService processService, SystemConfig systemConfig)
         {
             processService.HistoProcessed += Processed;

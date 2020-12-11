@@ -46,7 +46,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = (byte)(value % 256);
             buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
 
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
 
         public void OnLed()
@@ -61,7 +61,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = 0x01;
             buffer[6] = 0x0C;
             
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
 
         public void OffLed()
@@ -76,7 +76,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = 0x00;
             buffer[6] = 0x0B;
 
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
 
         public void Set660(double value)
@@ -91,7 +91,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = (byte)(value % 256);
             buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
 
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
 
         public void On660()
@@ -106,7 +106,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = 0x01;
             buffer[6] = 0x0A;
 
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
 
         public void Off660()
@@ -121,7 +121,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = 0x00;
             buffer[6] = 0x09;
 
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
 
         public void Set760(double value)
@@ -136,7 +136,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = (byte)(value % 256);
             buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
 
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
 
         public void On760()
@@ -151,7 +151,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = 0x01;
             buffer[6] = 0x0B;
 
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
 
         public void Off760()
@@ -166,7 +166,7 @@ namespace FIAT_Project.Core.Service
             buffer[5] = 0x00;
             buffer[6] = 0x0A;
 
-            _device.Write(buffer, 8);
+            _device?.Write(buffer, 8);
         }
     }
 }

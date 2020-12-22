@@ -175,6 +175,7 @@ namespace Net.Framework.Device.Matrox
 
         public void Dispose()
         {
+            Stop();
             MIL.MdigFree(_digitizer);
 
             foreach (var buffer in _buffers)

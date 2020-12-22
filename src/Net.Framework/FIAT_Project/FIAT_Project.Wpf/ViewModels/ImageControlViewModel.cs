@@ -213,44 +213,52 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public ImageControlViewModel(ProcessService processService, SystemConfig systemConfig)
         {
-            SetPolygonROI = new PointCollection();
-            _tempPolygonROI = new PointCollection();
-
-            SystemConfig = systemConfig;
-            ZoomService = new ZoomService();
-
-            processService.Processed += Processed;
-
-            _pipeLine = new PipeLine<(int, int, byte [][])>(true);
-            _pipeLine.Run(new CancellationToken());
-
-            _pipeLine.Job = new Action<(int, int, byte[][])>(tuple =>
+            try
             {
-                var width = tuple.Item1;
-                var height = tuple.Item2;
-                var datas = tuple.Item3;
+                SetPolygonROI = new PointCollection();
+                _tempPolygonROI = new PointCollection();
 
-                if (datas.Length < ImageIndex)
-                    return;
+                SystemConfig = systemConfig;
+                ZoomService = new ZoomService();
 
-                var size = width * height;
-                var total = size * 3;
+                processService.Processed += Processed;
 
-                var sourceData = new byte[total];
+                _pipeLine = new PipeLine<(int, int, byte[][])>(true);
+                _pipeLine.Run(new CancellationToken());
 
-                for (int i = 0, j = 0; i < total; i += 3, j++)
+                _pipeLine.Job = new Action<(int, int, byte[][])>(tuple =>
                 {
-                    sourceData[i] = datas[ImageIndex][j];
-                    sourceData[i + 1] = datas[ImageIndex][j + size];
-                    sourceData[i + 2] = datas[ImageIndex][j + size + size];
-                }
+                    var width = tuple.Item1;
+                    var height = tuple.Item2;
+                    var datas = tuple.Item3;
 
-                var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceData, width * 3);
-                temp.Freeze();
-                Source = temp;
-            });
+                    if (datas.Length < ImageIndex)
+                        return;
 
-            ZoomFitCommand = new DelegateCommand(ZoomFit);
+                    var size = width * height;
+                    var total = size * 3;
+
+                    var sourceData = new byte[total];
+
+                    for (int i = 0, j = 0; i < total; i += 3, j++)
+                    {
+                        sourceData[i] = datas[ImageIndex][j];
+                        sourceData[i + 1] = datas[ImageIndex][j + size];
+                        sourceData[i + 2] = datas[ImageIndex][j + size + size];
+                    }
+
+                    var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceData, width * 3);
+                    temp.Freeze();
+                    Source = temp;
+                });
+
+                ZoomFitCommand = new DelegateCommand(ZoomFit);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                MessageBox.Show(e.StackTrace);
+            }
         }
 
         private void Processed(int width, int height, byte[][] datas)

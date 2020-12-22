@@ -51,12 +51,14 @@ namespace Net.Framework.Device.Matrox
                 if (MIL.MsysAlloc(MatroxApplicationHelper.Application, GetSystemDescriptor(), 0, MIL.M_DEFAULT, ref _system) == MIL.M_NULL)
                     return false;
 
+                MatroxObjectPool.Add(this);
+
                 return true;
             }
             catch (Exception e)
             {
                 return false;
-            }           
+            }
         }
         
         public void Dispose()

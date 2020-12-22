@@ -59,13 +59,17 @@ namespace FIAT_Project.Wpf
 
         protected override void OnExit(ExitEventArgs e)
         {
+            var protocolService = Container.Resolve<ProtocolService>();
+            protocolService.OffLed();
+            protocolService.Off660();
+            protocolService.Off760();
+
+            MatroxObjectPool.Dispose();
+            MatroxApplicationHelper.Dispose();
+
             if (e.ApplicationExitCode == 0)
             {
-                var protocolService = Container.Resolve<ProtocolService>();
-                protocolService.OffLed();
-                protocolService.Off660();
-                protocolService.Off760();
-
+               
                 //MatroxHelper.FreeApplication();
                 //try
                 //{

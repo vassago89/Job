@@ -40,6 +40,8 @@ namespace Net.Framework.Matrox
                         8 + MIL.M_UNSIGNED,
                         MIL.M_IMAGE,
                         ref _source);
+
+            MatroxObjectPool.Add(this);
         }
 
         public virtual void Enqueue(TData[] data)

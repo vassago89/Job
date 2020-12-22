@@ -49,6 +49,7 @@
     <Compile Include="MatroxBayerProcessor.cs" />
     <Compile Include="MatroxApplicationHelper.cs" />
     <Compile Include="MatroxCapturer.cs" />
+    <Compile Include="MatroxObjectPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MatroxRecoreder.cs" />
   </ItemGroup>

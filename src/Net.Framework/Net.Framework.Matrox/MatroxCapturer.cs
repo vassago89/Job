@@ -21,8 +21,6 @@ namespace Net.Framework.Matrox
 
         private int _channels;
         public int Channels => _channels;
-        
-        private string _path;
 
         public void Intialize(int width, int height, int channels)
         {
@@ -38,6 +36,8 @@ namespace Net.Framework.Matrox
                         8 + MIL.M_UNSIGNED,
                         MIL.M_IMAGE,
                         ref _source);
+
+            MatroxObjectPool.Add(this);
         }
 
         public void Capture(TData[] data, string path)

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 
 namespace FIAT_Project.Wpf.ViewModels
@@ -353,152 +354,160 @@ namespace FIAT_Project.Wpf.ViewModels
             CaptureService captureService,
             SystemConfig systemConfig)
         {
-            _captureService = captureService;
-            _processService = processService;
-            _protocolService = protocolService;
-
-            SystemConfig = systemConfig;
-            
-            _color660 = Color.FromRgb(SystemConfig.ColorDictionary[ELazer.L660][0], SystemConfig.ColorDictionary[ELazer.L660][1], SystemConfig.ColorDictionary[ELazer.L660][2]);
-            _color760 = Color.FromRgb(SystemConfig.ColorDictionary[ELazer.L760][0], SystemConfig.ColorDictionary[ELazer.L760][1], SystemConfig.ColorDictionary[ELazer.L760][2]);
-
-            ValueLed = SystemConfig.ValueLed;
-            Value660 = SystemConfig.ValueDictionary[ELazer.L660];
-            Value760 = SystemConfig.ValueDictionary[ELazer.L760];
-
-            Threshold660 = SystemConfig.ThresholdDictionary[ELazer.L660];
-            Threshold760 = SystemConfig.ThresholdDictionary[ELazer.L760];
-
-            ExposureLed = systemConfig.ExposureLed;
-            Exposure660 = systemConfig.ExposureDictionary[ELazer.L660];
-            Exposure760 = systemConfig.ExposureDictionary[ELazer.L760];
-
-            GainLed = systemConfig.GainLed;
-            Gain660 = systemConfig.GainDictionary[ELazer.L660];
-            Gain760 = systemConfig.GainDictionary[ELazer.L760];
-
-            CoefficientRed = SystemConfig.CoefficientValues[0];
-            CoefficientGreen = SystemConfig.CoefficientValues[1];
-            CoefficientBlue = SystemConfig.CoefficientValues[2];
-
-            AutoWhiteBalance = SystemConfig.OnAutoBayer;
-
-            _on660Auto = SystemConfig.AutoDictionary[ELazer.L660];
-            _on760Auto = SystemConfig.AutoDictionary[ELazer.L760];
-
-            _offGrab = true;
-            _offRecord = true;
-
-            SaveCommand = new DelegateCommand(() =>
+            try
             {
-                systemConfig.Save(Environment.CurrentDirectory);
-            });
+                _captureService = captureService;
+                _processService = processService;
+                _protocolService = protocolService;
 
-            GrabCommand = new DelegateCommand(() =>
-            {
-                grabService.Start();
-                OnGrab = true;
-                OffGrab = false;
-            });
+                SystemConfig = systemConfig;
 
-            StopCommand = new DelegateCommand(() =>
-            {
-                grabService.Stop();
-                OnGrab = false;
-                OffGrab = true;
-            });
+                _color660 = Color.FromRgb(SystemConfig.ColorDictionary[ELazer.L660][0], SystemConfig.ColorDictionary[ELazer.L660][1], SystemConfig.ColorDictionary[ELazer.L660][2]);
+                _color760 = Color.FromRgb(SystemConfig.ColorDictionary[ELazer.L760][0], SystemConfig.ColorDictionary[ELazer.L760][1], SystemConfig.ColorDictionary[ELazer.L760][2]);
 
-            RecordStartCommand = new DelegateCommand(() =>
-            {
-                recordService.Start();
-                OnRecord = true;
-                OffRecord = false;
-            });
+                ValueLed = SystemConfig.ValueLed;
+                Value660 = SystemConfig.ValueDictionary[ELazer.L660];
+                Value760 = SystemConfig.ValueDictionary[ELazer.L760];
 
-            RecordStopCommand = new DelegateCommand(() =>
-            {
-                recordService.Stop();
-                OnRecord = false;
-                OffRecord = true;
+                Threshold660 = SystemConfig.ThresholdDictionary[ELazer.L660];
+                Threshold760 = SystemConfig.ThresholdDictionary[ELazer.L760];
 
-                var dialog = new SaveFileDialog()
+                ExposureLed = systemConfig.ExposureLed;
+                Exposure660 = systemConfig.ExposureDictionary[ELazer.L660];
+                Exposure760 = systemConfig.ExposureDictionary[ELazer.L760];
+
+                GainLed = systemConfig.GainLed;
+                Gain660 = systemConfig.GainDictionary[ELazer.L660];
+                Gain760 = systemConfig.GainDictionary[ELazer.L760];
+
+                CoefficientRed = SystemConfig.CoefficientValues[0];
+                CoefficientGreen = SystemConfig.CoefficientValues[1];
+                CoefficientBlue = SystemConfig.CoefficientValues[2];
+
+                AutoWhiteBalance = SystemConfig.OnAutoBayer;
+
+                _on660Auto = SystemConfig.AutoDictionary[ELazer.L660];
+                _on760Auto = SystemConfig.AutoDictionary[ELazer.L760];
+
+                _offGrab = true;
+                _offRecord = true;
+
+                SaveCommand = new DelegateCommand(() =>
                 {
-                    Filter = "AVI (*.avi)|*.avi"
-                };
+                    systemConfig.Save(Environment.CurrentDirectory);
+                });
 
-                if (dialog.ShowDialog(App.Current.MainWindow) == true)
+                GrabCommand = new DelegateCommand(() =>
                 {
-                    recordService.CopyTo(dialog.FileName);
-                }
-            });
+                    grabService.Start();
+                    OnGrab = true;
+                    OffGrab = false;
+                });
 
-            OnLedCommand = new DelegateCommand(() =>
+                StopCommand = new DelegateCommand(() =>
+                {
+                    grabService.Stop();
+                    OnGrab = false;
+                    OffGrab = true;
+                });
+
+                RecordStartCommand = new DelegateCommand(() =>
+                {
+                    recordService.Start();
+                    OnRecord = true;
+                    OffRecord = false;
+                });
+
+                RecordStopCommand = new DelegateCommand(() =>
+                {
+                    recordService.Stop();
+                    OnRecord = false;
+                    OffRecord = true;
+
+                    var dialog = new SaveFileDialog()
+                    {
+                        Filter = "AVI (*.avi)|*.avi"
+                    };
+
+                    if (dialog.ShowDialog(App.Current.MainWindow) == true)
+                    {
+                        recordService.CopyTo(dialog.FileName);
+                    }
+                });
+
+                OnLedCommand = new DelegateCommand(() =>
+                {
+                    protocolService.OnLed();
+                    OnLed = true;
+                });
+
+                OffLedCommand = new DelegateCommand(() =>
+                {
+                    protocolService.OffLed();
+                    OnLed = false;
+                });
+
+                On660Command = new DelegateCommand(() =>
+                {
+                    protocolService.On660();
+                    On660 = true;
+                });
+
+                Off660Command = new DelegateCommand(() =>
+                {
+                    protocolService.Off660();
+                    On660 = false;
+                });
+
+                On760Command = new DelegateCommand(() =>
+                {
+                    protocolService.On760();
+                    On760 = true;
+                });
+
+                Off760Command = new DelegateCommand(() =>
+                {
+                    protocolService.Off760();
+                    On760 = false;
+                });
+
+                SetLedCommand = new DelegateCommand(() =>
+                {
+                    protocolService.SetLed(SystemConfig.ValueLed * 1000);
+                });
+
+                Set660Command = new DelegateCommand(() =>
+                {
+                    protocolService.Set660(SystemConfig.ValueDictionary[ELazer.L660] * 1000);
+                });
+
+                Set660Command = new DelegateCommand(() =>
+                {
+                    protocolService.Set760(SystemConfig.ValueDictionary[ELazer.L760] * 1000);
+                });
+
+                Set660ManualCommand = new DelegateCommand(() =>
+                {
+                    systemConfig.ThresholdDictionary[ELazer.L660] = Threshold660;
+                });
+
+                Set760ManualCommand = new DelegateCommand(() =>
+                {
+                    systemConfig.ThresholdDictionary[ELazer.L760] = Threshold760;
+                });
+
+                CaptureCommand = new DelegateCommand(() =>
+                {
+                    _captureService.Start(SystemConfig.CaptureCount);
+                });
+
+                processService.Processed += Processed;
+            }
+            catch (Exception e)
             {
-                protocolService.OnLed();
-                OnLed = true;
-            });
-
-            OffLedCommand = new DelegateCommand(() =>
-            {
-                protocolService.OffLed();
-                OnLed = false;
-            });
-
-            On660Command = new DelegateCommand(() =>
-            {
-                protocolService.On660();
-                On660 = true;
-            });
-
-            Off660Command = new DelegateCommand(() =>
-            {
-                protocolService.Off660();
-                On660 = false;
-            });
-
-            On760Command = new DelegateCommand(() =>
-            {
-                protocolService.On760();
-                On760 = true;
-            });
-
-            Off760Command = new DelegateCommand(() =>
-            {
-                protocolService.Off760();
-                On760 = false;
-            });
-
-            SetLedCommand = new DelegateCommand(() =>
-            {
-                protocolService.SetLed(SystemConfig.ValueLed * 1000);
-            });
-
-            Set660Command = new DelegateCommand(() =>
-            {
-                protocolService.Set660(SystemConfig.ValueDictionary[ELazer.L660] * 1000);
-            });
-
-            Set660Command = new DelegateCommand(() =>
-            {
-                protocolService.Set760(SystemConfig.ValueDictionary[ELazer.L760] * 1000);
-            });
-
-            Set660ManualCommand = new DelegateCommand(() =>
-            {
-                systemConfig.ThresholdDictionary[ELazer.L660] = Threshold660;
-            });
-
-            Set760ManualCommand = new DelegateCommand(() =>
-            {
-                systemConfig.ThresholdDictionary[ELazer.L760] = Threshold760;
-            });
-
-            CaptureCommand = new DelegateCommand(() =>
-            {
-                _captureService.Start(SystemConfig.CaptureCount);
-            });
-
-            processService.Processed += Processed;
+                MessageBox.Show(e.Message);
+                MessageBox.Show(e.StackTrace);
+            }
         }
 
         private void Processed(int width, int height, byte[][] datas)

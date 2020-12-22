@@ -21,7 +21,7 @@ namespace FIAT_Project.Core.Service
         {
             _cpuUsage = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             _memoryUsage = new PerformanceCounter("Memory", "Available MBytes");
-            DriveInfos = DriveInfo.GetDrives();
+            DriveInfos = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Fixed);
         }
     }
 }

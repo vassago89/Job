@@ -1,6 +1,7 @@
 ﻿using Matrox.MatroxImagingLibrary;
 using Net.Framework.Data.ImageDatas;
 using Net.Framework.Device.ImageDevices;
+using Net.Framework.Matrox;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,6 +131,8 @@ namespace Net.Framework.Device.Matrox
                 throw e;
                 return false;
             }
+
+            MatroxObjectPool.Add(this);
 
             return true;
         }

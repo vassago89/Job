@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FIAT_Project.Wpf.ViewModels
 {
@@ -40,11 +41,19 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public SettingDialogViewModel(SystemConfig systemConfig)
         {
-            SystemConfig = systemConfig;
-            Ports = SerialPort.GetPortNames();
-            
-            Methods = typeof(EThresholdMethod).GetEnumValues().Cast<EThresholdMethod>();
-        }
+            try
+            {
+                SystemConfig = systemConfig;
+                Ports = SerialPort.GetPortNames();
+
+                Methods = typeof(EThresholdMethod).GetEnumValues().Cast<EThresholdMethod>();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                MessageBox.Show(e.StackTrace);
+            }
+}
 
         //private async void Search()
         //{

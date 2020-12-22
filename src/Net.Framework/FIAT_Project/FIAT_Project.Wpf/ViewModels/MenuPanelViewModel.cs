@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FIAT_Project.Wpf.ViewModels
 {
@@ -57,41 +58,49 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public MenuPanelViewModel(StateService stateService)
         {
-            SettingCommand = new DelegateCommand(async () =>
+            try
             {
-                var view = new SettingDialog();
+                SettingCommand = new DelegateCommand(async () =>
+                {
+                    var view = new SettingDialog();
 
                 //show the dialog
                 var result = await DialogHost.Show(view, "RootDialog", ClosingEventHandler);
 
                 //check the result...
                 Console.WriteLine("Dialog was closed, the CommandParameter used to close it was: " + (result ?? "NULL"));
-            });
+                });
 
-            ExitCommand = new DelegateCommand(App.Current.Shutdown);
+                ExitCommand = new DelegateCommand(App.Current.Shutdown);
 
-            DriveInfos = new ObservableCollection<BindableDriveInfo>();
+                DriveInfos = new ObservableCollection<BindableDriveInfo>();
 
-            foreach (var info in stateService.DriveInfos)
-                DriveInfos.Add(new BindableDriveInfo(info.Name, info.TotalSize));
+                foreach (var info in stateService.DriveInfos)
+                    DriveInfos.Add(new BindableDriveInfo(info.Name, info.TotalSize));
 
-            Task.Factory.StartNew(async () =>
-            {
-                while (true)
+                Task.Factory.StartNew(async () =>
                 {
-                    CpuUsage = stateService.CpuUsage;
-                    MemoryUsage = stateService.MemoryUsage / 1024;
-
-                    foreach (var info in stateService.DriveInfos)
+                    while (true)
                     {
-                        var founded = DriveInfos.First(d => d.Name == info.Name);
-                        founded.AvailableFreeSpace = info.AvailableFreeSpace / 1024 / 1024 / 1024;
-                    }
+                        CpuUsage = stateService.CpuUsage;
+                        MemoryUsage = stateService.MemoryUsage / 1024;
 
-                    await Task.Delay(1000);
-                }
-            }, TaskCreationOptions.LongRunning);
-        }
+                        foreach (var info in stateService.DriveInfos)
+                        {
+                            var founded = DriveInfos.First(d => d.Name == info.Name);
+                            founded.AvailableFreeSpace = info.AvailableFreeSpace / 1024 / 1024 / 1024;
+                        }
+
+                        await Task.Delay(1000);
+                    }
+                }, TaskCreationOptions.LongRunning);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                MessageBox.Show(e.StackTrace);
+            }
+}
 
         private async void ShowWorkListDialog()
         {

@@ -45,7 +45,7 @@ namespace Net.Framework.Matrox
                         MIL.M_IMAGE + MIL.M_PROC,
                         ref _destination);
 
-           
+            MatroxObjectPool.Add(this);
         }
         
         public void SetCoefficient(float[] data)

@@ -17,7 +17,7 @@
             </Grid.RowDefinitions>
             <TextBlock Text="Setting" Margin="8"/>
             <GroupBox Header="Common" Grid.Row="1">
-                <UniformGrid>
+                <UniformGrid Columns="2">
                     <TextBlock Text="Lazer Port"/>
                     <ComboBox SelectedItem="{Binding SystemConfig.LazerProtocolPort}" ItemsSource="{Binding Ports}"/>
                     <TextBlock Text="Grabber Port"/>
@@ -29,7 +29,7 @@
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">
-                <UniformGrid>
+                <UniformGrid Columns="2">
                     <TextBlock Text="L660"/>
                     <ComboBox SelectedItem="{Binding Method660}" ItemsSource="{Binding Methods}"/>
                     <TextBlock Text="760"/>

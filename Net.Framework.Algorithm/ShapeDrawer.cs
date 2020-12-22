@@ -46,6 +46,9 @@ namespace Net.Framework.Algorithm
 
         public byte[] DrawPolygon(byte[] data, IEnumerable<System.Drawing.Point> points, bool isFilled, byte r = 255, byte g = 255, byte b = 255)
         {
+            if (points.Count() == 0)
+                return data;
+
             var pts = new List<Point>();
             foreach (var point in points)
                 pts.Add(new Point(point.X, point.Y));

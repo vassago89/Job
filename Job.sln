@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1267
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30709.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{41978C36-4BC2-44EB-9F50-6E2E7F3968CE}"
 EndProject
@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Framework.Helper.Wpf", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Framework.Helper", "src\Net.Framework\Net.Framework.Helper\Net.Framework.Helper.csproj", "{F4D74A38-9B1B-47BB-9ED2-3DF725C1C88B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Framework.Algorithm", "Net.Framework.Algorithm\Net.Framework.Algorithm.csproj", "{E73FF83D-3D46-4247-BC2D-D8E314D0EB3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net.Framework.Algorithm", "src\Net.Framework\Net.Framework.Algorithm\Net.Framework.Algorithm.csproj", "{E73FF83D-3D46-4247-BC2D-D8E314D0EB3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

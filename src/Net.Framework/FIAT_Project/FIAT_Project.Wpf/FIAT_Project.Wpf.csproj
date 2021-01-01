@@ -213,13 +213,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Net.Framework.Algorithm\Net.Framework.Algorithm.csproj">
-      <Project>{E73FF83D-3D46-4247-BC2D-D8E314D0EB3D}</Project>
-      <Name>Net.Framework.Algorithm</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Device\Net.Framework.Device.Matrox\Net.Framework.Device.Matrox.csproj">
       <Project>{afc64e41-45d5-494b-86a7-4224d2de08ab}</Project>
       <Name>Net.Framework.Device.Matrox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Net.Framework.Algorithm\Net.Framework.Algorithm.csproj">
+      <Project>{e73ff83d-3d46-4247-bc2d-d8e314d0eb3d}</Project>
+      <Name>Net.Framework.Algorithm</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Net.Framework.Data\Net.Framework.Data.csproj">
       <Project>{bd4d1ede-ae9f-459b-bf31-0c8fe9808495}</Project>

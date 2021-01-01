@@ -84,10 +84,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Net.Framework.Algorithm\Net.Framework.Algorithm.csproj">
-      <Project>{E73FF83D-3D46-4247-BC2D-D8E314D0EB3D}</Project>
-      <Name>Net.Framework.Algorithm</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Device\Net.Framework.Device.Matrox\Net.Framework.Device.Matrox.csproj">
       <Project>{AFC64E41-45D5-494B-86A7-4224D2DE08AB}</Project>
       <Name>Net.Framework.Device.Matrox</Name>
@@ -95,6 +91,10 @@
     <ProjectReference Include="..\..\Device\Net.Framework.Device\Net.Framework.Device.csproj">
       <Project>{B496357A-EFDF-4B33-A35A-2B1EE3617A73}</Project>
       <Name>Net.Framework.Device</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Net.Framework.Algorithm\Net.Framework.Algorithm.csproj">
+      <Project>{e73ff83d-3d46-4247-bc2d-d8e314d0eb3d}</Project>
+      <Name>Net.Framework.Algorithm</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Net.Framework.Data\Net.Framework.Data.csproj">
       <Project>{BD4D1EDE-AE9F-459B-BF31-0C8FE9808495}</Project>

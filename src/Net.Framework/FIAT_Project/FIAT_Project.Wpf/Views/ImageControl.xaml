@@ -117,7 +117,7 @@
                 </RadioButton>
                 <RadioButton IsChecked="{Binding IsPolygon}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}">
                     <StackPanel>
-                        <TextBlock Text="Polygon"/>
+                        <TextBlock Text="Polygon (Shift)"/>
                     </StackPanel>
                 </RadioButton>
                 <Button Command="{Binding ZoomFitCommand}">

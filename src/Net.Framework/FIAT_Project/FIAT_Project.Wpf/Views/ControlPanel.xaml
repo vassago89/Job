@@ -25,7 +25,7 @@
                             <UniformGrid Columns="2">
                                 <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OffGrab}">
                                     <StackPanel>
-                                        <TextBlock Text="Grab"/>
+                                        <TextBlock Text="Start"/>
                                     </StackPanel>
                                 </Button>
                                 <Button Command="{Binding StopCommand}">

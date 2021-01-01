@@ -235,21 +235,22 @@ namespace FIAT_Project.Wpf.ViewModels
                     if (datas.Length < ImageIndex)
                         return;
 
-                    var size = width * height;
-                    var total = size * 3;
+                    //var size = width * height;
 
-                    var sourceData = new byte[total];
+                    //var total = size * 3;
 
-                    for (int i = 0, j = 0; i < total; i += 3, j++)
-                    {
-                        sourceData[i] = datas[ImageIndex][j];
-                        sourceData[i + 1] = datas[ImageIndex][j + size];
-                        sourceData[i + 2] = datas[ImageIndex][j + size + size];
-                    }
+                    //var sourceData = new byte[total];
 
-                    var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceData, width * 3);
-                    temp.Freeze();
-                    Source = temp;
+                    //for (int i = 0, j = 0; i < total; i += 3, j++)
+                    //{
+                    //    sourceData[i] = datas[ImageIndex][j];
+                    //    sourceData[i + 1] = datas[ImageIndex][j + size];
+                    //    sourceData[i + 2] = datas[ImageIndex][j + size + size];
+                    //}
+
+                    //var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceData, width * 3);
+                    //temp.Freeze();
+                    //Source = temp;
                 });
 
                 ZoomFitCommand = new DelegateCommand(ZoomFit);

@@ -27,27 +27,11 @@ namespace FIAT_Project.Core.Service
         public int Height => _imageDevice.Height;
         public int Channels => _imageDevice.Channels;
 
+        private byte[][] _buffers;
+
         public GrabService(SystemConfig systemConfig)
         {
             MatroxApplicationHelper.Initilize();
-            //_queue = new Queue<ImageData<byte>>();
-            //_pipeLine = new PipeLine<ImageData<byte>>(true);
-
-            //_pipeLine.Job = new Action<ImageData<byte>>((imageData) =>
-            //{
-            //    var datas = new byte[imageData.Channels][];
-
-            //    for (int i = 0; i < imageData.Channels; i++)
-            //    {
-            //        datas[i] = new byte[imageData.Width * imageData.Height];
-            //        Buffer.BlockCopy(imageData.Data, i * imageData.Width * imageData.Height, datas[i], 0, imageData.Width * imageData.Height);
-            //    }
-
-            //    Grabbed?.Invoke(imageData.Width, imageData.Height, datas.Reverse().ToArray());
-            //});
-
-            //_pipeLine.Run(new System.Threading.CancellationToken());
-
             _gateway = new MatroxSystemGateway();
             _gateway.ImageGrabberInfos.Add(new MatroxImageGrabberInfo()
             {
@@ -65,28 +49,24 @@ namespace FIAT_Project.Core.Service
             _gateway.Initialize();
 
             _imageDevice = _gateway.ImageDevices.First();
+            _imageDevice.DeviceGrabbed += DeviceImageGrabbed;
 
-            foreach (var imageDevice in _gateway.ImageDevices)
-                imageDevice.DeviceGrabbed += DeviceImageGrabbed;
+            _buffers = new byte[_imageDevice.Channels][];
+            for (int i = 0; i < _imageDevice.Channels; i++)
+            {
+                _buffers[i] = new byte[_imageDevice.Width * _imageDevice.Height];
+            }
         }
 
         private void DeviceImageGrabbed(IImageData obj)
         {
             var imageData = obj as ImageData<byte>;
 
-            var datas = new byte[obj.Channels][];
-
             int size = imageData.Width * imageData.Height;
-            for (int i = 0; i < obj.Channels; i++)
-            {
-                datas[i] = new byte[imageData.Width * imageData.Height];
-                Buffer.BlockCopy(imageData.Data, i * size, datas[i], 0, size);
-                //datas[i] = new byte[imageData.Width * imageData.Height * 3];
-                //for (int j = 0; j < obj.Channels; j++)
-                //    Buffer.BlockCopy(imageData.Data, i * size, datas[i], j * size, size);
-            }
+            for (int i = 0; i < _imageDevice.Channels; i++)
+                Buffer.BlockCopy(imageData.Data, i * size, _buffers[i], 0, size);
 
-            Grabbed?.Invoke(imageData.Width, imageData.Height, datas.Reverse().ToArray());
+            Grabbed?.Invoke(imageData.Width, imageData.Height, _buffers.Reverse().ToArray());
         }
         
         public void Start()

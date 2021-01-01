@@ -36,6 +36,7 @@ namespace FIAT_Project.Core
         public Dictionary<ELazer, double> ValueDictionary { get; set; }
         public Dictionary<ELazer, double> MaxValueDictionary { get; set; }
 
+        public EThresholdMode ThresholdMode { get; set; }
         public Dictionary<ELazer, bool> UseDictionary { get; set; }
 
         public Dictionary<ELazer, bool> AutoDictionary { get; set; }
@@ -103,6 +104,8 @@ namespace FIAT_Project.Core
             ValueDictionary[ELazer.L660] = MaxValueDictionary[ELazer.L660] = 1.5;
             ValueDictionary[ELazer.L760] = MaxValueDictionary[ELazer.L760] = 2.5;
 
+            ThresholdMode = EThresholdMode.BinaryMode;
+
             UseDictionary = new Dictionary<ELazer, bool>();
             UseDictionary[ELazer.L660] = true;
             UseDictionary[ELazer.L760] = true;
@@ -110,6 +113,7 @@ namespace FIAT_Project.Core
             AutoDictionary = new Dictionary<ELazer, bool>();
             AutoDictionary[ELazer.L660] = true;
             AutoDictionary[ELazer.L760] = true;
+
             MethodDictionary = new Dictionary<ELazer, EThresholdMethod>();
 
             MethodDictionary[ELazer.L660] = EThresholdMethod.Li;

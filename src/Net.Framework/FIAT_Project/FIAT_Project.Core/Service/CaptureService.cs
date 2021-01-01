@@ -67,7 +67,7 @@ namespace FIAT_Project.Core.Service
                 {
                     _processService.Processed -= Processed;
                     
-                    Process.Start(_directory);
+                    //Process.Start(_directory);
 
                     return;
                 }

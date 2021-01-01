@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\ELazer.cs" />
+    <Compile Include="Enums\EThresholdMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\DrawingService.cs" />
     <Compile Include="Service\GrabService.cs" />

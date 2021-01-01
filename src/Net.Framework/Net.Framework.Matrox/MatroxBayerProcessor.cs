@@ -13,6 +13,8 @@ namespace Net.Framework.Matrox
         private MIL_ID _destination;
         private MIL_ID _coef;
 
+        private byte[] _buffer;
+
         private int _width;
         public int Width => _width;
 
@@ -45,6 +47,8 @@ namespace Net.Framework.Matrox
                         MIL.M_IMAGE + MIL.M_PROC,
                         ref _destination);
 
+            _buffer = new byte[_width * _height * 3];
+
             MatroxObjectPool.Add(this);
         }
         
@@ -69,9 +73,8 @@ namespace Net.Framework.Matrox
             MIL.MbufPut(_source, data);
             MIL.MbufBayer(_source, _destination, _coef, MIL.M_BAYER_RG);
 
-            var buffer = new byte[_width * _height * 3];
-            MIL.MbufGet(_destination, buffer);
-            return buffer;
+            MIL.MbufGet(_destination, _buffer);
+            return _buffer;
         }
 
         public void Dispose()

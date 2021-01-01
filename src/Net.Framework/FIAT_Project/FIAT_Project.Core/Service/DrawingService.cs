@@ -30,11 +30,11 @@ namespace FIAT_Project.Core.Service
                 Buffer.BlockCopy(datas[3], i * width, buffer, j * width + width, width);
             }
 
-            for (int i = 0, j = height * 2; i < height; i++, j += 2)
-                Buffer.BlockCopy(datas[1], i * width, buffer, j * width, width);
+            //for (int i = 0, j = height * 2; i < height; i++, j += 2)
+            //    Buffer.BlockCopy(datas[1], i * width, buffer, j * width, width);
 
-            for (int i = height, j = height * 6; i < height * 2; i++, j += 2)
-                Buffer.BlockCopy(datas[2], i * width, buffer, j * width + width, width);
+            //for (int i = height, j = height * 6; i < height * 2; i++, j += 2)
+            //    Buffer.BlockCopy(datas[2], i * width, buffer, j * width + width, width);
         }
     }
 }

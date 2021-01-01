@@ -30,9 +30,9 @@
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">
                 <UniformGrid Columns="2">
-                    <TextBlock Text="L660"/>
+                    <TextBlock Text="Fluorescence ch1."/>
                     <ComboBox SelectedItem="{Binding Method660}" ItemsSource="{Binding Methods}"/>
-                    <TextBlock Text="760"/>
+                    <TextBlock Text="Fluorescence ch2."/>
                     <ComboBox SelectedItem="{Binding Method760}" ItemsSource="{Binding Methods}"/>
                 </UniformGrid>
             </GroupBox>

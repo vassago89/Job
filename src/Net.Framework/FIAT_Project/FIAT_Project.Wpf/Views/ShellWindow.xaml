@@ -31,25 +31,25 @@
                 <views:ControlPanel DockPanel.Dock="Left"
                                     Width="400"/>
                 <UniformGrid DockPanel.Dock="Bottom" Rows="1" Columns="2">
-                    <GroupBox Header="Lazer 660 Statistics">
+                    <GroupBox Header="Fluorescence ch1. Statistics">
                         <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer660}"/>
                     </GroupBox>
-                    <GroupBox Header="Lazer 760 Statistics">
+                    <GroupBox Header="Fluorescence ch2. Statistics">
                         <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer760}"/>
                     </GroupBox>
                 </UniformGrid>
                 <Grid>
                     <UniformGrid>
-                        <GroupBox Header="Original">
+                        <GroupBox Header="Color">
                             <views:ImageControl ImageIndex="0"/>
                         </GroupBox>
                         <GroupBox Header="Merged">
                             <views:ImageControl ImageIndex="3"/>
                         </GroupBox>
-                        <GroupBox Header="Lazer 660">
+                        <GroupBox Header="Fluorescence ch1.">
                             <views:ImageControl ImageIndex="1" Header="" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
                         </GroupBox>
-                        <GroupBox Header="Lazer 760">
+                        <GroupBox Header="Fluorescence ch2.">
                             <views:ImageControl ImageIndex="2" Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
                         </GroupBox>
                     </UniformGrid>

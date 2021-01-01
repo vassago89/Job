@@ -21,11 +21,14 @@
                             <Setter Property="Margin" Value="8 0 0 0"/>
                         </Style>
                     </StackPanel.Resources>
+                    <GroupBox Header="Frame Rate">
+                        <TextBlock Text="{Binding FrameRate, StringFormat={}{0:0.00} fps}"/>
+                    </GroupBox>
                     <GroupBox Header="CPU">
-                        <StackPanel VerticalAlignment="Center">
-                            <ProgressBar Value="{Binding CpuUsage}" Width="50"/>
-                            <TextBlock Text="{Binding CpuUsage, StringFormat={}{0:0.00} %}"/>
-                        </StackPanel>
+                        <Grid>
+                            <ProgressBar Value="{Binding CpuUsage}" Width="100" Height="Auto"/>
+                            <TextBlock Text="{Binding CpuUsage, StringFormat={}{0:0.00} %}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
                     </GroupBox>
                     <GroupBox Header="Available Memory">
                         <Grid>

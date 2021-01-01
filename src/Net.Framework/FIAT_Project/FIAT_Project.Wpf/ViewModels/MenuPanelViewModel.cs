@@ -55,8 +55,14 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SetProperty(ref _memoryUsage, value);
         }
 
+        private double _frameRate;
+        public double FrameRate
+        {
+            get => _frameRate;
+            set => SetProperty(ref _frameRate, value);
+        }
 
-        public MenuPanelViewModel(StateService stateService)
+        public MenuPanelViewModel(StateService stateService, GrabService grabService)
         {
             try
             {
@@ -84,12 +90,14 @@ namespace FIAT_Project.Wpf.ViewModels
                     {
                         CpuUsage = stateService.CpuUsage;
                         MemoryUsage = stateService.MemoryUsage / 1024;
-
+                        
                         foreach (var info in stateService.DriveInfos)
                         {
                             var founded = DriveInfos.First(d => d.Name == info.Name);
                             founded.AvailableFreeSpace = info.AvailableFreeSpace / 1024 / 1024 / 1024;
                         }
+
+                        FrameRate = grabService.FrameRate;
 
                         await Task.Delay(1000);
                     }

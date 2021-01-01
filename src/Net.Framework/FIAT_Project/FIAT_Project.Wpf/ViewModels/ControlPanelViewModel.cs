@@ -488,12 +488,12 @@ namespace FIAT_Project.Wpf.ViewModels
 
                 Set660ManualCommand = new DelegateCommand(() =>
                 {
-                    systemConfig.ThresholdDictionary[ELazer.L660] = Threshold660;
+                    SetManual(ELazer.L660);
                 });
 
                 Set760ManualCommand = new DelegateCommand(() =>
                 {
-                    systemConfig.ThresholdDictionary[ELazer.L760] = Threshold760;
+                    SetManual(ELazer.L760);
                 });
 
                 CaptureCommand = new DelegateCommand(() =>
@@ -510,6 +510,19 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
+        private void SetManual(ELazer lazer)
+        {
+            switch (lazer)
+            {
+                case ELazer.L660:
+                    SystemConfig.ThresholdDictionary[ELazer.L660] = Threshold660;
+                    break;
+                case ELazer.L760:
+                    SystemConfig.ThresholdDictionary[ELazer.L760] = Threshold760;
+                    break;
+            }
+        }
+
         private void Processed(int width, int height, byte[][] datas)
         {
             if (SystemConfig.OnAutoBayer)
@@ -517,6 +530,32 @@ namespace FIAT_Project.Wpf.ViewModels
                 CoefficientRed = SystemConfig.CoefficientValues[0];
                 CoefficientGreen = SystemConfig.CoefficientValues[1];
                 CoefficientBlue = SystemConfig.CoefficientValues[2];
+            }
+        }
+
+        public void On660KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Return)
+                return;
+
+            var tb = sender as System.Windows.Controls.TextBox;
+            if (byte.TryParse(tb.Text, out byte value))
+            {
+                Threshold660 = value;
+                SetManual(ELazer.L660);
+            }
+        }
+
+        public void On760KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Return)
+                return;
+
+            var tb = sender as System.Windows.Controls.TextBox;
+            if (byte.TryParse(tb.Text, out byte value))
+            {
+                Threshold760 = value;
+                SetManual(ELazer.L760);
             }
         }
     }

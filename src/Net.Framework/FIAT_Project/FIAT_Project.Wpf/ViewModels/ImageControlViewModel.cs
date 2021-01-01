@@ -125,9 +125,7 @@ namespace FIAT_Project.Wpf.ViewModels
         }
         
         public DelegateCommand ZoomFitCommand { get; }
-
-        private PipeLine<(int, int, byte[][])> _pipeLine;
-
+        
         public ZoomService ZoomService { get; }
 
         FrameworkElement _presentor;
@@ -211,6 +209,8 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public SystemConfig SystemConfig { get; }
 
+        private byte[] _buffer;
+
         public ImageControlViewModel(ProcessService processService, SystemConfig systemConfig)
         {
             try
@@ -222,37 +222,7 @@ namespace FIAT_Project.Wpf.ViewModels
                 ZoomService = new ZoomService();
 
                 processService.Processed += Processed;
-
-                _pipeLine = new PipeLine<(int, int, byte[][])>(true);
-                _pipeLine.Run(new CancellationToken());
-
-                _pipeLine.Job = new Action<(int, int, byte[][])>(tuple =>
-                {
-                    var width = tuple.Item1;
-                    var height = tuple.Item2;
-                    var datas = tuple.Item3;
-
-                    if (datas.Length < ImageIndex)
-                        return;
-
-                    //var size = width * height;
-
-                    //var total = size * 3;
-
-                    //var sourceData = new byte[total];
-
-                    //for (int i = 0, j = 0; i < total; i += 3, j++)
-                    //{
-                    //    sourceData[i] = datas[ImageIndex][j];
-                    //    sourceData[i + 1] = datas[ImageIndex][j + size];
-                    //    sourceData[i + 2] = datas[ImageIndex][j + size + size];
-                    //}
-
-                    //var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, sourceData, width * 3);
-                    //temp.Freeze();
-                    //Source = temp;
-                });
-
+                
                 ZoomFitCommand = new DelegateCommand(ZoomFit);
             }
             catch (Exception e)
@@ -275,7 +245,33 @@ namespace FIAT_Project.Wpf.ViewModels
                 });
             }
 
-            _pipeLine.Enqueue((width, height, datas));
+            if (datas.Length < ImageIndex)
+                return;
+
+            var size = width * height;
+            if (ImageIndex == 1 || ImageIndex == 2)
+            {
+                var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, datas[ImageIndex], width);
+                temp.Freeze();
+                Source = temp;
+            }
+            else
+            {
+                var total = size * 3;
+                if (_buffer == null)
+                    _buffer = new byte[total];
+
+                for (int i = 0, j = 0; i < total; i += 3, j++)
+                {
+                    _buffer[i] = datas[ImageIndex][j];
+                    _buffer[i + 1] = datas[ImageIndex][j + size];
+                    _buffer[i + 2] = datas[ImageIndex][j + size + size];
+                }
+
+                var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, _buffer, width * 3);
+                temp.Freeze();
+                Source = temp;
+            }
         }
 
         private void ZoomFit()

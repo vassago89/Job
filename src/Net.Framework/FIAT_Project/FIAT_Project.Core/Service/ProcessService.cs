@@ -67,7 +67,7 @@ namespace FIAT_Project.Core.Service
                 datas[1] = Process(ELazer.L660, datas[1], width, height);
 
             if (_systemConfig.UseDictionary[ELazer.L760] == true)
-                datas[2] = Process(ELazer.L660, datas[2], width, height);
+                datas[2] = Process(ELazer.L760, datas[2], width, height);
 
             var mergeDatas = new byte[][] { datas[0], datas[1], datas[2], _mergedBuffer };
 
@@ -136,7 +136,7 @@ namespace FIAT_Project.Core.Service
         private byte[] Threshold(ELazer lazer, byte[] data, double value)
         {
             var binaryData = _bufferDictionary[lazer];
-
+            Array.Clear(binaryData, 0, binaryData.Length);
             for (int i = 0; i < data.Length; i++)
             {
                 if (data[i] >= value)

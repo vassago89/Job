@@ -109,7 +109,7 @@
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="L660">
+                        <GroupBox Header="Fluorescence ch1.">
                             <StackPanel>
                                 <UniformGrid>
                                     <Button Command="{Binding On660Command}" IsEnabled="{Binding On660, Converter={StaticResource BooleanInverter}}">
@@ -141,7 +141,7 @@
                             </StackPanel>
                         </GroupBox>
 
-                        <GroupBox Header="L760">
+                        <GroupBox Header="Fluorescence ch1.">
                             <StackPanel>
                                 <UniformGrid>
                                     <Button Command="{Binding On760Command}" IsEnabled="{Binding On760, Converter={StaticResource BooleanInverter}}">
@@ -176,7 +176,7 @@
                 </Expander>
                 <Expander Header="Processing">
                     <StackPanel>
-                        <GroupBox Header="L660">
+                        <GroupBox Header="Fluorescence ch1.">
                             <StackPanel>
                                 <UniformGrid Columns="3">
                                     <RadioButton IsChecked="True">
@@ -198,7 +198,13 @@
                                 <UniformGrid Rows="1">
                                     <TextBox Text="{Binding Threshold660}"
                                              materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
-                                             IsEnabled="{Binding On660Manual}"/>
+                                             IsEnabled="{Binding On660Manual}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="On660KeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
                                     <Button Command="{Binding Set660ManualCommand}" IsEnabled="{Binding On660Manual}">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
@@ -207,7 +213,7 @@
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="L760">
+                        <GroupBox Header="Fluorescence ch2.">
                             <StackPanel>
                                 <UniformGrid Columns="3">
                                     <RadioButton IsChecked="True">
@@ -229,7 +235,13 @@
                                 <UniformGrid Rows="1">
                                     <TextBox Text="{Binding Threshold760}"
                                              materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
-                                             IsEnabled="{Binding On760Manual}"/>
+                                             IsEnabled="{Binding On760Manual}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="On760KeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
                                     <Button Command="{Binding Set760ManualCommand}" IsEnabled="{Binding On760Manual}">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>

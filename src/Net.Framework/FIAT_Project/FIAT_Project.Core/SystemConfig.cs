@@ -23,6 +23,7 @@ namespace FIAT_Project.Core
         public string GrabberProtocolPort { get; set; }
         public string DcfPath { get; set; }
         public string CapturePath { get; set; }
+        public string RecordPath { get; set; }
 
         public double MaxLed { get; set; }
         public int CaptureCount { get; set; }
@@ -58,15 +59,18 @@ namespace FIAT_Project.Core
         public Dictionary<ELazer, bool> IsAutoScaleDictionary { get; set; }
         public Dictionary<ELazer, bool> IsLogScaleDictionary { get; set; }
 
-        public double ValueLed { get; set; }
+        public Dictionary<ESensitivity, int> LedPresetDictionary { get; set; }
+        public Dictionary<ELazer, Dictionary<ESensitivity, int>> LazerPresetDictionary { get; set; }
 
+        public double ValueLed { get; set; }
+        public int RecodingFrame { get; set; }
         public SystemConfig()
         {
             LazerProtocolPort = "COM6";
             GrabberProtocolPort = "COM3";
             DcfPath = "MIL10_SOL_BV-C8300NV_re2.dcf";
             CapturePath = "..\\Capture";
-
+            RecordPath = "..\\Record";
             ValueLed = MaxLed = 1.000;
             CaptureCount = 5;
             
@@ -148,6 +152,24 @@ namespace FIAT_Project.Core
             IsLogScaleDictionary = new Dictionary<ELazer, bool>();
             IsLogScaleDictionary[ELazer.L660] = false;
             IsLogScaleDictionary[ELazer.L760] = false;
+
+            LedPresetDictionary = new Dictionary<ESensitivity, int>();
+            LedPresetDictionary[ESensitivity.Low] = 5;
+            LedPresetDictionary[ESensitivity.Medium] = 10;
+            LedPresetDictionary[ESensitivity.High] = 15;
+
+            LazerPresetDictionary = new Dictionary<ELazer, Dictionary<ESensitivity, int>>();
+            LazerPresetDictionary[ELazer.L660] = new Dictionary<ESensitivity, int>();
+            LazerPresetDictionary[ELazer.L660][ESensitivity.Low] = 5;
+            LazerPresetDictionary[ELazer.L660][ESensitivity.Medium] = 10;
+            LazerPresetDictionary[ELazer.L660][ESensitivity.High] = 15;
+
+            LazerPresetDictionary[ELazer.L760] = new Dictionary<ESensitivity, int>();
+            LazerPresetDictionary[ELazer.L760][ESensitivity.Low] = 5;
+            LazerPresetDictionary[ELazer.L760][ESensitivity.Medium] = 10;
+            LazerPresetDictionary[ELazer.L760][ESensitivity.High] = 15;
+
+            RecodingFrame = 15;
         }
     }
 }

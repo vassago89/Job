@@ -26,6 +26,10 @@
                     <TextBox Text="{Binding SystemConfig.DcfPath}"/>
                     <TextBlock Text="Capture Path"/>
                     <TextBox Text="{Binding SystemConfig.CapturePath}"/>
+                    <TextBlock Text="Record Path"/>
+                    <TextBox Text="{Binding SystemConfig.RecordPath}"/>
+                    <TextBlock Text="Recording Frame"/>
+                    <TextBox Text="{Binding SystemConfig.RecodingFrame}"/>
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">

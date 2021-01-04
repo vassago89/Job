@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FIAT_Project.Core.Service
@@ -193,6 +194,10 @@ namespace FIAT_Project.Core.Service
 
             var buffer = Encoding.UTF8.GetBytes($"exp {chennel} {value * 1000 / 2}\r");
             _grabberDevice?.Write(buffer, buffer.Length);
+
+            Thread.Sleep(10);
+
+            SetFrameRate(60);
         }
 
         public void SetGain(int value, ELazer lazer, bool isLed = false)
@@ -201,6 +206,14 @@ namespace FIAT_Project.Core.Service
 
             var buffer = Encoding.UTF8.GetBytes($"gain {chennel} {(int)(value * 3.36)}\r");
             _grabberDevice?.Write(buffer, buffer.Length);
+        }
+
+        public void SetFrameRate(double frameRate)
+        {
+            var buffer = Encoding.UTF8.GetBytes($"frame {1000000 / frameRate}\r");
+            _grabberDevice?.Write(buffer, buffer.Length);
+
+            Thread.Sleep(10);
         }
     }
 }

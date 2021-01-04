@@ -80,7 +80,7 @@
                     <StackPanel>
                         <GroupBox Header="Led">
                             <StackPanel>
-                                <UniformGrid>
+                                <UniformGrid Columns="2">
                                     <Button Command="{Binding OnLedCommand}" IsEnabled="{Binding OnLed, Converter={StaticResource BooleanInverter}}">
                                         <StackPanel>
                                             <TextBlock Text="On"/>
@@ -91,27 +91,92 @@
                                             <TextBlock Text="Off"/>
                                         </StackPanel>
                                     </Button>
+                                </UniformGrid>
+                                <UniformGrid Columns="3">
                                     <TextBox Text="{Binding ValueLed, StringFormat={}{0:0.000}}"
-                                             materialDesign:HintAssist.Hint="Ampere (0 ~ 1A)"/>
-                                    <Button Command="{Binding SetLedCommand}">
+                                             materialDesign:HintAssist.Hint="Ampere (0 ~ 1A)"
+                                             Tag="ValueLed">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding ValueLed}" Minimum="0" Maximum="1" Margin="4" TickFrequency="0.01"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="ValueLed">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <TextBox Text="{Binding GainLed}"
+                                             materialDesign:HintAssist.Hint="Gain (x0 ~ x100)"
+                                             Tag="GainLed">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding GainLed}" Minimum="0" Maximum="100"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="GainLed">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
-                                <UniformGrid Columns="3">
-                                    <TextBlock Text="Exp"/>
-                                    <Slider Value="{Binding ExposureLed}" Minimum="1" Maximum="16"/>
-                                    <TextBlock Text="{Binding ExposureLed}"/>
-                                    <TextBlock Text="Gain"/>
-                                    <Slider Value="{Binding GainLed}" Minimum="0" Maximum="100"/>
-                                    <TextBlock Text="{Binding GainLed}"/>
+                                <UniformGrid Rows="1" IsEnabled="{Binding OffRecord}">
+                                    <TextBox Text="{Binding ExposureLed}"
+                                             materialDesign:HintAssist.Hint="Exp. (1~1000 ms)"
+                                             Tag="ExposureLed">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding ExposureLed}" Minimum="1" Maximum="1000" Margin="4"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="ExposureLed">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
                                 </UniformGrid>
+                                <GroupBox Header="Preset" IsEnabled="{Binding OffRecord}">
+                                    <UniformGrid Rows="2">
+                                        <UniformGrid.Resources>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="FontSize" Value="12"/>
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                <Setter Property="Margin" Value="8 0 8 0"/>
+                                            </Style>
+                                        </UniformGrid.Resources>
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding SystemConfig.LedPresetDictionary[Low]}">
+                                            <StackPanel>
+                                                <TextBlock Text="Low"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding SystemConfig.LedPresetDictionary[Medium]}">
+                                            <StackPanel>
+                                                <TextBlock Text="Medium"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding SystemConfig.LedPresetDictionary[High]}">
+                                            <StackPanel>
+                                                <TextBlock Text="High"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <TextBox Text="{Binding SystemConfig.LedPresetDictionary[Low]}"/>
+                                        <TextBox Text="{Binding SystemConfig.LedPresetDictionary[Medium]}"/>
+                                        <TextBox Text="{Binding SystemConfig.LedPresetDictionary[High]}"/>
+                                    </UniformGrid>
+                                </GroupBox>
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Header="Fluorescence ch1.">
                             <StackPanel>
-                                <UniformGrid>
+                                <UniformGrid Rows="1">
                                     <Button Command="{Binding On660Command}" IsEnabled="{Binding On660, Converter={StaticResource BooleanInverter}}">
                                         <StackPanel>
                                             <TextBlock Text="On"/>
@@ -122,28 +187,93 @@
                                             <TextBlock Text="Off"/>
                                         </StackPanel>
                                     </Button>
-                                    <TextBox Text="{Binding Value660, StringFormat={}{0:0.000}}"
-                                             materialDesign:HintAssist.Hint="Ampere (0 ~ 1.5A)"/>
-                                    <Button Command="{Binding Set660Command}">
+                                </UniformGrid>
+                                <UniformGrid Columns="3">
+                                    <TextBox materialDesign:HintAssist.Hint="Ampere (0 ~ 1.5A)"
+                                             Text="{Binding Value660, StringFormat={}{0:0.000}}"
+                                             Tag="Value660">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding Value660}" Minimum="0" Maximum="1.5" Margin="4"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Value660">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <TextBox Text="{Binding Gain660}"
+                                             materialDesign:HintAssist.Hint="Gain (x0 ~ x100)"
+                                             Tag="Gain660">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding Gain660}" Minimum="0" Maximum="100"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Gain660">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
-                                <UniformGrid Columns="3">
-                                    <TextBlock Text="Exp"/>
-                                    <Slider Value="{Binding Exposure660}" Minimum="1" Maximum="16"/>
-                                    <TextBlock Text="{Binding Exposure660}"/>
-                                    <TextBlock Text="Gain"/>
-                                    <Slider Value="{Binding Gain660}" Minimum="0" Maximum="100"/>
-                                    <TextBlock Text="{Binding Gain660}"/>
+                                <UniformGrid Rows="1" IsEnabled="{Binding OffRecord}">
+                                    <TextBox Text="{Binding Exposure660}"
+                                             materialDesign:HintAssist.Hint="Exp. (1~1000 ms)"
+                                             Tag="Exposure660">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding Exposure660}" Minimum="1" Maximum="1000" Margin="4"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Exposure660">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
                                 </UniformGrid>
+                                <GroupBox Header="Preset" IsEnabled="{Binding OffRecord}">
+                                    <UniformGrid Rows="2">
+                                        <UniformGrid.Resources>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="FontSize" Value="12"/>
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                <Setter Property="Margin" Value="8 0 8 0"/>
+                                            </Style>
+                                        </UniformGrid.Resources>
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L660][Low]}">
+                                            <StackPanel>
+                                                <TextBlock Text="Low"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L660][Medium]}">
+                                            <StackPanel>
+                                                <TextBlock Text="Medium"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L660][High]}">
+                                            <StackPanel>
+                                                <TextBlock Text="High"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L660][Low]}"/>
+                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L660][Medium]}"/>
+                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L660][High]}"/>
+                                    </UniformGrid>
+                                </GroupBox>
                             </StackPanel>
                         </GroupBox>
 
-                        <GroupBox Header="Fluorescence ch1.">
+                        <GroupBox Header="Fluorescence ch2.">
                             <StackPanel>
-                                <UniformGrid>
+                                <UniformGrid Rows="1">
                                     <Button Command="{Binding On760Command}" IsEnabled="{Binding On760, Converter={StaticResource BooleanInverter}}">
                                         <StackPanel>
                                             <TextBlock Text="On"/>
@@ -154,22 +284,87 @@
                                             <TextBlock Text="Off"/>
                                         </StackPanel>
                                     </Button>
-                                    <TextBox Text="{Binding Value760, StringFormat={}{0:0.000}}"
-                                             materialDesign:HintAssist.Hint="Ampere (0 ~ 2.5A)"/>
-                                    <Button Command="{Binding Set760Command}">
+                                </UniformGrid>
+                                <UniformGrid Columns="3">
+                                    <TextBox materialDesign:HintAssist.Hint="Ampere (0 ~ 2.5A)"
+                                             Text="{Binding Value760, StringFormat={}{0:0.000}}"
+                                             Tag="Value760">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding Value760}" Minimum="0" Maximum="2.5" Margin="4"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Value760">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <TextBox Text="{Binding Gain760}"
+                                             materialDesign:HintAssist.Hint="Gain (x0 ~ x100)"
+                                             Tag="Gain760">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding Gain760}" Minimum="0" Maximum="100"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Gain760">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
-                                <UniformGrid Columns="3">
-                                    <TextBlock Text="Exp"/>
-                                    <Slider Value="{Binding Exposure760}" Minimum="1" Maximum="16"/>
-                                    <TextBlock Text="{Binding Exposure760}"/>
-                                    <TextBlock Text="Gain"/>
-                                    <Slider Value="{Binding Gain760}" Minimum="0" Maximum="100"/>
-                                    <TextBlock Text="{Binding Gain760}"/>
+                                <UniformGrid Rows="1" IsEnabled="{Binding OffRecord}">
+                                    <TextBox Text="{Binding Exposure760}"
+                                             materialDesign:HintAssist.Hint="Exp. (1~1000 ms)"
+                                             Tag="Exposure760">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="KeyDown">
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                    <Slider Value="{Binding Exposure760}" Minimum="1" Maximum="1000" Margin="4"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Exposure760">
+                                        <StackPanel>
+                                            <TextBlock Text="Set"/>
+                                        </StackPanel>
+                                    </Button>
                                 </UniformGrid>
+                                <GroupBox Header="Preset" IsEnabled="{Binding OffRecord}">
+                                    <UniformGrid Rows="2">
+                                        <UniformGrid.Resources>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="FontSize" Value="12"/>
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                <Setter Property="Margin" Value="8 0 8 0"/>
+                                            </Style>
+                                        </UniformGrid.Resources>
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L760][Low]}">
+                                            <StackPanel>
+                                                <TextBlock Text="Low"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L760][Medium]}">
+                                            <StackPanel>
+                                                <TextBlock Text="Medium"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L760][High]}">
+                                            <StackPanel>
+                                                <TextBlock Text="High"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L760][Low]}"/>
+                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L760][Medium]}"/>
+                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L760][High]}"/>
+                                    </UniformGrid>
+                                </GroupBox>
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
@@ -195,17 +390,20 @@
                                         </StackPanel>
                                     </RadioButton>
                                 </UniformGrid>
-                                <UniformGrid Rows="1">
+                                <UniformGrid Rows="1" Columns="3" IsEnabled="{Binding On660Manual}">
                                     <TextBox Text="{Binding Threshold660}"
                                              materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
-                                             IsEnabled="{Binding On660Manual}">
+                                             Tag="Threshold660">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="KeyDown">
-                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="On660KeyDown"/>
+                                                <i:InvokeCommandAction Command="{Binding TextChangedCommand}" 
+                                                                CommandParameter="{Binding ElementName=filterBox, Path=Text}"/>
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </TextBox>
-                                    <Button Command="{Binding Set660ManualCommand}" IsEnabled="{Binding On660Manual}">
+                                    <Slider Margin="4" Value="{Binding Threshold660}" Maximum="255"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Threshold660">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
                                         </StackPanel>
@@ -232,17 +430,18 @@
                                         </StackPanel>
                                     </RadioButton>
                                 </UniformGrid>
-                                <UniformGrid Rows="1">
+                                <UniformGrid IsEnabled="{Binding On760Manual}" Rows="1" Columns="3">
                                     <TextBox Text="{Binding Threshold760}"
                                              materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
-                                             IsEnabled="{Binding On760Manual}">
+                                             Tag="Threshold760">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="KeyDown">
-                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="On760KeyDown"/>
+                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </TextBox>
-                                    <Button Command="{Binding Set760ManualCommand}" IsEnabled="{Binding On760Manual}">
+                                    <Slider Margin="4" Value="{Binding Threshold760}" Maximum="255"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Threshold760">
                                         <StackPanel>
                                             <TextBlock Text="Set"/>
                                         </StackPanel>

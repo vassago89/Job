@@ -28,6 +28,8 @@ namespace FIAT_Project.Core.Service
         public int Height => _imageDevice.Height;
         public int Channels => _imageDevice.Channels;
 
+        public Action<bool> GrabbingStarted;
+
         private byte[][] _buffers;
 
         public GrabService(SystemConfig systemConfig)
@@ -74,12 +76,16 @@ namespace FIAT_Project.Core.Service
         {
             foreach (var imageDevice in _gateway.ImageDevices)
                 imageDevice.ContinuousGrab();
+
+            GrabbingStarted?.Invoke(true);
         }
 
         public void Stop()
         {
             foreach (var imageDevice in _gateway.ImageDevices)
                 imageDevice.Stop();
+
+            GrabbingStarted?.Invoke(false);
         }
     }
 }

@@ -30,6 +30,8 @@
                     <TextBox Text="{Binding SystemConfig.RecordPath}"/>
                     <TextBlock Text="Recording Frame"/>
                     <TextBox Text="{Binding SystemConfig.RecodingFrame}"/>
+                    <TextBlock Text="Frame Ratio"/>
+                    <TextBox Text="{Binding SystemConfig.FrameRatio}"/>
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">

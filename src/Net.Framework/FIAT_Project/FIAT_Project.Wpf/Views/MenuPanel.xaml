@@ -21,6 +21,9 @@
                             <Setter Property="Margin" Value="8 0 0 0"/>
                         </Style>
                     </StackPanel.Resources>
+                    <GroupBox Header="State" Width="150">
+                        <TextBlock Text="{Binding State}" TextAlignment="Center" VerticalAlignment="Center" FontSize="18" Background="{Binding StateBrush}"/>
+                    </GroupBox>
                     <GroupBox Header="Frame Rate">
                         <TextBlock Text="{Binding FrameRate, StringFormat={}{0:0.00} fps}"/>
                     </GroupBox>

@@ -53,9 +53,7 @@
                             <views:ImageControl ImageIndex="2" Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
                         </GroupBox>
                     </UniformGrid>
-                    <Border BorderBrush="Yellow" BorderThickness="5" CornerRadius="5" Visibility="{Binding RecordingStarted, Converter={StaticResource BoolToVisibleConverter}}">
-                        <TextBlock Text="Recording..." Foreground="Yellow" FontSize="64" />
-                    </Border>
+                    
                 </Grid>
             </DockPanel>
         </Grid>

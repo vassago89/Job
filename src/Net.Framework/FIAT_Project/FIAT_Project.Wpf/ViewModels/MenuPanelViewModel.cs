@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace FIAT_Project.Wpf.ViewModels
 {
@@ -62,10 +63,32 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SetProperty(ref _frameRate, value);
         }
 
-        public MenuPanelViewModel(StateService stateService, GrabService grabService)
+        private string _state;
+        public string State
+        {
+            get => _state;
+            set => SetProperty(ref _state, value);
+        }
+
+        private Brush _stateBrush; 
+        public Brush StateBrush
+        {
+            get => _stateBrush;
+            set => SetProperty(ref _stateBrush, value);
+        }
+
+        public MenuPanelViewModel(StateService stateService, GrabService grabService, RecordService recordService)
         {
             try
             {
+                State = "Idle";
+                var brush = new SolidColorBrush(Colors.LightGray);
+                brush.Freeze();
+                StateBrush = brush;
+
+                grabService.GrabbingStarted += GrabbingStarted;
+                recordService.RecordingStarted += RecordingStarted;
+
                 SettingCommand = new DelegateCommand(async () =>
                 {
                     var view = new SettingDialog();
@@ -108,7 +131,23 @@ namespace FIAT_Project.Wpf.ViewModels
                 MessageBox.Show(e.Message);
                 MessageBox.Show(e.StackTrace);
             }
-}
+        }
+
+        private void GrabbingStarted(bool state)
+        {
+            State = state ? "Run" : "Idle";
+            var brush = new SolidColorBrush(state ? Colors.LimeGreen : Colors.LightGray);
+            brush.Freeze();
+            StateBrush = brush;
+        }
+
+        private void RecordingStarted(bool state)
+        {
+            State = state ? "Recoding" : "Run";
+            var brush = new SolidColorBrush(state ? Colors.Yellow : Colors.LimeGreen);
+            brush.Freeze();
+            StateBrush = brush;
+        }
 
         private async void ShowWorkListDialog()
         {

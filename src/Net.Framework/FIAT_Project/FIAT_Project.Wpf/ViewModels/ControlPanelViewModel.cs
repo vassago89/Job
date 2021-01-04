@@ -340,7 +340,21 @@ namespace FIAT_Project.Wpf.ViewModels
         public DelegateCommand<int?> PresetLedCommand { get; }
         public DelegateCommand<int?> Preset660Command { get; }
         public DelegateCommand<int?> Preset760Command { get; }
-        
+
+        private bool _onBinaryMode;
+        public bool OnBinaryMode
+        {
+            get => _onBinaryMode;
+            set => SetProperty(ref _onBinaryMode, value);
+        }
+
+        private bool _onGrayMode;
+        public bool OnGrayMode
+        {
+            get => _onGrayMode;
+            set => SetProperty(ref _onGrayMode, value);
+        }
+
         public ControlPanelViewModel(
             GrabService grabService,
             ProcessService processService,
@@ -351,6 +365,9 @@ namespace FIAT_Project.Wpf.ViewModels
         {
             try
             {
+                OnBinaryMode = systemConfig.ThresholdMode == EThresholdMode.BinaryMode;
+                OnGrayMode = systemConfig.ThresholdMode == EThresholdMode.GrayMode;
+
                 _captureService = captureService;
                 _processService = processService;
                 _protocolService = protocolService;

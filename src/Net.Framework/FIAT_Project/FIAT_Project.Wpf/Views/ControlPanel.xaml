@@ -9,9 +9,9 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.Resources>
-           
             <conveters:BooleanInverter x:Key="BooleanInverter"/>
             <conveters:AllBooleanConverter x:Key="AllBooleanConverter"/>
+            <conveters:BoolToVisibleConverter x:Key="BooleanToVisibilityConverter"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -371,7 +371,15 @@
                 </Expander>
                 <Expander Header="Processing">
                     <StackPanel>
-                        <GroupBox Header="Fluorescence ch1.">
+                        <!--<UniformGrid Rows="1">
+                            <RadioButton IsChecked="{Binding OnGrayMode}">
+                                <TextBlock Text="Gray Mode"/>
+                            </RadioButton>
+                            <RadioButton IsChecked="{Binding OnBinaryMode}">
+                                <TextBlock Text="Binary Mode"/>
+                            </RadioButton>
+                        </UniformGrid>-->
+                        <GroupBox Header="Fluorescence ch1." Visibility="{Binding OnBinaryMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
                                 <UniformGrid Columns="3">
                                     <RadioButton IsChecked="True">
@@ -411,7 +419,7 @@
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="Fluorescence ch2.">
+                        <GroupBox Header="Fluorescence ch2." Visibility="{Binding OnBinaryMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
                                 <UniformGrid Columns="3">
                                     <RadioButton IsChecked="True">

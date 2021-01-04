@@ -24,6 +24,8 @@ namespace FIAT_Project.Core.Service
         private Dictionary<ELazer, byte[]> _maskDictionary;
         private Dictionary<ELazer, byte[]> _bufferDictionary;
 
+        private Dictionary<ELazer, MatroxMultiplyProcesser> _multiplyProcesserDictionary;
+        private MatroxMultiplyProcesser _mergeMultiplyProcesser;
         private byte[] _mergedBuffer;
 
         public ProcessService(GrabService grabService, SystemConfig systemConfig)
@@ -45,6 +47,12 @@ namespace FIAT_Project.Core.Service
             _bufferDictionary[ELazer.L760] = new byte[grabService.Width * grabService.Height];
 
             _mergedBuffer = new byte[grabService.Width * grabService.Height * 3];
+
+            //_multiplyProcesserDictionary = new Dictionary<ELazer, MatroxMultiplyProcesser>();
+            //_multiplyProcesserDictionary[ELazer.L660] = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, 1, 1, 2, 2, 2);
+            //_multiplyProcesserDictionary[ELazer.L760] = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, 1, 1, 2, 2, 2);
+
+            //_mergeMultiplyProcesser = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, )
         }
 
         public void SetCoefficient(float red, float green, float blue)
@@ -145,11 +153,6 @@ namespace FIAT_Project.Core.Service
 
             return binaryData;
         }
-
-        //private byte[] Multiply(ELazer lazer, byte[] data, int width, int height)
-        //{
-
-        //}
 
         private byte[] Threshold(ELazer lazer, byte[] data, int width, int height, long[] histo)
         {

@@ -12,11 +12,15 @@ namespace FIAT_Project.Core.Service
 {
     public class ProtocolService
     {
-        public SerialDevice _lazerDevice;
-        public SerialDevice _grabberDevice;
+        private SerialDevice _lazerDevice;
+        private SerialDevice _grabberDevice;
+
+        private SystemConfig _systemConfig;
 
         public ProtocolService(SystemConfig systemConfig)
         {
+            _systemConfig = systemConfig;
+
             var lazerDeviceInfo = new SerialDeviceInfo()
             {
                 BaudRate = 9600,
@@ -210,7 +214,7 @@ namespace FIAT_Project.Core.Service
 
         public void SetFrameRate(double frameRate)
         {
-            var buffer = Encoding.UTF8.GetBytes($"frame {1000000 / frameRate}\r");
+            var buffer = Encoding.UTF8.GetBytes($"frame {1000000 / frameRate / _systemConfig.FrameRatio}\r");
             _grabberDevice?.Write(buffer, buffer.Length);
 
             Thread.Sleep(10);

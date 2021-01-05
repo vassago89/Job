@@ -66,6 +66,10 @@ namespace FIAT_Project.Core
         public int RecodingFrame { get; set; }
         public int FrameRatio { get; set; }
         
+        public double RatioColor { get; set; }
+        public double Ratio660 { get; set; }
+        public double Ratio760 { get; set; }
+
         public SystemConfig()
         {
             LazerProtocolPort = "COM6";
@@ -173,6 +177,10 @@ namespace FIAT_Project.Core
 
             RecodingFrame = 15;
             FrameRatio = 2;
+
+            RatioColor = 1;
+            Ratio660 = 1;
+            Ratio760 = 1;
         }
     }
 }

@@ -23,8 +23,7 @@ namespace FIAT_Project.Core.Service
 
         private Dictionary<ELazer, byte[]> _maskDictionary;
         private Dictionary<ELazer, byte[]> _bufferDictionary;
-
-        private Dictionary<ELazer, MatroxMultiplyProcesser> _multiplyProcesserDictionary;
+        
         private MatroxMultiplyProcesser _mergeMultiplyProcesser;
         private byte[] _mergedBuffer;
 
@@ -53,6 +52,11 @@ namespace FIAT_Project.Core.Service
             //_multiplyProcesserDictionary[ELazer.L760] = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, 1, 1, 2, 2, 2);
 
             //_mergeMultiplyProcesser = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, )
+
+            _mergeMultiplyProcesser =
+                new MatroxMultiplyProcesser(
+                    grabService.Width,
+                    grabService.Height, 0, 1);
         }
 
         public void SetCoefficient(float red, float green, float blue)
@@ -70,12 +74,28 @@ namespace FIAT_Project.Core.Service
             datas[0] = _bayerProcessor.Process(datas[0]);
 
             Array.Clear(_mergedBuffer, 0, _mergedBuffer.Length);
-
+             
             if (_systemConfig.UseDictionary[ELazer.L660] == true)
-                datas[1] = Process(ELazer.L660, datas[1], width, height);
+            {
+                StatisticsProcess(ELazer.L660, datas[1]);
+
+                if (_systemConfig.ThresholdMode == EThresholdMode.BinaryMode)
+                    datas[1] = BinaryProcess(ELazer.L660, datas[1], width, height);
+            }
 
             if (_systemConfig.UseDictionary[ELazer.L760] == true)
-                datas[2] = Process(ELazer.L760, datas[2], width, height);
+            {
+                StatisticsProcess(ELazer.L760, datas[2]);
+
+                if (_systemConfig.ThresholdMode == EThresholdMode.BinaryMode)
+                    datas[2] = BinaryProcess(ELazer.L760, datas[2], width, height);
+            }
+
+            if (_systemConfig.ThresholdMode == EThresholdMode.GrayMode)
+            {
+                var buffer = _mergeMultiplyProcesser.Multiply(datas[0], datas[1], datas[2], _systemConfig.RatioColor, _systemConfig.Ratio660, _systemConfig.Ratio760);
+                Array.Copy(buffer, _mergedBuffer, _mergedBuffer.Length);
+            }
 
             var mergeDatas = new byte[][] { datas[0], datas[1], datas[2], _mergedBuffer };
 
@@ -96,19 +116,12 @@ namespace FIAT_Project.Core.Service
             Processed?.Invoke(width, height, mergeDatas);
         }
 
-        private byte[] Process(ELazer lazer, byte[] data, int width, int height)
+        private byte[] BinaryProcess(ELazer lazer, byte[] data, int width, int height)
         {
             var histo = _autoThresholder.GetHistogram(data);
 
-            switch (_systemConfig.ThresholdMode)
-            {
-                case EThresholdMode.GrayMode:
-                    break;
-                case EThresholdMode.BinaryMode:
-                    data = Threshold(lazer, data, width, height, histo);
-                    Merge(lazer, data, _mergedBuffer, width * height, lazer == ELazer.L660 ? 0 : 1);
-                    break;
-            }
+            data = Threshold(lazer, data, width, height, histo);
+            Merge(lazer, data, _mergedBuffer, width * height, lazer == ELazer.L660 ? 0 : 1);
 
             return data;
         }
@@ -154,16 +167,8 @@ namespace FIAT_Project.Core.Service
             return binaryData;
         }
 
-        private byte[] Threshold(ELazer lazer, byte[] data, int width, int height, long[] histo)
+        private void StatisticsProcess(ELazer lazer, byte[] data)
         {
-            var dataOfSource = data;
-            var srcRect = new Rectangle(0, 0, width, height);
-
-            if (_systemConfig.AutoDictionary[lazer] == true)
-                dataOfSource = AutoThreshold(lazer, dataOfSource, histo, _systemConfig.MethodDictionary[lazer]);
-            else if (_systemConfig.ManualDictionary[lazer] == true)
-                dataOfSource = Threshold(lazer,dataOfSource, _systemConfig.ThresholdDictionary[lazer]);
-
             if (_systemConfig.OnROIDictionary[lazer])
             {
                 if (_systemConfig.OnROIChangedDictionary[lazer])
@@ -184,11 +189,25 @@ namespace FIAT_Project.Core.Service
                             break;
                     }
                 }
-
-                histo = _autoThresholder.GetHistogram(data, _maskDictionary[lazer]);
+                HistoProcessed?.Invoke(lazer, _autoThresholder.GetHistogram(data, _maskDictionary[lazer]));
             }
+            else
+            {
+                HistoProcessed?.Invoke(lazer, _autoThresholder.GetHistogram(data));
+            }
+        }
 
-            HistoProcessed?.Invoke(lazer, histo);
+        private byte[] Threshold(ELazer lazer, byte[] data, int width, int height, long[] histo)
+        {
+            var dataOfSource = data;
+            var srcRect = new Rectangle(0, 0, width, height);
+
+            if (_systemConfig.AutoDictionary[lazer] == true)
+                dataOfSource = AutoThreshold(lazer, dataOfSource, histo, _systemConfig.MethodDictionary[lazer]);
+            else if (_systemConfig.ManualDictionary[lazer] == true)
+                dataOfSource = Threshold(lazer,dataOfSource, _systemConfig.ThresholdDictionary[lazer]);
+
+            
 
             return dataOfSource;
         }

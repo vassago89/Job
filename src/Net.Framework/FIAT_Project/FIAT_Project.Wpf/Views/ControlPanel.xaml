@@ -152,24 +152,24 @@
                                                 <Setter Property="Margin" Value="8 0 8 0"/>
                                             </Style>
                                         </UniformGrid.Resources>
-                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding SystemConfig.LedPresetDictionary[Low]}">
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.Low}">
                                             <StackPanel>
                                                 <TextBlock Text="Low"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding SystemConfig.LedPresetDictionary[Medium]}">
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.Medium}">
                                             <StackPanel>
                                                 <TextBlock Text="Medium"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding SystemConfig.LedPresetDictionary[High]}">
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.High}">
                                             <StackPanel>
                                                 <TextBlock Text="High"/>
                                             </StackPanel>
                                         </Button>
-                                        <TextBox Text="{Binding SystemConfig.LedPresetDictionary[Low]}"/>
-                                        <TextBox Text="{Binding SystemConfig.LedPresetDictionary[Medium]}"/>
-                                        <TextBox Text="{Binding SystemConfig.LedPresetDictionary[High]}"/>
+                                        <TextBox Text="{Binding PrsetLed.Low}"/>
+                                        <TextBox Text="{Binding PrsetLed.Medium}"/>
+                                        <TextBox Text="{Binding PrsetLed.High, Mode=TwoWay}"/>
                                     </UniformGrid>
                                 </GroupBox>
                             </StackPanel>
@@ -248,24 +248,24 @@
                                                 <Setter Property="Margin" Value="8 0 8 0"/>
                                             </Style>
                                         </UniformGrid.Resources>
-                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L660][Low]}">
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.Low}">
                                             <StackPanel>
                                                 <TextBlock Text="Low"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L660][Medium]}">
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.Medium}">
                                             <StackPanel>
                                                 <TextBlock Text="Medium"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L660][High]}">
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.High}">
                                             <StackPanel>
                                                 <TextBlock Text="High"/>
                                             </StackPanel>
                                         </Button>
-                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L660][Low]}"/>
-                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L660][Medium]}"/>
-                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L660][High]}"/>
+                                        <TextBox Text="{Binding Prset660.Low}"/>
+                                        <TextBox Text="{Binding Prset660.Medium}"/>
+                                        <TextBox Text="{Binding Prset660.High}"/>
                                     </UniformGrid>
                                 </GroupBox>
                             </StackPanel>
@@ -345,24 +345,24 @@
                                                 <Setter Property="Margin" Value="8 0 8 0"/>
                                             </Style>
                                         </UniformGrid.Resources>
-                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L760][Low]}">
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.Low}">
                                             <StackPanel>
                                                 <TextBlock Text="Low"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L760][Medium]}">
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.Medium}">
                                             <StackPanel>
                                                 <TextBlock Text="Medium"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding SystemConfig.LazerPresetDictionary[L760][High]}">
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.High}">
                                             <StackPanel>
                                                 <TextBlock Text="High"/>
                                             </StackPanel>
                                         </Button>
-                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L760][Low]}"/>
-                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L760][Medium]}"/>
-                                        <TextBox Text="{Binding SystemConfig.LazerPresetDictionary[L760][High]}"/>
+                                        <TextBox Text="{Binding Prset760.Low}"/>
+                                        <TextBox Text="{Binding Prset760.Medium}"/>
+                                        <TextBox Text="{Binding Prset760.High}"/>
                                     </UniformGrid>
                                 </GroupBox>
                             </StackPanel>
@@ -371,14 +371,21 @@
                 </Expander>
                 <Expander Header="Processing">
                     <StackPanel>
-                        <!--<UniformGrid Rows="1">
+                        <UniformGrid Rows="1">
                             <RadioButton IsChecked="{Binding OnGrayMode}">
                                 <TextBlock Text="Gray Mode"/>
                             </RadioButton>
                             <RadioButton IsChecked="{Binding OnBinaryMode}">
                                 <TextBlock Text="Binary Mode"/>
                             </RadioButton>
-                        </UniformGrid>-->
+                        </UniformGrid>
+                        <GroupBox Header="Channel Ratio" Visibility="{Binding OnGrayMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <UniformGrid Columns="3" Rows="1">
+                                <TextBox Text="{Binding SystemConfig.RatioColor, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Color"/>
+                                <TextBox Text="{Binding SystemConfig.Ratio660, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Fluorescence ch1."/>
+                                <TextBox Text="{Binding SystemConfig.Ratio760, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Fluorescence ch2."/>
+                            </UniformGrid>
+                        </GroupBox>
                         <GroupBox Header="Fluorescence ch1." Visibility="{Binding OnBinaryMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
                                 <UniformGrid Columns="3">

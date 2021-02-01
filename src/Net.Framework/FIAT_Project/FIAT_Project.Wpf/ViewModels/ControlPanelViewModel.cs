@@ -273,8 +273,8 @@ namespace FIAT_Project.Wpf.ViewModels
             get => _exposureLed;
             set
             {
-                if (value < 1 || value > 1000)
-                    return;
+                //if (value < 1 || value > 1000)
+                //    return;
 
                 SetProperty(ref _exposureLed, value);
                 SetExposure(ELazer.L660, true);
@@ -287,8 +287,8 @@ namespace FIAT_Project.Wpf.ViewModels
             get => _exposure660;
             set
             {
-                if (value < 1 || value > 1000)
-                    return;
+                //if (value < 1 || value > 1000)
+                //    return;
 
                 SetProperty(ref _exposure660, value);
                 SetExposure(ELazer.L660);
@@ -301,8 +301,8 @@ namespace FIAT_Project.Wpf.ViewModels
             get => _exposure760;
             set
             {
-                if (value < 1 || value > 1000)
-                    return;
+                //if (value < 1 || value > 1000)
+                //    return;
 
                 SetProperty(ref _exposure760, value);
                 SetExposure(ELazer.L760);
@@ -355,7 +355,8 @@ namespace FIAT_Project.Wpf.ViewModels
         public DelegateCommand SaveCommand { get; }
 
         public SystemConfig SystemConfig { get; }
-        
+
+        private GrabService _grabService;
         private ProcessService _processService;
         private ProtocolService _protocolService;
 
@@ -394,6 +395,7 @@ namespace FIAT_Project.Wpf.ViewModels
         public Preset Prset660 { get; }
         public Preset Prset760 { get; }
 
+        public SettingStore SettingStore { get; }
 
         public ControlPanelViewModel(
             GrabService grabService,
@@ -401,10 +403,14 @@ namespace FIAT_Project.Wpf.ViewModels
             ProtocolService protocolService, 
             RecordService recordService,
             CaptureService captureService,
+            SettingStore settingStore,
             SystemConfig systemConfig)
         {
             try
             {
+                SettingStore = settingStore;
+
+                _grabService = grabService;
                 _onBinaryMode = systemConfig.ThresholdMode == EThresholdMode.BinaryMode;
                 _onGrayMode = systemConfig.ThresholdMode == EThresholdMode.GrayMode;
 
@@ -469,12 +475,13 @@ namespace FIAT_Project.Wpf.ViewModels
 
                 RecordStartCommand = new DelegateCommand(() =>
                 {
-                    var maxExposure = Math.Max(SystemConfig.ExposureLed, Math.Max(SystemConfig.ExposureDictionary[ELazer.L660], SystemConfig.ExposureDictionary[ELazer.L760]));
+                    var maxExposure = Math.Max(SystemConfig.ExposureLed, Math.Max(Exposure660, Exposure760));
                     var frameRate = 1000.0 / maxExposure;
                     frameRate = Math.Min(SystemConfig.RecodingFrame, frameRate);
-                    _protocolService.SetFrameRate(SystemConfig.RecodingFrame);
-
+                    
+                    _protocolService.SetFrameRate(frameRate);
                     recordService.Start(frameRate);
+
                     OnRecord = true;
                     OffRecord = false;
                 });
@@ -482,7 +489,7 @@ namespace FIAT_Project.Wpf.ViewModels
                 RecordStopCommand = new DelegateCommand(() =>
                 {
                     recordService.Stop();
-                    _protocolService.SetFrameRate(60);
+                    _protocolService.SetFrameRate(100);
                     OnRecord = false;
                     OffRecord = true;
                 });
@@ -610,6 +617,11 @@ namespace FIAT_Project.Wpf.ViewModels
 
         private void SetExposure(ELazer lazer, bool isColor = false)
         {
+            var maxExposure = Math.Max(ExposureLed, Math.Max(SystemConfig.ExposureDictionary[ELazer.L660], SystemConfig.ExposureDictionary[ELazer.L760]));
+            var frameRate = 1000.0 / maxExposure;
+
+            _protocolService.SetFrameRate(frameRate);
+
             if (isColor)
             {
                 _protocolService.SetExposure(ExposureLed, ELazer.L660, true);
@@ -668,7 +680,8 @@ namespace FIAT_Project.Wpf.ViewModels
                 return;
 
             var tb = sender as System.Windows.Controls.TextBox;
-            if (byte.TryParse(tb.Text, out byte value))
+            
+            if (int.TryParse(tb.Text, out int value))
             {
                 switch (tb.Tag)
                 {
@@ -685,36 +698,30 @@ namespace FIAT_Project.Wpf.ViewModels
                         _protocolService.Set760(SystemConfig.ValueDictionary[ELazer.L760] * 1000);
                         break;
                     case "Threshold660":
-                        _threshold660 = value;
+                        _threshold660 = (byte)value;
                         SetManual(ELazer.L660);
                         break;
                     case "Threshold760":
-                        _threshold760 = value;
+                        _threshold760 = (byte)value;
                         SetManual(ELazer.L760);
                         break;
                     case "ExposureLed":
-                        _exposureLed = value;
-                        SetExposure(ELazer.L660, true);
+                        ExposureLed = value;
                         break;
                     case "Exposure660":
-                        _exposure660 = value;
-                        SetExposure(ELazer.L660);
+                        Exposure660 = value;
                         break;
                     case "Exposure760":
-                        _exposure760 = value;
-                        SetExposure(ELazer.L760);
+                        Exposure760 = value;
                         break;
                     case "GainLed":
-                        _gainLed = value;
-                        SetGain(ELazer.L660, true);
+                        GainLed = value;
                         break;
                     case "Gain660":
-                        _gain660 = value;
-                        SetGain(ELazer.L660);
+                        Gain660 = value;
                         break;
                     case "Gain760":
-                        _gain760 = value;
-                        SetGain(ELazer.L760);
+                        Gain760 = value;
                         break;
                 }
             }

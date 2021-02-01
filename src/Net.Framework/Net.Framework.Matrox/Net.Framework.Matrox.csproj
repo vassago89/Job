@@ -62,6 +62,10 @@
       <Project>{BD4D1EDE-AE9F-459B-BF31-0C8FE9808495}</Project>
       <Name>Net.Framework.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Net.Framework.Helper\Net.Framework.Helper.csproj">
+      <Project>{F4D74A38-9B1B-47BB-9ED2-3DF725C1C88B}</Project>
+      <Name>Net.Framework.Helper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

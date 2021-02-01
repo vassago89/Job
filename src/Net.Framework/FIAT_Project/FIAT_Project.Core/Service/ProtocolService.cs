@@ -104,6 +104,9 @@ namespace FIAT_Project.Core.Service
 
         public void Set660(double value)
         {
+            if (_systemConfig.UseDictionary[ELazer.L660] == false)
+                return;
+
             var buffer = new byte[8];
             
             buffer[0] = 0x55;
@@ -119,6 +122,9 @@ namespace FIAT_Project.Core.Service
 
         public void On660()
         {
+            if (_systemConfig.UseDictionary[ELazer.L660] == false)
+                return;
+
             var buffer = new byte[8];
             
             buffer[0] = 0x55;
@@ -134,6 +140,9 @@ namespace FIAT_Project.Core.Service
 
         public void Off660()
         {
+            if (_systemConfig.UseDictionary[ELazer.L660] == false)
+                return;
+
             var buffer = new byte[8];
             
             buffer[0] = 0x55;
@@ -149,6 +158,9 @@ namespace FIAT_Project.Core.Service
 
         public void Set760(double value)
         {
+            if (_systemConfig.UseDictionary[ELazer.L760] == false)
+                return;
+
             var buffer = new byte[8];
 
             buffer[0] = 0x55;
@@ -164,6 +176,9 @@ namespace FIAT_Project.Core.Service
 
         public void On760()
         {
+            if (_systemConfig.UseDictionary[ELazer.L760] == false)
+                return;
+
             var buffer = new byte[8];
             
             buffer[0] = 0x55;
@@ -179,6 +194,9 @@ namespace FIAT_Project.Core.Service
 
         public void Off760()
         {
+            if (_systemConfig.UseDictionary[ELazer.L760] == false)
+                return;
+
             var buffer = new byte[8];
             
             buffer[0] = 0x55;
@@ -194,14 +212,16 @@ namespace FIAT_Project.Core.Service
 
         public void SetExposure(int value, ELazer lazer, bool isLed = false)
         {
+            //SetFrameRate(1000.0 / value);
+
+            //Thread.Sleep(10);
+
             var chennel = isLed ? 'b' : lazer == ELazer.L660 ? 'g' : 'r';
 
-            var buffer = Encoding.UTF8.GetBytes($"exp {chennel} {value * 1000 / 2}\r");
+            var buffer = Encoding.UTF8.GetBytes($"exp {chennel} {value * 1000}\r");
             _grabberDevice?.Write(buffer, buffer.Length);
 
             Thread.Sleep(10);
-
-            SetFrameRate(60);
         }
 
         public void SetGain(int value, ELazer lazer, bool isLed = false)
@@ -214,7 +234,7 @@ namespace FIAT_Project.Core.Service
 
         public void SetFrameRate(double frameRate)
         {
-            var buffer = Encoding.UTF8.GetBytes($"frame {1000000 / frameRate / _systemConfig.FrameRatio}\r");
+            var buffer = Encoding.UTF8.GetBytes($"frame {1000000 / frameRate}\r");
             _grabberDevice?.Write(buffer, buffer.Length);
 
             Thread.Sleep(10);

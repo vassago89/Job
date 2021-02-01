@@ -18,6 +18,10 @@
             <TextBlock Text="Setting" Margin="8"/>
             <GroupBox Header="Common" Grid.Row="1">
                 <UniformGrid Columns="2">
+                    <TextBlock Text="Use 660"/>
+                    <CheckBox IsChecked="{Binding SettingStore.Use660}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="Use 760"/>
+                    <CheckBox IsChecked="{Binding SettingStore.Use760}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBlock Text="Lazer Port"/>
                     <ComboBox SelectedItem="{Binding SystemConfig.LazerProtocolPort}" ItemsSource="{Binding Ports}"/>
                     <TextBlock Text="Grabber Port"/>
@@ -30,8 +34,8 @@
                     <TextBox Text="{Binding SystemConfig.RecordPath}"/>
                     <TextBlock Text="Recording Frame"/>
                     <TextBox Text="{Binding SystemConfig.RecodingFrame}"/>
-                    <TextBlock Text="Frame Ratio"/>
-                    <TextBox Text="{Binding SystemConfig.FrameRatio}"/>
+                    <!--<TextBlock Text="Frame Ratio"/>
+                    <TextBox Text="{Binding SystemConfig.FrameRatio}"/>-->
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">

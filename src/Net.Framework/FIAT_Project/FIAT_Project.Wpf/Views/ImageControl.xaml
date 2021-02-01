@@ -18,8 +18,12 @@
         <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter"/>
     </UserControl.Resources>
     <Grid>
-        <Grid ClipToBounds="True">
-            <Canvas>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid ClipToBounds="True" Margin="0 0 0 12">
+            <Border Background="Black" BorderThickness="0">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Loaded">
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnLoaded"/>
@@ -46,16 +50,17 @@
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseMove"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <Canvas.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="{Binding ZoomService.Scale}" ScaleY="{Binding ZoomService.Scale}"/>
-                        <TranslateTransform X="{Binding ZoomService.TranslateX}" Y="{Binding ZoomService.TranslateY}"/>
-                    </TransformGroup>
-                </Canvas.RenderTransform>
-                <Image Source="{Binding Source}"/>
-                <Canvas Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}">
-                    <Canvas Visibility="{Binding IsSetROI, Converter={StaticResource BoolToVisibleConverter}}">
-                        <Rectangle StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                <Canvas>
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding ZoomService.Scale}" ScaleY="{Binding ZoomService.Scale}"/>
+                            <TranslateTransform X="{Binding ZoomService.TranslateX}" Y="{Binding ZoomService.TranslateY}"/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <Image Source="{Binding Source}"/>
+                    <Canvas Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}">
+                        <Canvas Visibility="{Binding IsSetROI, Converter={StaticResource BoolToVisibleConverter}}">
+                            <Rectangle StrokeThickness="{Binding ZoomService.OverlayThickness}"
                                     Stroke="Yellow"
                                     StrokeDashArray="2 2"
                                     Canvas.Left="{Binding SetRectROI.X}"
@@ -63,7 +68,7 @@
                                     Width="{Binding SetRectROI.Width}"
                                     Height="{Binding SetRectROI.Height}"
                                     Visibility="{Binding IsRectangle, Converter={StaticResource BoolToVisibleConverter}}"/>
-                        <Ellipse StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                            <Ellipse StrokeThickness="{Binding ZoomService.OverlayThickness}"
                                     Stroke="Yellow"
                                     StrokeDashArray="2 2"
                                     Canvas.Left="{Binding SetRectROI.X}"
@@ -71,35 +76,38 @@
                                     Width="{Binding SetRectROI.Width}"
                                     Height="{Binding SetRectROI.Height}"
                                     Visibility="{Binding IsEllipse, Converter={StaticResource BoolToVisibleConverter}}"/>
-                        <Polygon StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                            <Polygon StrokeThickness="{Binding ZoomService.OverlayThickness}"
                                     Stroke="Yellow"
                                     StrokeDashArray="2 2"
                                     Points="{Binding SetPolygonROI}"
                                     Visibility="{Binding IsPolygon, Converter={StaticResource BoolToVisibleConverter}}"/>
-                    </Canvas>
-                    <Canvas Visibility="{Binding OnROI, Converter={StaticResource BoolToVisibleConverter}}">
-                        <Rectangle StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                        </Canvas>
+                        <Canvas Visibility="{Binding OnROI, Converter={StaticResource BoolToVisibleConverter}}">
+                            <Rectangle StrokeThickness="{Binding ZoomService.OverlayThickness}"
                                     Stroke="Yellow"
                                     Canvas.Left="{Binding RectangleROI.X}"
                                     Canvas.Top="{Binding RectangleROI.Y}"
                                     Width="{Binding RectangleROI.Width}"
                                     Height="{Binding RectangleROI.Height}"
                                     Visibility="{Binding IsRectangle, Converter={StaticResource BoolToVisibleConverter}}"/>
-                        <Ellipse StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                            <Ellipse StrokeThickness="{Binding ZoomService.OverlayThickness}"
                                     Stroke="Yellow"
                                     Canvas.Left="{Binding EllipseROI.X}"
                                     Canvas.Top="{Binding EllipseROI.Y}"
                                     Width="{Binding EllipseROI.Width}"
                                     Height="{Binding EllipseROI.Height}"
                                     Visibility="{Binding IsEllipse, Converter={StaticResource BoolToVisibleConverter}}"/>
-                        <Polygon StrokeThickness="{Binding ZoomService.OverlayThickness}"
+                            <Polygon StrokeThickness="{Binding ZoomService.OverlayThickness}"
                                     Stroke="Yellow"
                                     Points="{Binding PolygonROI}"
                                     Visibility="{Binding IsPolygon, Converter={StaticResource BoolToVisibleConverter}}"/>
+                        </Canvas>
                     </Canvas>
                 </Canvas>
-            </Canvas>
-            <ToolBar HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="16">
+            </Border>
+        </Grid>
+        <Border Grid.Row="1"  Margin="-6">
+            <ToolBar HorizontalAlignment="Right">
                 <CheckBox IsChecked="{Binding OnROI}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}">
                     <StackPanel>
                         <TextBlock Text="ROI"/>
@@ -126,6 +134,6 @@
                     </StackPanel>
                 </Button>
             </ToolBar>
-        </Grid>
+        </Border>
     </Grid>
 </UserControl>

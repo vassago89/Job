@@ -1,6 +1,7 @@
 ﻿using FIAT_Project.Core;
 using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
+using FIAT_Project.Wpf.Datas;
 using FIAT_Project.Wpf.Views;
 using Net.Framework.Device.Matrox;
 using Net.Framework.Matrox;
@@ -13,6 +14,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace FIAT_Project.Wpf
 {
@@ -23,6 +26,8 @@ namespace FIAT_Project.Wpf
     {
         protected override void OnInitialized()
         {
+            RenderOptions.ProcessRenderMode = RenderMode.Default;
+
             base.OnInitialized();
 
             var systemConfig = Container.Resolve<SystemConfig>();
@@ -32,13 +37,19 @@ namespace FIAT_Project.Wpf
             protocolService.Set660(systemConfig.ValueDictionary[ELazer.L660] * 1000.0);
             protocolService.Set760(systemConfig.ValueDictionary[ELazer.L760] * 1000.0);
 
-            protocolService.SetExposure(systemConfig.ExposureLed, ELazer.L660, true);
-            protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L660], ELazer.L660);
-            protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L760], ELazer.L760);
-
             protocolService.SetGain(systemConfig.GainLed, ELazer.L660, true);
             protocolService.SetGain(systemConfig.GainDictionary[ELazer.L660], ELazer.L660);
             protocolService.SetGain(systemConfig.GainDictionary[ELazer.L760], ELazer.L760);
+
+            var maxExp = Math.Max(systemConfig.ExposureLed,
+                Math.Max(systemConfig.ExposureDictionary[ELazer.L660],
+                systemConfig.ExposureDictionary[ELazer.L760]));
+
+            protocolService.SetFrameRate(1000.0 / maxExp);
+
+            protocolService.SetExposure(systemConfig.ExposureLed, ELazer.L660, true);
+            protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L660], ELazer.L660);
+            protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L760], ELazer.L760);
         }
         
         protected override Window CreateShell()
@@ -53,6 +64,7 @@ namespace FIAT_Project.Wpf
                 .RegisterSingleton<ProcessService>()
                 .RegisterSingleton<RecordService>()
                 .RegisterSingleton<ProtocolService>()
+                .RegisterSingleton<SettingStore>()
                 .RegisterInstance(SystemConfig.Load(Environment.CurrentDirectory));
             //throw new NotImplementedException();
         }

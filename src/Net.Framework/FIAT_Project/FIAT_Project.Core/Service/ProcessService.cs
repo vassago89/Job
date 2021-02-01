@@ -27,9 +27,12 @@ namespace FIAT_Project.Core.Service
         private MatroxMultiplyProcesser _mergeMultiplyProcesser;
         private byte[] _mergedBuffer;
 
+        private GrabService _grabService;
+
         public ProcessService(GrabService grabService, SystemConfig systemConfig)
         {
             _systemConfig = systemConfig;
+            _grabService = grabService;
 
             grabService.Grabbed += ServiceGrabbed;
 
@@ -45,7 +48,7 @@ namespace FIAT_Project.Core.Service
             _bufferDictionary[ELazer.L660] = new byte[grabService.Width * grabService.Height];
             _bufferDictionary[ELazer.L760] = new byte[grabService.Width * grabService.Height];
 
-            _mergedBuffer = new byte[grabService.Width * grabService.Height * 3];
+            //_mergedBuffer = new byte[grabService.Width * grabService.Height * 3];
 
             //_multiplyProcesserDictionary = new Dictionary<ELazer, MatroxMultiplyProcesser>();
             //_multiplyProcesserDictionary[ELazer.L660] = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, 1, 1, 2, 2, 2);
@@ -63,56 +66,63 @@ namespace FIAT_Project.Core.Service
         {
             _bayerProcessor.SetCoefficient(new float[] { red, green, blue });
         }
-
+        
         private void ServiceGrabbed(int width, int height, byte[][] datas)
         {
-            if (_systemConfig.OnAutoBayer)
-                _systemConfig.CoefficientValues = _bayerProcessor.GenerateCoefficient(datas[0]);
-            else
-                _bayerProcessor.SetCoefficient(_systemConfig.CoefficientValues);
+            var tasks = new List<Task>();
 
-            datas[0] = _bayerProcessor.Process(datas[0]);
-
-            Array.Clear(_mergedBuffer, 0, _mergedBuffer.Length);
-             
-            if (_systemConfig.UseDictionary[ELazer.L660] == true)
+            tasks.Add(Task.Run(() =>
             {
-                StatisticsProcess(ELazer.L660, datas[1]);
+                if (_systemConfig.OnAutoBayer)
+                    _systemConfig.CoefficientValues = _bayerProcessor.GenerateCoefficient(datas[0]);
+                else
+                    _bayerProcessor.SetCoefficient(_systemConfig.CoefficientValues);
 
-                if (_systemConfig.ThresholdMode == EThresholdMode.BinaryMode)
-                    datas[1] = BinaryProcess(ELazer.L660, datas[1], width, height);
-            }
+                datas[0] = _bayerProcessor.Process(datas[0]);
+            }));
+            
+            if (_systemConfig.UseDictionary[ELazer.L660] == true)
+                tasks.Add(Task.Run(() => StatisticsProcess(ELazer.L660, datas[1])));
 
             if (_systemConfig.UseDictionary[ELazer.L760] == true)
-            {
-                StatisticsProcess(ELazer.L760, datas[2]);
+                tasks.Add(Task.Run(() => StatisticsProcess(ELazer.L760, datas[2])));
 
-                if (_systemConfig.ThresholdMode == EThresholdMode.BinaryMode)
-                    datas[2] = BinaryProcess(ELazer.L760, datas[2], width, height);
+            _mergedBuffer = new byte[_grabService.Width * _grabService.Height * 3];
+
+            switch (_systemConfig.ThresholdMode)
+            {
+                case EThresholdMode.GrayMode:
+                    var buffer = _mergeMultiplyProcesser.Multiply(datas[0], datas[1], datas[2], _systemConfig.RatioColor, _systemConfig.Ratio660, _systemConfig.Ratio760);
+                    Array.Copy(buffer, _mergedBuffer, _mergedBuffer.Length);
+                    break;
+                case EThresholdMode.BinaryMode:
+                    if (_systemConfig.UseDictionary[ELazer.L660] == true)
+                        tasks.Add(Task.Run(() => datas[1] = BinaryProcess(ELazer.L660, datas[1], width, height)));
+
+                    if (_systemConfig.UseDictionary[ELazer.L760] == true)
+                        tasks.Add(Task.Run(() => datas[2] = BinaryProcess(ELazer.L760, datas[2], width, height)));
+
+                    Task.WaitAll(tasks.ToArray());
+                    tasks.Clear();
+
+                    var lengthOfOneChannel = width * height;
+                    for (int redIndex = 0, greenIndex = lengthOfOneChannel, blueIndex = lengthOfOneChannel * 2; redIndex < lengthOfOneChannel; redIndex++, greenIndex++, blueIndex++)
+                    {
+                        if (_mergedBuffer[redIndex] == 0 && _mergedBuffer[greenIndex] == 0)
+                        {
+                            _mergedBuffer[redIndex] = datas[0][redIndex];
+                            _mergedBuffer[greenIndex] = datas[0][greenIndex];
+                            _mergedBuffer[blueIndex] = datas[0][blueIndex];
+                        }
+                    }
+                    break;
             }
 
-            if (_systemConfig.ThresholdMode == EThresholdMode.GrayMode)
-            {
-                var buffer = _mergeMultiplyProcesser.Multiply(datas[0], datas[1], datas[2], _systemConfig.RatioColor, _systemConfig.Ratio660, _systemConfig.Ratio760);
-                Array.Copy(buffer, _mergedBuffer, _mergedBuffer.Length);
-            }
+            Task.WaitAll(tasks.ToArray());
 
             var mergeDatas = new byte[][] { datas[0], datas[1], datas[2], _mergedBuffer };
 
-            if (_systemConfig.ThresholdMode == EThresholdMode.BinaryMode)
-            {
-                var lengthOfOneChannel = width * height;
-                for (int redIndex = 0, greenIndex = lengthOfOneChannel, blueIndex = lengthOfOneChannel * 2; redIndex < lengthOfOneChannel; redIndex++, greenIndex++, blueIndex++)
-                {
-                    if (mergeDatas[3][redIndex] == 0 && mergeDatas[3][greenIndex] == 0)
-                    {
-                        mergeDatas[3][redIndex] = datas[0][redIndex];
-                        mergeDatas[3][greenIndex] = datas[0][greenIndex];
-                        mergeDatas[3][blueIndex] = datas[0][blueIndex];
-                    }
-                }
-            }
-
+            //Task.Run(() => Processed?.Invoke(width, height, mergeDatas));
             Processed?.Invoke(width, height, mergeDatas);
         }
 
@@ -189,6 +199,7 @@ namespace FIAT_Project.Core.Service
                             break;
                     }
                 }
+
                 HistoProcessed?.Invoke(lazer, _autoThresholder.GetHistogram(data, _maskDictionary[lazer]));
             }
             else
@@ -206,9 +217,7 @@ namespace FIAT_Project.Core.Service
                 dataOfSource = AutoThreshold(lazer, dataOfSource, histo, _systemConfig.MethodDictionary[lazer]);
             else if (_systemConfig.ManualDictionary[lazer] == true)
                 dataOfSource = Threshold(lazer,dataOfSource, _systemConfig.ThresholdDictionary[lazer]);
-
             
-
             return dataOfSource;
         }
     }

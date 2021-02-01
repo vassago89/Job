@@ -64,11 +64,12 @@ namespace FIAT_Project.Core
 
         public double ValueLed { get; set; }
         public int RecodingFrame { get; set; }
-        public int FrameRatio { get; set; }
         
         public double RatioColor { get; set; }
         public double Ratio660 { get; set; }
         public double Ratio760 { get; set; }
+
+        public ELazerMachineType LazerMachineType { get; set; }
 
         public SystemConfig()
         {
@@ -176,7 +177,6 @@ namespace FIAT_Project.Core
             LazerPresetDictionary[ELazer.L760][ESensitivity.High] = 15;
 
             RecodingFrame = 15;
-            FrameRatio = 2;
 
             RatioColor = 1;
             Ratio660 = 1;

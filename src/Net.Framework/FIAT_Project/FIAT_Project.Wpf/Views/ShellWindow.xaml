@@ -29,12 +29,12 @@
             <DockPanel
                 Grid.Row="1">
                 <views:ControlPanel DockPanel.Dock="Left"
-                                    Width="400"/>
-                <UniformGrid DockPanel.Dock="Bottom" Rows="1" Columns="2">
-                    <GroupBox Header="Fluorescence ch1. Statistics">
+                                    Width="425"/>
+                <UniformGrid DockPanel.Dock="Bottom" Rows="1" Columns="2" Height="200">
+                    <GroupBox Header="Fluorescence ch1. Statistics" IsEnabled="{Binding SettingStore.Use660}">
                         <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer660}"/>
                     </GroupBox>
-                    <GroupBox Header="Fluorescence ch2. Statistics">
+                    <GroupBox Header="Fluorescence ch2. Statistics" IsEnabled="{Binding SettingStore.Use760}">
                         <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer760}"/>
                     </GroupBox>
                 </UniformGrid>
@@ -46,10 +46,10 @@
                         <GroupBox Header="Merged">
                             <views:ImageControl ImageIndex="3"/>
                         </GroupBox>
-                        <GroupBox Header="Fluorescence ch1.">
+                        <GroupBox Header="Fluorescence ch1." IsEnabled="{Binding SettingStore.Use660}">
                             <views:ImageControl ImageIndex="1" Header="" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
                         </GroupBox>
-                        <GroupBox Header="Fluorescence ch2.">
+                        <GroupBox Header="Fluorescence ch2." IsEnabled="{Binding SettingStore.Use760}">
                             <views:ImageControl ImageIndex="2" Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
                         </GroupBox>
                     </UniformGrid>

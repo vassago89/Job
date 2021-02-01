@@ -78,7 +78,7 @@ namespace Net.Framework.Helper.Wpf.Services
             set
             {
                 SetValue(TranslateXProperty, value);
-                System.Diagnostics.Debug.WriteLine($"{value}");
+                //System.Diagnostics.Debug.WriteLine($"{value}");
             }
         }
 

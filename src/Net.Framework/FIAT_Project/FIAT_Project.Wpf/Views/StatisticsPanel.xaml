@@ -9,13 +9,27 @@
              xmlns:liveChart="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <liveChart:CartesianChart LegendLocation="None" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <UniformGrid Rows="1">
+            <TextBlock Text="Avg"/>
+            <TextBlock Text="{Binding AvgValue, StringFormat={}{0:0.0}}"/>
+            <TextBlock Text="Min"/>
+            <TextBlock Text="{Binding MinValue, StringFormat={}{0:0}}"/>
+            <TextBlock Text="Max"/>
+            <TextBlock Text="{Binding MaxValue, StringFormat={}{0:0}}"/>
+            <TextBlock Text="Std"/>
+            <TextBlock Text="{Binding StdDevValue, StringFormat={}{0:0.0}}"/>
+            <TextBlock Text="Scale"/>
+            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsAutoScale}"/>
+            <TextBlock Text="Log"/>
+            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsLogScale}"/>
+        </UniformGrid>
+        <liveChart:CartesianChart Grid.Row="1" LegendLocation="None" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
             <liveChart:CartesianChart.Series>
-                <liveChart:ColumnSeries Values="{Binding ChartValues}" ColumnPadding="1"/>
+                <liveChart:ColumnSeries Values="{Binding ChartValues}" ColumnPadding="0"/>
             </liveChart:CartesianChart.Series>
             <liveChart:CartesianChart.AxisX>
                 <liveChart:Axis MinValue="{Binding AxisMinValue}" MaxValue="{Binding AxisMaxValue}">
@@ -32,19 +46,5 @@
                 </liveChart:Axis>
             </liveChart:CartesianChart.AxisY>
         </liveChart:CartesianChart>
-        <UniformGrid Columns="2" Grid.Column="1">
-            <TextBlock Text="Avg"/>
-            <TextBlock Text="{Binding AvgValue, StringFormat={}{0:0.0}}"/>
-            <TextBlock Text="Min"/>
-            <TextBlock Text="{Binding MinValue, StringFormat={}{0:0}}"/>
-            <TextBlock Text="Max"/>
-            <TextBlock Text="{Binding MaxValue, StringFormat={}{0:0}}"/>
-            <TextBlock Text="Std"/>
-            <TextBlock Text="{Binding StdDevValue, StringFormat={}{0:0.0}}"/>
-            <TextBlock Text="Scale"/>
-            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsAutoScale}"/>
-            <TextBlock Text="Log"/>
-            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsLogScale}"/>
-        </UniformGrid>
     </Grid>
 </UserControl>

@@ -1,4 +1,5 @@
-﻿using Net.Framework.Data.ImageDatas;
+﻿using FIAT_Project.Core.Enums;
+using Net.Framework.Data.ImageDatas;
 using Net.Framework.Device.ImageDevices;
 using Net.Framework.Device.Matrox;
 using Net.Framework.Helper;
@@ -31,9 +32,11 @@ namespace FIAT_Project.Core.Service
         public Action<bool> GrabbingStarted;
 
         private byte[][] _buffers;
-
+        private SystemConfig _systemConfig;
         public GrabService(SystemConfig systemConfig)
         {
+            _systemConfig = systemConfig;
+
             MatroxApplicationHelper.Initilize();
             _gateway = new MatroxSystemGateway();
             _gateway.ImageGrabberInfos.Add(new MatroxImageGrabberInfo()

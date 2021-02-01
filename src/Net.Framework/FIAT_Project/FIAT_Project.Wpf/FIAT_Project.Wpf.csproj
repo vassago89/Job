@@ -126,6 +126,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datas\Preset.cs" />
+    <Compile Include="Datas\SettingStore.cs" />
     <Compile Include="ViewModels\ControlPanelViewModel.cs" />
     <Compile Include="ViewModels\ImageControlViewModel.cs" />
     <Compile Include="ViewModels\LoadingDialogViewModel.cs" />

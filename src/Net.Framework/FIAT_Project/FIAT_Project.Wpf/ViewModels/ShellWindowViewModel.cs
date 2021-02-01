@@ -1,5 +1,6 @@
 ﻿using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
+using FIAT_Project.Wpf.Datas;
 using FIAT_Project.Wpf.Views;
 using MaterialDesignThemes.Wpf;
 using Prism.Commands;
@@ -21,9 +22,12 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SetProperty(ref _recordingStarted, value);
         }
 
-        public ShellWindowViewModel(RecordService recordService)
+        public SettingStore SettingStore { get; }
+
+        public ShellWindowViewModel(RecordService recordService, SettingStore settingStore)
         {
             recordService.RecordingStarted += Started;
+            SettingStore = settingStore;
         }
 
         private void Started(bool state)

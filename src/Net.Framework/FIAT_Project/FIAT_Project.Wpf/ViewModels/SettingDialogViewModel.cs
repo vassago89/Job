@@ -1,6 +1,7 @@
 ﻿using FIAT_Project.Core;
 using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
+using FIAT_Project.Wpf.Datas;
 using FIAT_Project.Wpf.Views;
 using MaterialDesignThemes.Wpf;
 using Net.Framework.Algorithm.Enums;
@@ -39,10 +40,13 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SystemConfig.MethodDictionary[ELazer.L760] = value;
         }
 
-        public SettingDialogViewModel(SystemConfig systemConfig)
+        public SettingStore SettingStore { get; }
+
+        public SettingDialogViewModel(SettingStore settingStore, SystemConfig systemConfig)
         {
             try
             {
+                SettingStore = settingStore;
                 SystemConfig = systemConfig;
                 Ports = SerialPort.GetPortNames();
 

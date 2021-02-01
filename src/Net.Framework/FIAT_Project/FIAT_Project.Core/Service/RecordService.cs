@@ -1,5 +1,6 @@
 ﻿using Net.Framework.Data.ImageDatas;
 using Net.Framework.Data.Recorder;
+using Net.Framework.Helper.Patterns;
 using Net.Framework.Matrox;
 using System;
 using System.Collections.Generic;
@@ -27,12 +28,13 @@ namespace FIAT_Project.Core.Service
         private SystemConfig _systemConfig;
 
         private double _frameRate;
-
+        
         public RecordService(GrabService grabService, ProcessService processService, DrawingService drawingService, SystemConfig systemConfig)
         {
             _drawingService = drawingService;
             _grabService = grabService;
             _processService = processService;
+        
             _recorder = new MatroxRecoreder<byte>();
             _recorder.Intialize(grabService.Width * 2, grabService.Height * 2, 3);
 

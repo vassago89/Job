@@ -1,6 +1,7 @@
 ﻿using Matrox.MatroxImagingLibrary;
 using Net.Framework.Data.ImageDatas;
 using Net.Framework.Data.Recorder;
+using Net.Framework.Helper.Patterns;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace Net.Framework.Matrox
         public int Channels => _channels;
         
         private string _path;
+        PipeLine<TData[]> _pipeLine;
 
         public void Intialize(int width, int height, int channels)
         {
@@ -42,6 +44,15 @@ namespace Net.Framework.Matrox
                         ref _source);
 
             MatroxObjectPool.Add(this);
+
+            _pipeLine = new PipeLine<TData[]>(false);
+            _pipeLine.Job = new Action<TData[]>(data =>
+            {
+                MIL.MbufPut(_source, data.Cast<byte>().ToArray());
+                MIL.MbufExportSequence(_path, MIL.M_AVI_MJPG, ref _source, 1, MIL.M_DEFAULT, MIL.M_WRITE);
+            });
+
+            _pipeLine.Run(new System.Threading.CancellationToken());
         }
 
         public virtual void Enqueue(TData[] data)
@@ -50,10 +61,10 @@ namespace Net.Framework.Matrox
             {
                 if (_onRecord == false)
                     return;
-                
-                MIL.MbufPut(_source, data.Cast<byte>().ToArray());
-                MIL.MbufExportSequence(_path, MIL.M_AVI_MJPG, ref _source, 1, MIL.M_DEFAULT, MIL.M_WRITE);
-                //MIL.MbufExport("d:\\1.bmp", MIL.M_BMP, _source);
+
+                //MIL.MbufPut(_source, data.Cast<byte>().ToArray());
+                //MIL.MbufExportSequence(_path, MIL.M_AVI_MJPG, ref _source, 1, MIL.M_DEFAULT, MIL.M_WRITE);
+                _pipeLine.Enqueue(data);
             }
         }
 
@@ -72,6 +83,8 @@ namespace Net.Framework.Matrox
         {
             lock (this)
             {
+                while (_pipeLine.Count > 0) { }
+
                 MIL.MbufExportSequence(_path, MIL.M_AVI_MJPG, MIL.M_NULL, MIL.M_NULL, frameRate, MIL.M_CLOSE);
                 _onRecord = false;
             }

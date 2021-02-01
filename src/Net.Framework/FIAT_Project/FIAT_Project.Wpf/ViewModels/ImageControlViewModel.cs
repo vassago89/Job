@@ -210,6 +210,7 @@ namespace FIAT_Project.Wpf.ViewModels
         public SystemConfig SystemConfig { get; }
 
         private byte[] _buffer;
+        private PipeLine<(int width, int height, byte[][] datas)> _pipeLine;
 
         public ImageControlViewModel(ProcessService processService, SystemConfig systemConfig)
         {
@@ -224,6 +225,14 @@ namespace FIAT_Project.Wpf.ViewModels
                 processService.Processed += Processed;
                 
                 ZoomFitCommand = new DelegateCommand(ZoomFit);
+
+                _pipeLine = new PipeLine<(int width, int height, byte[][] datas)>(true);
+                _pipeLine.Job = new Action<(int width, int height, byte[][] datas)>((tuple) =>
+                {
+                    DrawImage(tuple.width, tuple.height, tuple.datas);
+                });
+
+                _pipeLine.Run(new CancellationToken());
             }
             catch (Exception e)
             {
@@ -232,7 +241,7 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
-        private void Processed(int width, int height, byte[][] datas)
+        private void DrawImage(int width, int height, byte[][] datas)
         {
             if (Source == null)
             {
@@ -261,17 +270,23 @@ namespace FIAT_Project.Wpf.ViewModels
                 if (_buffer == null)
                     _buffer = new byte[total];
 
-                for (int i = 0, j = 0; i < total; i += 3, j++)
+                for (int i = 0, red = 0, green = size, blue = size * 2; i < total; red++, green++, blue++)
                 {
-                    _buffer[i] = datas[ImageIndex][j];
-                    _buffer[i + 1] = datas[ImageIndex][j + size];
-                    _buffer[i + 2] = datas[ImageIndex][j + size + size];
+                    _buffer[i++] = datas[ImageIndex][red];
+                    _buffer[i++] = datas[ImageIndex][green];
+                    _buffer[i++] = datas[ImageIndex][blue];
                 }
 
                 var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, _buffer, width * 3);
                 temp.Freeze();
                 Source = temp;
             }
+        }
+
+        private void Processed(int width, int height, byte[][] datas)
+        {
+            _pipeLine.Enqueue((width, height, datas));
+            //DrawImage(width, height, datas);
         }
 
         private void ZoomFit()

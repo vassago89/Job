@@ -175,11 +175,17 @@ namespace Net.Framework.Device.Matrox
 
         public void Dispose()
         {
+            if (_digitizer == MIL.M_NULL)
+                return;
+
             Stop();
             MIL.MdigFree(_digitizer);
 
             foreach (var buffer in _buffers)
                 MIL.MbufFree(buffer);
+
+            _digitizer = MIL.M_NULL;
+            _buffers = null;
         }
     }
         

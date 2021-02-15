@@ -2,6 +2,8 @@
 using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
 using FIAT_Project.Wpf.Datas;
+using FIAT_Project.Wpf.Views;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using Net.Framework.Device.Matrox;
 using Prism.Commands;
@@ -47,7 +49,11 @@ namespace FIAT_Project.Wpf.ViewModels
         public bool OnGrab
         {
             get => _onGrab;
-            set => SetProperty(ref _onGrab, value);
+            set
+            {
+                SetProperty(ref _onGrab, value);
+                SettingStore.OnGrab = value;
+            }
         }
 
         private bool _offGrab;
@@ -61,7 +67,14 @@ namespace FIAT_Project.Wpf.ViewModels
         public bool OnRecord
         {
             get => _onRecord;
-            set => SetProperty(ref _onRecord, value);
+            set
+            {
+                SetProperty(ref _onRecord, value);
+                //if (value)
+                //    RecordStartCommand.Execute();
+                //else
+                //    RecordStopCommand.Execute();
+            }
         }
 
         private bool _offRecord;
@@ -204,14 +217,22 @@ namespace FIAT_Project.Wpf.ViewModels
         public byte Threshold660
         {
             get => _threshold660;
-            set => SetProperty(ref _threshold660, value);
+            set
+            {
+                SetProperty(ref _threshold660, value);
+                SystemConfig.ThresholdDictionary[ELazer.L660] = value;
+            }
         }
 
         private byte _threshold760;
         public byte Threshold760
         {
             get => _threshold760;
-            set => SetProperty(ref _threshold760, value);
+            set
+            {
+                SetProperty(ref _threshold760, value);
+                SystemConfig.ThresholdDictionary[ELazer.L760] = value;
+            }
         }
 
         private float _coefficientRed;
@@ -397,6 +418,9 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public SettingStore SettingStore { get; }
 
+        public DelegateCommand CaptureOpenCommand { get; }
+        public DelegateCommand RecordOpenCommand { get; }
+
         public ControlPanelViewModel(
             GrabService grabService,
             ProcessService processService,
@@ -451,12 +475,16 @@ namespace FIAT_Project.Wpf.ViewModels
                 _on660Auto = SystemConfig.AutoDictionary[ELazer.L660];
                 _on760Auto = SystemConfig.AutoDictionary[ELazer.L760];
 
+                _on660Manual = SystemConfig.ManualDictionary[ELazer.L660];
+                _on760Manual = SystemConfig.ManualDictionary[ELazer.L760];
+
                 _offGrab = true;
                 _offRecord = true;
 
-                SaveCommand = new DelegateCommand(() =>
+                SaveCommand = new DelegateCommand(async () =>
                 {
                     systemConfig.Save(Environment.CurrentDirectory);
+                    await DialogHost.Show(new MessageDialog("Saving settings succeeded.", false), "RootDialog");
                 });
 
                 GrabCommand = new DelegateCommand(() =>
@@ -478,8 +506,8 @@ namespace FIAT_Project.Wpf.ViewModels
                     var maxExposure = Math.Max(SystemConfig.ExposureLed, Math.Max(Exposure660, Exposure760));
                     var frameRate = 1000.0 / maxExposure;
                     frameRate = Math.Min(SystemConfig.RecodingFrame, frameRate);
-                    
-                    _protocolService.SetFrameRate(frameRate);
+
+                    //_protocolService.SetFrameRate(frameRate);
                     recordService.Start(frameRate);
 
                     OnRecord = true;
@@ -489,7 +517,7 @@ namespace FIAT_Project.Wpf.ViewModels
                 RecordStopCommand = new DelegateCommand(() =>
                 {
                     recordService.Stop();
-                    _protocolService.SetFrameRate(100);
+                    //_protocolService.SetFrameRate(100);
                     OnRecord = false;
                     OffRecord = true;
                 });
@@ -593,6 +621,16 @@ namespace FIAT_Project.Wpf.ViewModels
                     SetExposure(ELazer.L760);
                 });
 
+                CaptureOpenCommand = new DelegateCommand(() =>
+                {
+                    System.Diagnostics.Process.Start(SystemConfig.CapturePath);
+                });
+
+                RecordOpenCommand = new DelegateCommand(() =>
+                {
+                    System.Diagnostics.Process.Start(SystemConfig.RecordPath);
+                });
+
                 processService.Processed += Processed;
             }
             catch (Exception e)
@@ -664,7 +702,7 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
-        private void Processed(int width, int height, byte[][] datas)
+        private void Processed(int width, int height, byte[] ledData, byte[] mergedData, Dictionary<ELazer, byte[]> dataDictionary)
         {
             if (SystemConfig.OnAutoBayer)
             {

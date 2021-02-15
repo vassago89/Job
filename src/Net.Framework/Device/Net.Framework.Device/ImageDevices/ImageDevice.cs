@@ -5,7 +5,7 @@ using Net.Framework.Data.ImageDatas;
 
 namespace Net.Framework.Device.ImageDevices
 {
-    public interface IImageDevice
+    public interface IImageDevice : IDevice
     {
         int Width { get; }
         int Height { get; }
@@ -19,7 +19,7 @@ namespace Net.Framework.Device.ImageDevices
         bool Stop();
     }
 
-    public interface IImageDeviceNonGrabber<TDeviceInfo> : IImageDevice, IDevice where TDeviceInfo : ImageDeviceInfo
+    public interface IImageDeviceNonGrabber<TDeviceInfo> : IImageDevice where TDeviceInfo : ImageDeviceInfo
     {
         TDeviceInfo Info { get; }
     }

@@ -5,7 +5,7 @@ namespace Net.Framework.Device
 {
     public interface IDevice : IDisposable
     {
-
+        
     }
 
     public interface IDevice<T> : IDevice where T : IDeviceInfo

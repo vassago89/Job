@@ -50,6 +50,12 @@ namespace FIAT_Project.Core.Service
             _grabberDevice.Open();
         }
 
+        public void Release()
+        {
+            _lazerDevice.Close();
+            _grabberDevice.Close();
+        }
+
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             var port = sender as SerialPort;

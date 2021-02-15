@@ -106,34 +106,79 @@
                 </Canvas>
             </Border>
         </Grid>
-        <Border Grid.Row="1"  Margin="-6">
-            <ToolBar HorizontalAlignment="Right">
-                <CheckBox IsChecked="{Binding OnROI}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}">
-                    <StackPanel>
-                        <TextBlock Text="ROI"/>
-                    </StackPanel>
-                </CheckBox>
-                <RadioButton IsChecked="{Binding IsRectangle}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}">
-                    <StackPanel>
-                        <TextBlock Text="Rectangle"/>
-                    </StackPanel>
-                </RadioButton>
-                <RadioButton IsChecked="{Binding IsEllipse}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}">
-                    <StackPanel>
-                        <TextBlock Text="Ellipse"/>
-                    </StackPanel>
-                </RadioButton>
-                <RadioButton IsChecked="{Binding IsPolygon}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}">
-                    <StackPanel>
-                        <TextBlock Text="Polygon (Shift)"/>
-                    </StackPanel>
-                </RadioButton>
-                <Button Command="{Binding ZoomFitCommand}">
-                    <StackPanel>
-                        <TextBlock Text="Zoom Fit"/>
-                    </StackPanel>
-                </Button>
-            </ToolBar>
+        <Border Grid.Row="1"  Margin="-5">
+            <Border.Resources>
+                <Style TargetType="Button"  BasedOn="{StaticResource MaterialDesignFlatButton}">
+                    <!--<Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                        <Setter Property="FontSize" Value="18"/>-->
+                    <Setter Property="Margin" Value="4"/>
+                </Style>
+                <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="12 0 0 0"/>
+                </Style>
+                <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="12 0 0 0"/>
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                    <Setter Property="FontSize" Value="18"/>
+                </Style>
+            </Border.Resources>
+            <DockPanel>
+                <!--<Grid DockPanel.Dock="Left">
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="12"/>
+                        </Style>
+                    </Grid.Resources>
+                    <TextBlock Text="Menu"/>
+                </Grid>-->
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Command="{Binding ZoomInCommand}"
+                        ToolTip="Zoom In">
+                        <StackPanel>
+                            <TextBlock Text="&#xE71F;"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ZoomOutCommand}"
+                        ToolTip="Zoom Out">
+                        <StackPanel>
+                            <TextBlock Text="&#xE71F;"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding ZoomFitCommand}"
+                        ToolTip="Zoom Fit">
+                        <StackPanel>
+                            <TextBlock Text="&#xE71E;"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding OnROI}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" ToolTip="Region of Interest">
+                        <StackPanel>
+                            <TextBlock Text="&#xE7B3;"/>
+                        </StackPanel>
+                    </CheckBox>
+                    <RadioButton IsChecked="{Binding IsRectangle}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}" ToolTip="Rectangle">
+                        <StackPanel>
+                            <TextBlock Text="&#xF407;"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton IsChecked="{Binding IsEllipse}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}" ToolTip="Ellipse">
+                        <StackPanel>
+                            <TextBlock Text="&#xEA3A;"/>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton IsChecked="{Binding IsPolygon}" Visibility="{Binding OnLazer, Converter={StaticResource BoolToVisibleConverter}}" IsEnabled="{Binding OnROI}" ToolTip="Polygon (Shift)">
+                        <StackPanel>
+                            <TextBlock Text="&#xF408;"/>
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+            </DockPanel>
         </Border>
     </Grid>
 </UserControl>

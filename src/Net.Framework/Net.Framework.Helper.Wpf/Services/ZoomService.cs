@@ -201,20 +201,20 @@ namespace Net.Framework.Helper.Wpf.Services
             }
         }
 
-        public async void ZoomIn(int presentorWidth, int presentorHeight)
+        public async void ZoomIn(double presentorWidth, double presentorHeight)
         {
             await ExecuteZoom(presentorWidth / 2, presentorHeight / 2, 1.1f);
         }
 
-        public async void ZoomOut(int presentorWidth, int presentorHeight)
+        public async void ZoomOut(double presentorWidth, double presentorHeight)
         {
             await ExecuteZoom(presentorWidth / 2, presentorHeight / 2, 0.9f);
         }
 
         public async Task ExecuteZoom(double centerX, double centerY, double zoomFactor, bool isAnimated = false, int duration = 500)
         {
-            double prevX = (centerX - TranslateX);
-            double prevY = (centerY - TranslateY);
+            double prevX = (centerX - TranslateX) / 2;
+            double prevY = (centerY - TranslateY) / 2;
 
             var translateX = TranslateX + prevX - (prevX * zoomFactor);
             var translateY = TranslateY + prevY - (prevY * zoomFactor);

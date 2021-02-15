@@ -27,7 +27,8 @@
             <TextBlock Text="Log"/>
             <CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsLogScale}"/>
         </UniformGrid>
-        <liveChart:CartesianChart Grid.Row="1" LegendLocation="None" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+        <liveChart:CartesianChart Grid.Row="1" LegendLocation="None" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}"
+                                  Background="{DynamicResource MaterialDesignBackground}">
             <liveChart:CartesianChart.Series>
                 <liveChart:ColumnSeries Values="{Binding ChartValues}" ColumnPadding="0"/>
             </liveChart:CartesianChart.Series>

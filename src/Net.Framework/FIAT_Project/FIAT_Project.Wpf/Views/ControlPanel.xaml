@@ -12,67 +12,106 @@
             <conveters:BooleanInverter x:Key="BooleanInverter"/>
             <conveters:AllBooleanConverter x:Key="AllBooleanConverter"/>
             <conveters:BoolToVisibleConverter x:Key="BooleanToVisibilityConverter"/>
+            <Style TargetType="TextBlock" x:Key="IconTextBlock">
+                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TabControl >
-            <TabItem Header="Camera">
+        <TabControl Background="{DynamicResource MaterialDesignPaper}">
+            <TabItem Foreground="{DynamicResource MaterialDesignBody}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE714;" Style="{DynamicResource IconTextBlock}" Foreground="{DynamicResource MaterialDesignPaper}"/>
+                        <TextBlock Text="Camera" Foreground="{DynamicResource MaterialDesignPaper}" Margin="4"/>
+                    </StackPanel>
+                </TabItem.Header>
                 <ScrollViewer>
                     <StackPanel >
                         <GroupBox Header="Video">
                             <UniformGrid Columns="2">
-                                <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OffGrab}">
-                                    <StackPanel>
-                                        <TextBlock Text="Start"/>
+                                <Button Command="{Binding GrabCommand}" IsEnabled="{Binding OffGrab}" ToolTip="Start">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE768;" Style="{DynamicResource IconTextBlock}"/>
+                                        <TextBlock Text="Start" Margin="4 0 0 0"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Command="{Binding StopCommand}">
+                                <Button Command="{Binding StopCommand}" ToolTip="Stop">
                                     <Button.IsEnabled>
                                         <MultiBinding Converter="{StaticResource AllBooleanConverter}">
                                             <Binding Path="OnGrab"/>
                                             <Binding Path="OffRecord"/>
                                         </MultiBinding>
                                     </Button.IsEnabled>
-                                    <StackPanel>
-                                        <TextBlock Text="Stop"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE71A;" Style="{DynamicResource IconTextBlock}"/>
+                                        <TextBlock Text="Stop" Margin="4 0 0 0"/>
                                     </StackPanel>
                                 </Button>
                             </UniformGrid>
                         </GroupBox>
                         <GroupBox Header="Record">
-                            <UniformGrid Columns="2">
-                                <Button Command="{Binding CaptureCommand}">
-                                    <Button.IsEnabled>
-                                        <MultiBinding Converter="{StaticResource AllBooleanConverter}">
-                                            <Binding Path="OnGrab"/>
-                                            <Binding Path="OffRecord"/>
-                                        </MultiBinding>
-                                    </Button.IsEnabled>
-                                    <StackPanel>
-                                        <TextBlock Text="Capture"/>
-                                    </StackPanel>
-                                </Button>
-                                <TextBox Text="{Binding SystemConfig.CaptureCount}"
-                                            materialDesign:HintAssist.Hint="Count"/>
-                                <Button Command="{Binding RecordStartCommand}">
-                                    <Button.IsEnabled>
-                                        <MultiBinding Converter="{StaticResource AllBooleanConverter}">
-                                            <Binding Path="OnGrab"/>
-                                            <Binding Path="OffRecord"/>
-                                        </MultiBinding>
-                                    </Button.IsEnabled>
-                                    <StackPanel>
-                                        <TextBlock Text="Start"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button Command="{Binding RecordStopCommand}" IsEnabled="{Binding OnRecord}">
-                                    <StackPanel>
-                                        <TextBlock Text="Stop"/>
-                                    </StackPanel>
-                                </Button>
-                            </UniformGrid>
+                            <StackPanel>
+                                <UniformGrid Columns="3">
+                                    <Button Command="{Binding RecordStartCommand}" ToolTip="Start">
+                                        <Button.IsEnabled>
+                                            <MultiBinding Converter="{StaticResource AllBooleanConverter}">
+                                                <Binding Path="OnGrab"/>
+                                                <Binding Path="OffRecord"/>
+                                            </MultiBinding>
+                                        </Button.IsEnabled>
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<TextBlock Text="Start"/>-->
+                                            <TextBlock Text="&#xF7EE;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Start" Margin="4 0 0 0"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding RecordStopCommand}" IsEnabled="{Binding OnRecord}" ToolTip="Stop">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<TextBlock Text="Stop"/>-->
+                                            <TextBlock Text="&#xE71A;" Style="{DynamicResource IconTextBlock}" FontSize="12"/>
+                                            <TextBlock Text="Stop" Margin="4 0 0 0"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding RecordOpenCommand}" ToolTip="Open Folder">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<TextBlock Text="Open Folder"/>-->
+                                            <TextBlock Text="&#xE838;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Open" Margin="4 0 0 0"/>
+                                        </StackPanel>
+                                    </Button>
+                                </UniformGrid>
+                                <UniformGrid Columns="2">
+                                    <Button Command="{Binding CaptureCommand}"
+                                        ToolTip="Capture">
+                                        <Button.IsEnabled>
+                                            <MultiBinding Converter="{StaticResource AllBooleanConverter}">
+                                                <Binding Path="OnGrab"/>
+                                                <Binding Path="OffRecord"/>
+                                            </MultiBinding>
+                                        </Button.IsEnabled>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xF7ED;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Capture" Margin="4 0 0 0"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <!--<TextBox Text="{Binding SystemConfig.CaptureCount}"
+                                            materialDesign:HintAssist.Hint="Count"/>-->
+                                    <Button Command="{Binding CaptureOpenCommand}" ToolTip="Open Folder">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<TextBlock Text="Open Folder"/>-->
+                                            <TextBlock Text="&#xE838;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Open" Margin="4 0 0 0"/>
+                                        </StackPanel>
+                                    </Button>
+                                </UniformGrid>
+                            </StackPanel>
                         </GroupBox>
                         <GroupBox Header="Led">
                             <StackPanel>
@@ -118,22 +157,27 @@
                                                 <Setter Property="FontSize" Value="12"/>
                                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                                                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                                <Setter Property="Margin" Value="8 0 8 0"/>
+                                                <Setter Property="Margin" Value="8 0 8 4"/>
                                             </Style>
                                         </UniformGrid.Resources>
-                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.Low}">
-                                            <StackPanel>
-                                                <TextBlock Text="Low"/>
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.Low}" ToolTip="Low">
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<TextBlock Text="Low"/>-->
+                                                <TextBlock Text="&#xEC48;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="L" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.Medium}">
-                                            <StackPanel>
-                                                <TextBlock Text="Medium"/>
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.Medium}" ToolTip="Medium">
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<TextBlock Text="Medium"/>-->
+                                                <TextBlock Text="&#xEC49;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="M" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.High}">
-                                            <StackPanel>
-                                                <TextBlock Text="High"/>
+                                        <Button Command="{Binding PresetLedCommand}" CommandParameter="{Binding PrsetLed.High}" ToolTip="High">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&#xEC4A;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="H" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
                                         <TextBox Text="{Binding PrsetLed.Low}"/>
@@ -143,7 +187,7 @@
                                 </GroupBox>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="Fluorescence ch1." IsEnabled="{Binding SettingStore.Use660}">
+                        <GroupBox Header="Fluorescence ch1." Visibility="{Binding SettingStore.Use660, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
                                 <UniformGrid Columns="2">
                                     <TextBox Text="{Binding Gain660}"
@@ -187,22 +231,28 @@
                                                 <Setter Property="FontSize" Value="12"/>
                                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                                                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                                <Setter Property="Margin" Value="8 0 8 0"/>
+                                                <Setter Property="Margin" Value="8 0 8 4"/>
                                             </Style>
                                         </UniformGrid.Resources>
-                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.Low}">
-                                            <StackPanel>
-                                                <TextBlock Text="Low"/>
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.Low}" ToolTip="Low">
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<TextBlock Text="Low"/>-->
+                                                <TextBlock Text="&#xEC48;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="L" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.Medium}">
-                                            <StackPanel>
-                                                <TextBlock Text="Medium"/>
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.Medium}" ToolTip="Medium">
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<TextBlock Text="Medium"/>-->
+                                                <TextBlock Text="&#xEC49;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="M" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.High}">
-                                            <StackPanel>
-                                                <TextBlock Text="High"/>
+                                        <Button Command="{Binding Preset660Command}" CommandParameter="{Binding Prset660.High}" ToolTip="High">
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<TextBlock Text="High"/>-->
+                                                <TextBlock Text="&#xEC4A;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="H" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
                                         <TextBox Text="{Binding Prset660.Low}"/>
@@ -212,7 +262,7 @@
                                 </GroupBox>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="Fluorescence ch2." IsEnabled="{Binding SettingStore.Use760}">
+                        <GroupBox Header="Fluorescence ch2." Visibility="{Binding SettingStore.Use760, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
                                 <UniformGrid Columns="2">
                                     <TextBox Text="{Binding Gain760}"
@@ -256,22 +306,28 @@
                                                 <Setter Property="FontSize" Value="12"/>
                                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                                                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                                <Setter Property="Margin" Value="8 0 8 0"/>
+                                                <Setter Property="Margin" Value="8 0 8 4"/>
                                             </Style>
                                         </UniformGrid.Resources>
-                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.Low}">
-                                            <StackPanel>
-                                                <TextBlock Text="Low"/>
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.Low}" ToolTip="Low">
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<TextBlock Text="Low"/>-->
+                                                <TextBlock Text="&#xEC48;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="L" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.Medium}">
-                                            <StackPanel>
-                                                <TextBlock Text="Medium"/>
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.Medium}" ToolTip="Medium">
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<TextBlock Text="Medium"/>-->
+                                                <TextBlock Text="&#xEC49;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="M" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.High}">
-                                            <StackPanel>
-                                                <TextBlock Text="High"/>
+                                        <Button Command="{Binding Preset760Command}" CommandParameter="{Binding Prset760.High}" ToolTip="High">
+                                            <StackPanel Orientation="Horizontal">
+                                                <!--<TextBlock Text="High"/>-->
+                                                <TextBlock Text="&#xEC4A;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="H" Margin="4 0 0 0"/>
                                             </StackPanel>
                                         </Button>
                                         <TextBox Text="{Binding Prset760.Low}"/>
@@ -284,26 +340,36 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="Device">
+            <TabItem Foreground="{DynamicResource MaterialDesignBody}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE793;" Style="{DynamicResource IconTextBlock}" Foreground="{DynamicResource MaterialDesignPaper}"/>
+                        <TextBlock Text="Device" Foreground="{DynamicResource MaterialDesignPaper}" Margin="4"/>
+                    </StackPanel>
+                </TabItem.Header>
                 <ScrollViewer>
                     <StackPanel>
                         <GroupBox Header="Led">
                             <StackPanel>
                                 <UniformGrid Columns="2">
-                                    <Button Command="{Binding OnLedCommand}" IsEnabled="{Binding OnLed, Converter={StaticResource BooleanInverter}}">
-                                        <StackPanel>
-                                            <TextBlock Text="On"/>
+                                    <Button Command="{Binding OnLedCommand}" IsEnabled="{Binding OnLed, Converter={StaticResource BooleanInverter}}" ToolTip="On">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE7E8;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="On" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding OffLedCommand}" IsEnabled="{Binding OnLed}">
+                                    <Button Command="{Binding OffLedCommand}" IsEnabled="{Binding OnLed}" ToolTip="Off">
                                         <StackPanel>
-                                            <TextBlock Text="Off"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&#xE7E8;" Style="{DynamicResource IconTextBlock}"/>
+                                                <TextBlock Text="Off" Margin="4 0 0 0"/>
+                                            </StackPanel>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
                                 <UniformGrid Columns="3">
                                     <TextBox Text="{Binding ValueLed, StringFormat={}{0:0.000}}"
-                                                materialDesign:HintAssist.Hint="Ampere (0 ~ 1A)"
+                                                materialDesign:HintAssist.Hint="0 ~ 1A"
                                                 Tag="ValueLed">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="KeyDown">
@@ -312,30 +378,34 @@
                                         </i:Interaction.Triggers>
                                     </TextBox>
                                     <Slider Value="{Binding ValueLed}" Minimum="0" Maximum="1" Margin="4" TickFrequency="0.01"/>
-                                    <Button Command="{Binding SetCommand}" CommandParameter="ValueLed">
-                                        <StackPanel>
-                                            <TextBlock Text="Set"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="ValueLed" ToolTip="Set">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<TextBlock Text="Set"/>-->
+                                            <TextBlock Text="&#xE898;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Set" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="Fluorescence ch1."  IsEnabled="{Binding SettingStore.Use660}">
+                        <GroupBox Header="Fluorescence ch1."  Visibility="{Binding SettingStore.Use660, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
                                 <UniformGrid Rows="1">
-                                    <Button Command="{Binding On660Command}" IsEnabled="{Binding On660, Converter={StaticResource BooleanInverter}}">
-                                        <StackPanel>
-                                            <TextBlock Text="On"/>
+                                    <Button Command="{Binding On660Command}" IsEnabled="{Binding On660, Converter={StaticResource BooleanInverter}}" ToolTip="On">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE7E8;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="On" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding Off660Command}" IsEnabled="{Binding On660}">
-                                        <StackPanel>
-                                            <TextBlock Text="Off"/>
+                                    <Button Command="{Binding Off660Command}" IsEnabled="{Binding On660}" ToolTip="Off">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE7E8;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Off" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
                                 <UniformGrid Columns="3">
-                                    <TextBox materialDesign:HintAssist.Hint="Ampere (0 ~ 1.5A)"
+                                    <TextBox materialDesign:HintAssist.Hint="0 ~ 1.5A"
                                                 Text="{Binding Value660, StringFormat={}{0:0.000}}"
                                                 Tag="Value660">
                                         <i:Interaction.Triggers>
@@ -345,30 +415,34 @@
                                         </i:Interaction.Triggers>
                                     </TextBox>
                                     <Slider Value="{Binding Value660}" Minimum="0" Maximum="1.5" Margin="4"/>
-                                    <Button Command="{Binding SetCommand}" CommandParameter="Value660">
-                                        <StackPanel>
-                                            <TextBlock Text="Set"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Value660" ToolTip="Set">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<TextBlock Text="Set"/>-->
+                                            <TextBlock Text="&#xE898;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Set" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="Fluorescence ch2." IsEnabled="{Binding SettingStore.Use760}">
+                        <GroupBox Header="Fluorescence ch2." Visibility="{Binding SettingStore.Use760, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
                                 <UniformGrid Rows="1">
-                                    <Button Command="{Binding On760Command}" IsEnabled="{Binding On760, Converter={StaticResource BooleanInverter}}">
-                                        <StackPanel>
-                                            <TextBlock Text="On"/>
+                                    <Button Command="{Binding On760Command}" IsEnabled="{Binding On760, Converter={StaticResource BooleanInverter}}" ToolTip="On">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE7E8;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="On" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding Off760Command}" IsEnabled="{Binding On760}">
-                                        <StackPanel>
-                                            <TextBlock Text="Off"/>
+                                    <Button Command="{Binding Off760Command}" IsEnabled="{Binding On760}" ToolTip="Off">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE7E8;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Off" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
                                 <UniformGrid Columns="3">
-                                    <TextBox materialDesign:HintAssist.Hint="Ampere (0 ~ 2.5A)"
+                                    <TextBox materialDesign:HintAssist.Hint="0 ~ 2.5A"
                                                 Text="{Binding Value760, StringFormat={}{0:0.000}}"
                                                 Tag="Value760">
                                         <i:Interaction.Triggers>
@@ -378,9 +452,11 @@
                                         </i:Interaction.Triggers>
                                     </TextBox>
                                     <Slider Value="{Binding Value760}" Minimum="0" Maximum="2.5" Margin="4"/>
-                                    <Button Command="{Binding SetCommand}" CommandParameter="Value760">
-                                        <StackPanel>
-                                            <TextBlock Text="Set"/>
+                                    <Button Command="{Binding SetCommand}" CommandParameter="Value760" ToolTip="Set">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<TextBlock Text="Set"/>-->
+                                            <TextBlock Text="&#xE898;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Set" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
@@ -389,137 +465,135 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="Processing">
+            <TabItem Foreground="{DynamicResource MaterialDesignBody}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE9F5;" Style="{DynamicResource IconTextBlock}" Foreground="{DynamicResource MaterialDesignPaper}"/>
+                        <TextBlock Text="Process" Foreground="{DynamicResource MaterialDesignPaper}" Margin="4"/>
+                    </StackPanel>
+                </TabItem.Header>
                 <ScrollViewer>
                     <StackPanel>
-                        <UniformGrid Rows="1">
-                            <RadioButton IsChecked="{Binding OnGrayMode}">
-                                <TextBlock Text="Gray Mode"/>
-                            </RadioButton>
-                            <RadioButton IsChecked="{Binding OnBinaryMode}">
-                                <TextBlock Text="Binary Mode"/>
-                            </RadioButton>
-                        </UniformGrid>
-                        <GroupBox Header="Channel Ratio" Visibility="{Binding OnGrayMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <UniformGrid Columns="3" Rows="1">
-                                <TextBox Text="{Binding SystemConfig.RatioColor, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Color"/>
-                                <TextBox Text="{Binding SystemConfig.Ratio660, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Fluorescence ch1." IsEnabled="{Binding SettingStore.Use660}"/>
-                                <TextBox Text="{Binding SystemConfig.Ratio760, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Fluorescence ch2." IsEnabled="{Binding SettingStore.Use760}"/>
-                            </UniformGrid>
-                        </GroupBox>
-                        <GroupBox Header="Fluorescence ch1." IsEnabled="{Binding SettingStore.Use660}" Visibility="{Binding OnBinaryMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <GroupBox Header="Highlight">
                             <StackPanel>
-                                <UniformGrid Columns="3">
-                                    <RadioButton IsChecked="True">
-                                        <StackPanel>
-                                            <TextBlock Text="None"/>
-                                        </StackPanel>
+                                <UniformGrid Rows="1">
+                                    <RadioButton IsChecked="{Binding OnGrayMode}">
+                                        <TextBlock Text="Gray"/>
                                     </RadioButton>
-                                    <RadioButton IsChecked="{Binding On660Auto}">
-                                        <StackPanel>
-                                            <TextBlock Text="Auto"/>
-                                        </StackPanel>
-                                    </RadioButton>
-                                    <RadioButton IsChecked="{Binding On660Manual}">
-                                        <StackPanel>
-                                            <TextBlock Text="Manual"/>
-                                        </StackPanel>
+                                    <RadioButton IsChecked="{Binding OnBinaryMode}">
+                                        <TextBlock Text="Binary"/>
                                     </RadioButton>
                                 </UniformGrid>
-                                <UniformGrid Rows="1" Columns="3" IsEnabled="{Binding On660Manual}">
-                                    <TextBox Text="{Binding Threshold660}"
+                                <!--<GroupBox Header="Channel Ratio" Visibility="{Binding OnGrayMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <UniformGrid Rows="1">
+                                <TextBox Text="{Binding SystemConfig.RatioColor, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Color"/>
+                                <TextBox Text="{Binding SystemConfig.Ratio660, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Fluorescence ch1." Visibility="{Binding SettingStore.Use660, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <TextBox Text="{Binding SystemConfig.Ratio760, StringFormat={}{0:0.00}}" materialDesign:HintAssist.Hint="Fluorescence ch2." Visibility="{Binding SettingStore.Use760, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            </UniformGrid>
+                        </GroupBox>-->
+                                <StackPanel IsEnabled="{Binding OnBinaryMode}">
+                                    <GroupBox Header="Fluorescence ch1." IsEnabled="{Binding SettingStore.Use660}" Visibility="{Binding SettingStore.Use660, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel>
+                                            <UniformGrid Columns="2">
+                                                <RadioButton IsChecked="{Binding On660Auto}">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Auto"/>
+                                                    </StackPanel>
+                                                </RadioButton>
+                                                <RadioButton IsChecked="{Binding On660Manual}">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Manual"/>
+                                                    </StackPanel>
+                                                </RadioButton>
+                                            </UniformGrid>
+                                            <UniformGrid Rows="1" Columns="3" IsEnabled="{Binding On660Manual}">
+                                                <TextBox Text="{Binding Threshold660}"
                                             materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
                                             Tag="Threshold660">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="KeyDown">
-                                                <i:InvokeCommandAction Command="{Binding TextChangedCommand}" 
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="KeyDown">
+                                                            <i:InvokeCommandAction Command="{Binding TextChangedCommand}" 
                                                             CommandParameter="{Binding ElementName=filterBox, Path=Text}"/>
-                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                    </TextBox>
-                                    <Slider Margin="4" Value="{Binding Threshold660}" Maximum="255"/>
-                                    <Button Command="{Binding SetCommand}" CommandParameter="Threshold660">
-                                        <StackPanel>
-                                            <TextBlock Text="Set"/>
+                                                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </TextBox>
+                                                <Slider Margin="4" Value="{Binding Threshold660}" Maximum="255"/>
+                                                <Button Command="{Binding SetCommand}" CommandParameter="Threshold660">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Set"/>
+                                                    </StackPanel>
+                                                </Button>
+                                            </UniformGrid>
                                         </StackPanel>
-                                    </Button>
-                                </UniformGrid>
-                            </StackPanel>
-                        </GroupBox>
-                        <GroupBox Header="Fluorescence ch2." IsEnabled="{Binding SettingStore.Use760}" Visibility="{Binding OnBinaryMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <StackPanel>
-                                <UniformGrid Columns="3">
-                                    <RadioButton IsChecked="True">
+                                    </GroupBox>
+                                    <GroupBox Header="Fluorescence ch2." IsEnabled="{Binding SettingStore.Use760}" Visibility="{Binding SettingStore.Use760, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <StackPanel>
-                                            <TextBlock Text="None"/>
-                                        </StackPanel>
-                                    </RadioButton>
-                                    <RadioButton IsChecked="{Binding On760Auto}">
-                                        <StackPanel>
-                                            <TextBlock Text="Auto"/>
-                                        </StackPanel>
-                                    </RadioButton>
-                                    <RadioButton IsChecked="{Binding On760Manual}">
-                                        <StackPanel>
-                                            <TextBlock Text="Manual"/>
-                                        </StackPanel>
-                                    </RadioButton>
-                                </UniformGrid>
-                                <UniformGrid IsEnabled="{Binding On760Manual}" Rows="1" Columns="3">
-                                    <TextBox Text="{Binding Threshold760}"
+                                            <UniformGrid Columns="2">
+                                                <RadioButton IsChecked="{Binding On760Auto}">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Auto"/>
+                                                    </StackPanel>
+                                                </RadioButton>
+                                                <RadioButton IsChecked="{Binding On760Manual}">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Manual"/>
+                                                    </StackPanel>
+                                                </RadioButton>
+                                            </UniformGrid>
+                                            <UniformGrid IsEnabled="{Binding On760Manual}" Rows="1" Columns="3">
+                                                <TextBox Text="{Binding Threshold760}"
                                             materialDesign:HintAssist.Hint="Threshold (0 ~ 255)"
                                             Tag="Threshold760">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="KeyDown">
-                                                <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                    </TextBox>
-                                    <Slider Margin="4" Value="{Binding Threshold760}" Maximum="255"/>
-                                    <Button Command="{Binding SetCommand}" CommandParameter="Threshold760">
-                                        <StackPanel>
-                                            <TextBlock Text="Set"/>
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="KeyDown">
+                                                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnKeyDown"/>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </TextBox>
+                                                <Slider Margin="4" Value="{Binding Threshold760}" Maximum="255"/>
+                                                <Button Command="{Binding SetCommand}" CommandParameter="Threshold760">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Set"/>
+                                                    </StackPanel>
+                                                </Button>
+                                            </UniformGrid>
                                         </StackPanel>
-                                    </Button>
-                                </UniformGrid>
+                                    </GroupBox>
+                                </StackPanel>
                             </StackPanel>
                         </GroupBox>
-                    </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-            <TabItem Header="White Blance">
-                <ScrollViewer>
-                    <StackPanel>
-                        <Border BorderThickness="3" CornerRadius="4" Margin="4 0 4 0"  BorderBrush="{DynamicResource MaterialDesignBody}">
-                            <UniformGrid Rows="1">
-                                <TextBlock Text="Auto Mode"/>
-                                <ToggleButton IsChecked="{Binding AutoWhiteBalance}"/>
-                            </UniformGrid>
-                        </Border>
-                        <GroupBox Header="R" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
-                            <DockPanel>
-                                <TextBox DockPanel.Dock="Left" 
+                        <GroupBox Header="White Blance">
+                            <StackPanel>
+                                <UniformGrid Rows="1">
+                                    <TextBlock Text="Auto"/>
+                                    <ToggleButton IsChecked="{Binding AutoWhiteBalance}"/>
+                                </UniformGrid>
+                                <GroupBox Header="R" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
+                                    <DockPanel>
+                                        <TextBox DockPanel.Dock="Left" 
                                         Text="{Binding CoefficientRed, StringFormat={}{0:0.00}}"
                                         materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
-                                <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientRed}"/>
-                            </DockPanel>
-                        </GroupBox>
-                        <GroupBox Header="G" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
-                            <DockPanel>
-                                <TextBox DockPanel.Dock="Left" 
+                                        <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientRed}"/>
+                                    </DockPanel>
+                                </GroupBox>
+                                <GroupBox Header="G" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
+                                    <DockPanel>
+                                        <TextBox DockPanel.Dock="Left" 
                                         Text="{Binding CoefficientGreen, StringFormat={}{0:0.00}}"
                                         materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
-                                <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientGreen}"/>
-                            </DockPanel>
-                        </GroupBox>
-                        <GroupBox Header="B" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
-                            <DockPanel>
-                                <TextBox DockPanel.Dock="Left" 
+                                        <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientGreen}"/>
+                                    </DockPanel>
+                                </GroupBox>
+                                <GroupBox Header="B" IsEnabled="{Binding AutoWhiteBalance, Converter={StaticResource BooleanInverter}}">
+                                    <DockPanel>
+                                        <TextBox DockPanel.Dock="Left" 
                                         Text="{Binding CoefficientBlue, StringFormat={}{0:0.00}}"
                                         materialDesign:HintAssist.Hint="(0 ~ 5.5)"/>
-                                <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientBlue}"/>
-                            </DockPanel>
+                                        <Slider Minimum="0" Maximum="5.5" Value="{Binding CoefficientBlue}"/>
+                                    </DockPanel>
+                                </GroupBox>
+                            </StackPanel>
                         </GroupBox>
                     </StackPanel>
                 </ScrollViewer>
@@ -527,8 +601,9 @@
         </TabControl>
         <StackPanel Grid.Row="1">
             <Button Command="{Binding SaveCommand}">
-                <StackPanel>
-                    <TextBlock Text="Save"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE74E;" Style="{DynamicResource IconTextBlock}"/>
+                    <TextBlock Text="Save" Margin="4 0 0 0"/>
                 </StackPanel>
             </Button>
         </StackPanel>

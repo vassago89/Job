@@ -13,10 +13,16 @@ namespace FIAT_Project.Wpf.Views
     {
         private ImageControlViewModel _viewModel => DataContext as ImageControlViewModel;
 
-        public int ImageIndex
+        public bool IsColor
         {
-            get => _viewModel.ImageIndex;
-            set => _viewModel.ImageIndex = value;
+            get => _viewModel.IsColor;
+            set => _viewModel.IsColor = value;
+        }
+
+        public bool IsMerged
+        {
+            get => _viewModel.IsMerged;
+            set => _viewModel.IsMerged = value;
         }
 
         public string Header

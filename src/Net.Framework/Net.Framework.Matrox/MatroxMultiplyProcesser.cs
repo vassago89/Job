@@ -55,7 +55,7 @@ namespace Net.Framework.Matrox
             _buffer = new byte[width * height * 3];
             
             MatroxObjectPool.Add(this);
-        }
+        }   
 
         public byte[] Multiply(byte[] color, byte[] src1, byte[] src2, double colorRatio, double ratio1, double ratio2)
         {
@@ -66,6 +66,18 @@ namespace Net.Framework.Matrox
             MIL.MimArithMultiple(_child1, colorRatio, _src1, ratio1, colorRatio + ratio1, _child1, MIL.M_MULTIPLY_ACCUMULATE_2, MIL.M_DEFAULT);
             MIL.MimArithMultiple(_child2, colorRatio, _src2, ratio2, colorRatio + ratio2, _child2, MIL.M_MULTIPLY_ACCUMULATE_2, MIL.M_DEFAULT);
             
+            MIL.MbufGet(_color, _buffer);
+
+            return _buffer;
+        }
+
+        public byte[] Multiply(byte[] color, byte[] src, double colorRatio, double ratio)
+        {
+            MIL.MbufPut(_color, color);
+            MIL.MbufPut(_src1, src);
+
+            MIL.MimArithMultiple(_child1, colorRatio, _src1, ratio, colorRatio + ratio, _child1, MIL.M_MULTIPLY_ACCUMULATE_2, MIL.M_DEFAULT);
+
             MIL.MbufGet(_color, _buffer);
 
             return _buffer;

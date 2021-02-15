@@ -67,6 +67,8 @@ namespace Net.Framework.Device.Matrox
                 return;
 
             MIL.MsysFree(_system);
+
+            _system = MIL.M_NULL;
         }
     }
 }

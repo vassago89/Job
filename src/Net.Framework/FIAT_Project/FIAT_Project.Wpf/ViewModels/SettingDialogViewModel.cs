@@ -41,6 +41,7 @@ namespace FIAT_Project.Wpf.ViewModels
         }
 
         public SettingStore SettingStore { get; }
+        public DelegateCommand RestartCommand { get; }
 
         public SettingDialogViewModel(SettingStore settingStore, SystemConfig systemConfig)
         {
@@ -51,6 +52,12 @@ namespace FIAT_Project.Wpf.ViewModels
                 Ports = SerialPort.GetPortNames();
 
                 Methods = typeof(EThresholdMethod).GetEnumValues().Cast<EThresholdMethod>();
+
+                RestartCommand = new DelegateCommand(() =>
+                {
+                    systemConfig.Save(Environment.CurrentDirectory);
+                    Application.Current.Shutdown(1000);
+                });
             }
             catch (Exception e)
             {

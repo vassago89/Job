@@ -29,8 +29,6 @@
                     </Style>
                     <Style TargetType="Slider" BasedOn="{StaticResource MaterialDesignSlider}">
                         <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
-                        <Setter Property="Background" Value="{DynamicResource MaterialDesignPaper}"/>
                     </Style>
                     <Style TargetType="GroupBox">
                         <Setter Property="Margin" Value="4"/>

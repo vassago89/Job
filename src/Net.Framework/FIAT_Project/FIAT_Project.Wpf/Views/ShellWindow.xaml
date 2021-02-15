@@ -29,31 +29,36 @@
             <DockPanel
                 Grid.Row="1">
                 <views:ControlPanel DockPanel.Dock="Left"
-                                    Width="425"/>
-                <UniformGrid DockPanel.Dock="Bottom" Rows="1" Columns="2" Height="200">
-                    <GroupBox Header="Fluorescence ch1. Statistics" IsEnabled="{Binding SettingStore.Use660}">
+                                    Width="350"/>
+                <UniformGrid DockPanel.Dock="Bottom" Rows="1" Height="200">
+                    <GroupBox Header="Fluorescence ch1. Statistics" Visibility="{Binding SettingStore.Use660, Converter={StaticResource BoolToVisibleConverter}}">
                         <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer660}"/>
                     </GroupBox>
-                    <GroupBox Header="Fluorescence ch2. Statistics" IsEnabled="{Binding SettingStore.Use760}">
+                    <GroupBox Header="Fluorescence ch2. Statistics" Visibility="{Binding SettingStore.Use760, Converter={StaticResource BoolToVisibleConverter}}">
                         <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer760}"/>
                     </GroupBox>
                 </UniformGrid>
                 <Grid>
-                    <UniformGrid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <UniformGrid Rows="1">
                         <GroupBox Header="Color">
-                            <views:ImageControl ImageIndex="0"/>
+                            <views:ImageControl IsColor="True"/>
                         </GroupBox>
                         <GroupBox Header="Merged">
-                            <views:ImageControl ImageIndex="3"/>
-                        </GroupBox>
-                        <GroupBox Header="Fluorescence ch1." IsEnabled="{Binding SettingStore.Use660}">
-                            <views:ImageControl ImageIndex="1" Header="" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
-                        </GroupBox>
-                        <GroupBox Header="Fluorescence ch2." IsEnabled="{Binding SettingStore.Use760}">
-                            <views:ImageControl ImageIndex="2" Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
+                            <views:ImageControl IsMerged="True"/>
                         </GroupBox>
                     </UniformGrid>
-                    
+                    <UniformGrid Grid.Row="1" Rows="1">
+                        <GroupBox Header="Fluorescence ch1." Visibility="{Binding SettingStore.Use660, Converter={StaticResource BoolToVisibleConverter}}">
+                            <views:ImageControl Header="" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer660}"/>
+                        </GroupBox>
+                        <GroupBox Header="Fluorescence ch2." Visibility="{Binding SettingStore.Use760, Converter={StaticResource BoolToVisibleConverter}}">
+                            <views:ImageControl Header="Lazer 760" OnLazer="True" Lazer="{x:Static local:ShellWindow.Lazer760}"/>
+                        </GroupBox>
+                    </UniformGrid>
                 </Grid>
             </DockPanel>
         </Grid>

@@ -1,4 +1,5 @@
 ﻿using FIAT_Project.Core.Service;
+using FIAT_Project.Wpf.Datas;
 using FIAT_Project.Wpf.Views;
 using MaterialDesignThemes.Wpf;
 using Net.Framework.Data.ImageDatas;
@@ -77,10 +78,14 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SetProperty(ref _stateBrush, value);
         }
 
-        public MenuPanelViewModel(StateService stateService, GrabService grabService, RecordService recordService)
+        public SettingStore SettingStore { get; }
+
+        public MenuPanelViewModel(StateService stateService, GrabService grabService, RecordService recordService, SettingStore settingStore)
         {
             try
             {
+                SettingStore = settingStore;
+
                 State = "Idle";
                 var brush = new SolidColorBrush(Colors.LightGray);
                 brush.Freeze();
@@ -91,13 +96,13 @@ namespace FIAT_Project.Wpf.ViewModels
 
                 SettingCommand = new DelegateCommand(async () =>
                 {
-                    var view = new SettingDialog();
+                    var message = "When you change the settings, restart the program. Do you agree ?";
 
-                //show the dialog
-                var result = await DialogHost.Show(view, "RootDialog", ClosingEventHandler);
+                    var result = await DialogHost.Show(new MessageDialog(message, true), "RootDialog", ClosingEventHandler);
 
-                //check the result...
-                Console.WriteLine("Dialog was closed, the CommandParameter used to close it was: " + (result ?? "NULL"));
+                    
+                    if (bool.Parse((string)result))
+                        await DialogHost.Show(new SettingDialog(), "RootDialog", ClosingEventHandler);
                 });
 
                 ExitCommand = new DelegateCommand(App.Current.Shutdown);

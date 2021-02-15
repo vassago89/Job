@@ -26,7 +26,7 @@ namespace FIAT_Project.Wpf
     {
         protected override void OnInitialized()
         {
-            RenderOptions.ProcessRenderMode = RenderMode.Default;
+            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
             base.OnInitialized();
 
@@ -34,22 +34,27 @@ namespace FIAT_Project.Wpf
             var protocolService = Container.Resolve<ProtocolService>();
 
             protocolService.SetLed(systemConfig.ValueLed * 1000.0);
-            protocolService.Set660(systemConfig.ValueDictionary[ELazer.L660] * 1000.0);
-            protocolService.Set760(systemConfig.ValueDictionary[ELazer.L760] * 1000.0);
-
             protocolService.SetGain(systemConfig.GainLed, ELazer.L660, true);
-            protocolService.SetGain(systemConfig.GainDictionary[ELazer.L660], ELazer.L660);
-            protocolService.SetGain(systemConfig.GainDictionary[ELazer.L760], ELazer.L760);
+            protocolService.SetExposure(systemConfig.ExposureLed, ELazer.L660, true);
+            if (systemConfig.UseDictionary[ELazer.L660])
+            {
+                protocolService.Set660(systemConfig.ValueDictionary[ELazer.L660] * 1000.0);
+                protocolService.SetGain(systemConfig.GainDictionary[ELazer.L660], ELazer.L660);
+                protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L660], ELazer.L660);
+            }
+
+            if (systemConfig.UseDictionary[ELazer.L760])
+            {
+                protocolService.Set760(systemConfig.ValueDictionary[ELazer.L760] * 1000.0);
+                protocolService.SetGain(systemConfig.GainDictionary[ELazer.L760], ELazer.L760);
+                protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L760], ELazer.L760);
+            }
 
             var maxExp = Math.Max(systemConfig.ExposureLed,
                 Math.Max(systemConfig.ExposureDictionary[ELazer.L660],
                 systemConfig.ExposureDictionary[ELazer.L760]));
 
             protocolService.SetFrameRate(1000.0 / maxExp);
-
-            protocolService.SetExposure(systemConfig.ExposureLed, ELazer.L660, true);
-            protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L660], ELazer.L660);
-            protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L760], ELazer.L760);
         }
         
         protected override Window CreateShell()
@@ -71,33 +76,25 @@ namespace FIAT_Project.Wpf
 
         protected override void OnExit(ExitEventArgs e)
         {
+            var systemConfig = Container.Resolve<SystemConfig>();
             var protocolService = Container.Resolve<ProtocolService>();
+            var grabService = Container.Resolve<GrabService>();
             protocolService.OffLed();
-            protocolService.Off660();
-            protocolService.Off760();
+
+            if (systemConfig.UseDictionary[ELazer.L660])
+                protocolService.Off660();
+
+            if (systemConfig.UseDictionary[ELazer.L760])
+                protocolService.Off760();
+
+            protocolService.Release();
+            grabService.Release();
 
             MatroxObjectPool.Dispose();
             MatroxApplicationHelper.Dispose();
 
-            if (e.ApplicationExitCode == 0)
-            {
-               
-                //MatroxHelper.FreeApplication();
-                //try
-                //{
-                //    c
-                //    Container.Resolve<IoService>().Stop();
-                //    Container.Resolve<IoService>().Cancle();
-                //}
-                //catch
-                //{
-                //    var pm = new PatternMatching();
-                //    pm.AddPattern
-                //}
-            }
-
-            //MatroxHelper.FreeApplication();
-            //CudaMethods.CUDA_RELEASE();
+            if (e.ApplicationExitCode == 1000)
+                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
 
             base.OnExit(e);
         }

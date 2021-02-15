@@ -73,7 +73,8 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
-        public int ImageIndex { get; set; }
+        public bool IsColor { get; set; }
+        public bool IsMerged { get; set; }
 
         private ELazer lazer;
         public ELazer Lazer
@@ -123,7 +124,9 @@ namespace FIAT_Project.Wpf.ViewModels
             get => _source;
             set => SetProperty(ref _source, value);
         }
-        
+
+        public DelegateCommand ZoomInCommand { get; }
+        public DelegateCommand ZoomOutCommand { get; }
         public DelegateCommand ZoomFitCommand { get; }
         
         public ZoomService ZoomService { get; }
@@ -134,8 +137,7 @@ namespace FIAT_Project.Wpf.ViewModels
         private int _height;
         
         bool _isPanning;
-
-        Point _panningTranslatePos;
+        
         Point _panningStartPos;
 
         Point _setROIStartPos;
@@ -210,7 +212,7 @@ namespace FIAT_Project.Wpf.ViewModels
         public SystemConfig SystemConfig { get; }
 
         private byte[] _buffer;
-        private PipeLine<(int width, int height, byte[][] datas)> _pipeLine;
+        private PipeLine<(int width, int height, byte[] data)> _pipeLine;
 
         public ImageControlViewModel(ProcessService processService, SystemConfig systemConfig)
         {
@@ -223,13 +225,23 @@ namespace FIAT_Project.Wpf.ViewModels
                 ZoomService = new ZoomService();
 
                 processService.Processed += Processed;
-                
+
+                ZoomInCommand = new DelegateCommand(() =>
+                {
+                    ZoomService.ZoomIn(_presentor.ActualWidth, _presentor.ActualHeight);
+                });
+
+                ZoomOutCommand = new DelegateCommand(() =>
+                {
+                    ZoomService.ZoomOut(_presentor.ActualWidth, _presentor.ActualHeight);
+                });
+
                 ZoomFitCommand = new DelegateCommand(ZoomFit);
 
-                _pipeLine = new PipeLine<(int width, int height, byte[][] datas)>(true);
-                _pipeLine.Job = new Action<(int width, int height, byte[][] datas)>((tuple) =>
+                _pipeLine = new PipeLine<(int width, int height, byte[] data)>(true);
+                _pipeLine.Job = new Action<(int width, int height, byte[] data)>((tuple) =>
                 {
-                    DrawImage(tuple.width, tuple.height, tuple.datas);
+                    DrawImage(tuple.width, tuple.height, tuple.data);
                 });
 
                 _pipeLine.Run(new CancellationToken());
@@ -241,7 +253,7 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
-        private void DrawImage(int width, int height, byte[][] datas)
+        private void DrawImage(int width, int height, byte[] data)
         {
             if (Source == null)
             {
@@ -253,14 +265,11 @@ namespace FIAT_Project.Wpf.ViewModels
                     ZoomFit();
                 });
             }
-
-            if (datas.Length < ImageIndex)
-                return;
-
+            
             var size = width * height;
-            if (ImageIndex == 1 || ImageIndex == 2)
+            if (IsColor == false && IsMerged == false)
             {
-                var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, datas[ImageIndex], width);
+                var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, data, width);
                 temp.Freeze();
                 Source = temp;
             }
@@ -272,9 +281,9 @@ namespace FIAT_Project.Wpf.ViewModels
 
                 for (int i = 0, red = 0, green = size, blue = size * 2; i < total; red++, green++, blue++)
                 {
-                    _buffer[i++] = datas[ImageIndex][red];
-                    _buffer[i++] = datas[ImageIndex][green];
-                    _buffer[i++] = datas[ImageIndex][blue];
+                    _buffer[i++] = data[red];
+                    _buffer[i++] = data[green];
+                    _buffer[i++] = data[blue];
                 }
 
                 var temp = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, _buffer, width * 3);
@@ -283,10 +292,22 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
-        private void Processed(int width, int height, byte[][] datas)
+        private void Processed(int width, int height, byte[] ledData, byte[] mergedData, Dictionary<ELazer, byte[]> dataDictionary)
         {
-            _pipeLine.Enqueue((width, height, datas));
-            //DrawImage(width, height, datas);
+            if (IsColor)
+            {
+                _pipeLine.Enqueue((width, height, ledData));
+                return;
+            }
+                
+            if (IsMerged)
+            {
+                _pipeLine.Enqueue((width, height, mergedData));
+                return;
+            }
+            
+            if (dataDictionary.ContainsKey(Lazer))
+                _pipeLine.Enqueue((width, height, dataDictionary[Lazer]));
         }
 
         private void ZoomFit()
@@ -335,9 +356,8 @@ namespace FIAT_Project.Wpf.ViewModels
         {
             var curPos = e.GetPosition(sender as IInputElement);
             _isPanning = true;
-
-            _panningTranslatePos = new Point(ZoomService.TranslateX, ZoomService.TranslateY);
-            _panningStartPos = curPos;
+            
+            _panningStartPos = new Point(curPos.X, curPos.Y);
         }
 
         public void OnMouseRightButtonUp()
@@ -401,9 +421,16 @@ namespace FIAT_Project.Wpf.ViewModels
             {
                 ZoomService.TranslateX += curPos.X - _panningStartPos.X;
                 ZoomService.TranslateY += curPos.Y - _panningStartPos.Y;
+
+                _panningStartPos.X = curPos.X;
+                _panningStartPos.Y = curPos.Y;
             }
             else if (_isSetROI)
             {
+                if (ZoomService.Scale == 0)
+                    return;
+
+                curPos = new Point(curPos.X / ZoomService.Scale, curPos.Y / ZoomService.Scale);
                 switch (SystemConfig.ROIShapeDictionary[Lazer])
                 {
                     case EShape.Rectangle:
@@ -424,7 +451,6 @@ namespace FIAT_Project.Wpf.ViewModels
                         SetPolygonROI = collection;
                         break;
                 }
-               
             }
         }
     }

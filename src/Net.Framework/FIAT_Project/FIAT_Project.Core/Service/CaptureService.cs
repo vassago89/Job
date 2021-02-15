@@ -1,4 +1,5 @@
-﻿using Net.Framework.Data.ImageDatas;
+﻿using FIAT_Project.Core.Enums;
+using Net.Framework.Data.ImageDatas;
 using Net.Framework.Data.Recorder;
 using Net.Framework.Matrox;
 using System;
@@ -17,11 +18,12 @@ namespace FIAT_Project.Core.Service
         private ProcessService _processService;
         private GrabService _grabService;
 
-        private ICapturer<byte> _capturer;
-        private byte[] _buffer;
-        
+        private ICapturer<byte> _ledCapturer;
+        private ICapturer<byte> _mergedCapturer;
+
+        private Dictionary<ELazer, ICapturer<byte>> _capturerDictionary;
+
         public Action<bool> CapturingStarted;
-        private DrawingService _drawingService;
         private SystemConfig _systemConfig;
 
         private int _current;
@@ -31,48 +33,76 @@ namespace FIAT_Project.Core.Service
         public CaptureService(GrabService grabService, ProcessService processService, DrawingService drawingService, SystemConfig systemConfig)
         {
             _systemConfig = systemConfig;
-
-            _drawingService = drawingService;
+            
             _grabService = grabService;
             _processService = processService;
-            _capturer = new MatroxCapturer<byte>();
-            _capturer.Intialize(grabService.Width * 2, grabService.Height * 2, 3);
 
-            _buffer = new byte[grabService.Width * grabService.Height * 12];
+            _ledCapturer = new MatroxCapturer<byte>();
+            _ledCapturer.Intialize(grabService.Width, grabService.Height, 3);
+
+            _mergedCapturer = new MatroxCapturer<byte>();
+            _mergedCapturer.Intialize(grabService.Width, grabService.Height, 3);
+
+            _capturerDictionary = new Dictionary<ELazer, ICapturer<byte>>();
+
+            foreach (var pair in _systemConfig.UseDictionary)
+            {
+                if (pair.Value)
+                {
+                    _capturerDictionary[pair.Key] = new MatroxCapturer<byte>();
+                    _capturerDictionary[pair.Key].Intialize(grabService.Width, grabService.Height, 1);
+                }
+            }
         }
 
         public void Start(int count)
         {
             lock (this)
             {
-                _current = 0;
+                _current = 1;
                 _count = count;
+                
+                var captureDirectory = Path.Combine(Environment.CurrentDirectory, _systemConfig.CapturePath);
+                if (Directory.Exists(captureDirectory) == false)
+                    Directory.CreateDirectory(captureDirectory);
 
-                _directory = Path.Combine(Environment.CurrentDirectory, _systemConfig.CapturePath);
+                _directory = Path.Combine(captureDirectory, DateTime.Now.ToString("yyyyMMdd_HHmmss"));
                 if (Directory.Exists(_directory) == false)
                     Directory.CreateDirectory(_directory);
 
-                Array.Clear(_buffer, 0, _buffer.Length);
                 _processService.Processed += Processed;
                 
                 CapturingStarted?.Invoke(true);
             }
         }
 
-        private void Processed(int width, int height, byte[][] datas)
+        private void Processed(int width, int height, byte[] ledData, byte[] mergedData, Dictionary<ELazer, byte[]> dataDictionary)
         {
             lock (this)
             {
-                if (_current >= _count)
+                _ledCapturer.Capture(ledData, Path.Combine(_directory, $"Color_{_current}.bmp"));
+                _mergedCapturer.Capture(mergedData, Path.Combine(_directory, $"Merged_{_current}.bmp"));
+
+                foreach (var pair in dataDictionary)
                 {
-                    _processService.Processed -= Processed;
-                    
-                    return;
+                    switch (pair.Key)
+                    {
+                        case ELazer.L660:
+                            _capturerDictionary[pair.Key].Capture(pair.Value, Path.Combine(_directory, $"Ch1_{_current}.bmp"));
+                            break;
+                        case ELazer.L760:
+                            _capturerDictionary[pair.Key].Capture(pair.Value, Path.Combine(_directory, $"Ch2_{_current}.bmp"));
+                            break;
+                    }
                 }
 
-                _drawingService.Drawing(width, height, datas, _buffer);
-                _capturer.Capture(_buffer, Path.Combine(_directory, $"{DateTime.Now.ToString("yyyyMMdd_HHmmssfff")}.bmp"));
                 _current++;
+
+                if (_current > _count)
+                {
+                    _processService.Processed -= Processed;
+                    return;
+                }
             }
         }
     }

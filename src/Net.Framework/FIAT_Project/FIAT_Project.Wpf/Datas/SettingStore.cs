@@ -34,6 +34,13 @@ namespace FIAT_Project.Wpf.Datas
             }
         }
 
+        private bool _onGrab;
+        public bool OnGrab
+        {
+            get => _onGrab;
+            set => SetProperty(ref _onGrab, value);
+        }
+
         public SettingStore(SystemConfig systemConfig)
         {
             _systemConfig = systemConfig;

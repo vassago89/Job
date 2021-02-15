@@ -13,7 +13,7 @@ namespace FIAT_Project.Core.Service
 {
     public class ProcessService
     {
-        public Action<int, int, byte[][]> Processed;
+        public Action<int, int, byte[], byte[], Dictionary<ELazer, byte[]>> Processed;
         public Action<ELazer, long[]> HistoProcessed;
 
         private MatroxBayerProcessor _bayerProcessor;
@@ -25,7 +25,6 @@ namespace FIAT_Project.Core.Service
         private Dictionary<ELazer, byte[]> _bufferDictionary;
         
         private MatroxMultiplyProcesser _mergeMultiplyProcesser;
-        private byte[] _mergedBuffer;
 
         private GrabService _grabService;
 
@@ -41,12 +40,16 @@ namespace FIAT_Project.Core.Service
             _shapeDrawer = new ShapeDrawer(grabService.Width, grabService.Height, 1);
 
             _maskDictionary = new Dictionary<ELazer, byte[]>();
-            _maskDictionary[ELazer.L660] = new byte[grabService.Width * grabService.Height];
-            _maskDictionary[ELazer.L760] = new byte[grabService.Width * grabService.Height];
-
             _bufferDictionary = new Dictionary<ELazer, byte[]>();
-            _bufferDictionary[ELazer.L660] = new byte[grabService.Width * grabService.Height];
-            _bufferDictionary[ELazer.L760] = new byte[grabService.Width * grabService.Height];
+            
+            foreach (var pair in systemConfig.UseDictionary)
+            {
+                if (pair.Value)
+                {
+                    _maskDictionary[pair.Key] = new byte[grabService.Width * grabService.Height];
+                    _bufferDictionary[pair.Key] = new byte[grabService.Width * grabService.Height];
+                }
+            }
 
             //_mergedBuffer = new byte[grabService.Width * grabService.Height * 3];
 
@@ -59,7 +62,7 @@ namespace FIAT_Project.Core.Service
             _mergeMultiplyProcesser =
                 new MatroxMultiplyProcesser(
                     grabService.Width,
-                    grabService.Height, 0, 1);
+                    grabService.Height, 0, 2);
         }
 
         public void SetCoefficient(float red, float green, float blue)
@@ -67,40 +70,71 @@ namespace FIAT_Project.Core.Service
             _bayerProcessor.SetCoefficient(new float[] { red, green, blue });
         }
         
-        private void ServiceGrabbed(int width, int height, byte[][] datas)
+        private void ServiceGrabbed(int width, int height, byte[] ledData, Dictionary<ELazer, byte[]> dataDictionary)
         {
             var tasks = new List<Task>();
-
+            
             tasks.Add(Task.Run(() =>
             {
                 if (_systemConfig.OnAutoBayer)
-                    _systemConfig.CoefficientValues = _bayerProcessor.GenerateCoefficient(datas[0]);
+                    _systemConfig.CoefficientValues = _bayerProcessor.GenerateCoefficient(ledData);
                 else
                     _bayerProcessor.SetCoefficient(_systemConfig.CoefficientValues);
 
-                datas[0] = _bayerProcessor.Process(datas[0]);
+                ledData = _bayerProcessor.Process(ledData);
             }));
-            
+
+            var processedDictionary = new Dictionary<ELazer, byte[]>();
+
             if (_systemConfig.UseDictionary[ELazer.L660] == true)
-                tasks.Add(Task.Run(() => StatisticsProcess(ELazer.L660, datas[1])));
-
+            {
+                tasks.Add(Task.Run(() => StatisticsProcess(ELazer.L660, dataDictionary[ELazer.L660])));
+                processedDictionary[ELazer.L660] = dataDictionary[ELazer.L660];
+            }
+            
             if (_systemConfig.UseDictionary[ELazer.L760] == true)
-                tasks.Add(Task.Run(() => StatisticsProcess(ELazer.L760, datas[2])));
+            {
+                tasks.Add(Task.Run(() => StatisticsProcess(ELazer.L760, dataDictionary[ELazer.L760])));
+                processedDictionary[ELazer.L760] = dataDictionary[ELazer.L760];
+            }
 
-            _mergedBuffer = new byte[_grabService.Width * _grabService.Height * 3];
+            Task.WaitAll(tasks.ToArray());
+            tasks.Clear();
 
+            var mergedBuffer = new byte[_grabService.Width * _grabService.Height * 3];
+            
             switch (_systemConfig.ThresholdMode)
             {
                 case EThresholdMode.GrayMode:
-                    var buffer = _mergeMultiplyProcesser.Multiply(datas[0], datas[1], datas[2], _systemConfig.RatioColor, _systemConfig.Ratio660, _systemConfig.Ratio760);
-                    Array.Copy(buffer, _mergedBuffer, _mergedBuffer.Length);
+                    if (processedDictionary.Count == 2)
+                    {
+                        var buffer = _mergeMultiplyProcesser.Multiply(ledData, processedDictionary[ELazer.L660], processedDictionary[ELazer.L760], _systemConfig.RatioColor, _systemConfig.Ratio660, _systemConfig.Ratio760);
+                        Array.Copy(buffer, mergedBuffer, mergedBuffer.Length);
+                    }
+                    else if (processedDictionary.Count == 1)
+                    {
+                        var lazer = processedDictionary.First().Key;
+                        byte[] buffer = null;
+                        switch (lazer)
+                        {
+                            case ELazer.L660:
+                                buffer = _mergeMultiplyProcesser.Multiply(ledData, processedDictionary[lazer], _systemConfig.RatioColor, _systemConfig.Ratio660);
+                                break;
+                            case ELazer.L760:
+                                buffer = _mergeMultiplyProcesser.Multiply(ledData, processedDictionary[lazer], _systemConfig.RatioColor, _systemConfig.Ratio760);
+                                break;
+                        }
+                        
+                        Array.Copy(buffer, mergedBuffer, mergedBuffer.Length);
+                    }
+
                     break;
                 case EThresholdMode.BinaryMode:
                     if (_systemConfig.UseDictionary[ELazer.L660] == true)
-                        tasks.Add(Task.Run(() => datas[1] = BinaryProcess(ELazer.L660, datas[1], width, height)));
+                        tasks.Add(Task.Run(() => processedDictionary[ELazer.L660] = BinaryProcess(ELazer.L660, processedDictionary[ELazer.L660], mergedBuffer, width, height)));
 
                     if (_systemConfig.UseDictionary[ELazer.L760] == true)
-                        tasks.Add(Task.Run(() => datas[2] = BinaryProcess(ELazer.L760, datas[2], width, height)));
+                        tasks.Add(Task.Run(() => processedDictionary[ELazer.L760] = BinaryProcess(ELazer.L760, processedDictionary[ELazer.L760], mergedBuffer, width, height)));
 
                     Task.WaitAll(tasks.ToArray());
                     tasks.Clear();
@@ -108,11 +142,11 @@ namespace FIAT_Project.Core.Service
                     var lengthOfOneChannel = width * height;
                     for (int redIndex = 0, greenIndex = lengthOfOneChannel, blueIndex = lengthOfOneChannel * 2; redIndex < lengthOfOneChannel; redIndex++, greenIndex++, blueIndex++)
                     {
-                        if (_mergedBuffer[redIndex] == 0 && _mergedBuffer[greenIndex] == 0)
+                        if (mergedBuffer[redIndex] == 0 && mergedBuffer[greenIndex] == 0 && mergedBuffer[blueIndex] == 0)
                         {
-                            _mergedBuffer[redIndex] = datas[0][redIndex];
-                            _mergedBuffer[greenIndex] = datas[0][greenIndex];
-                            _mergedBuffer[blueIndex] = datas[0][blueIndex];
+                            mergedBuffer[redIndex] = ledData[redIndex];
+                            mergedBuffer[greenIndex] = ledData[greenIndex];
+                            mergedBuffer[blueIndex] = ledData[blueIndex];
                         }
                     }
                     break;
@@ -120,18 +154,17 @@ namespace FIAT_Project.Core.Service
 
             Task.WaitAll(tasks.ToArray());
 
-            var mergeDatas = new byte[][] { datas[0], datas[1], datas[2], _mergedBuffer };
-
             //Task.Run(() => Processed?.Invoke(width, height, mergeDatas));
-            Processed?.Invoke(width, height, mergeDatas);
+
+            Processed?.Invoke(width, height, ledData, mergedBuffer, processedDictionary);
         }
 
-        private byte[] BinaryProcess(ELazer lazer, byte[] data, int width, int height)
+        private byte[] BinaryProcess(ELazer lazer, byte[] data, byte[] merged, int width, int height)
         {
             var histo = _autoThresholder.GetHistogram(data);
 
             data = Threshold(lazer, data, width, height, histo);
-            Merge(lazer, data, _mergedBuffer, width * height, lazer == ELazer.L660 ? 0 : 1);
+            Merge(lazer, data, merged, width * height, lazer == ELazer.L660 ? 0 : 2);
 
             return data;
         }
@@ -210,15 +243,12 @@ namespace FIAT_Project.Core.Service
 
         private byte[] Threshold(ELazer lazer, byte[] data, int width, int height, long[] histo)
         {
-            var dataOfSource = data;
-            var srcRect = new Rectangle(0, 0, width, height);
-
             if (_systemConfig.AutoDictionary[lazer] == true)
-                dataOfSource = AutoThreshold(lazer, dataOfSource, histo, _systemConfig.MethodDictionary[lazer]);
+                return AutoThreshold(lazer, data, histo, _systemConfig.MethodDictionary[lazer]);
             else if (_systemConfig.ManualDictionary[lazer] == true)
-                dataOfSource = Threshold(lazer,dataOfSource, _systemConfig.ThresholdDictionary[lazer]);
+                return Threshold(lazer, data, _systemConfig.ThresholdDictionary[lazer]);
             
-            return dataOfSource;
+            return data;
         }
     }
 }

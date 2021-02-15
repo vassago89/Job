@@ -1,4 +1,5 @@
-﻿using Net.Framework.Data.ImageDatas;
+﻿using FIAT_Project.Core.Enums;
+using Net.Framework.Data.ImageDatas;
 using Net.Framework.Data.Recorder;
 using Net.Framework.Helper.Patterns;
 using Net.Framework.Matrox;
@@ -8,7 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace FIAT_Project.Core.Service
 {
@@ -17,43 +18,46 @@ namespace FIAT_Project.Core.Service
         private ProcessService _processService;
         private GrabService _grabService;
 
-        private IRecorder<byte> _recorder;
-        private List<IRecorder<byte>> _recorders;
+        private IRecorder<byte> _ledRecorder;
+        private IRecorder<byte> _mergedRecorder;
+        private Dictionary<ELazer, IRecorder<byte>> _recoderDictionary;
 
-        private byte[] _buffer;
-        
+        private byte[] _ledBuffer;
+        private byte[] _mergedBuffer;
+        private Dictionary<ELazer, byte[]> _bufferDictionary;
+
         public Action<bool> RecordingStarted;
-        private DrawingService _drawingService;
 
         private SystemConfig _systemConfig;
 
         private double _frameRate;
+
+        private Timer _timer;
         
-        public RecordService(GrabService grabService, ProcessService processService, DrawingService drawingService, SystemConfig systemConfig)
+        public RecordService(GrabService grabService, ProcessService processService, SystemConfig systemConfig)
         {
-            _drawingService = drawingService;
             _grabService = grabService;
             _processService = processService;
-        
-            _recorder = new MatroxRecoreder<byte>();
-            _recorder.Intialize(grabService.Width * 2, grabService.Height * 2, 3);
-
-            _recorders = new List<IRecorder<byte>>();
-            for (int i =0; i < 4; i++)
-            {
-                var recorder = new MatroxRecoreder<byte>();
-
-                if (i == 1 || i == 2)
-                    recorder.Intialize(grabService.Width, grabService.Height, 1);
-                else
-                    recorder.Intialize(grabService.Width, grabService.Height, 3);
-
-                _recorders.Add(recorder);
-            }
-
+            
             _systemConfig = systemConfig;
 
-            _buffer = new byte[grabService.Width * grabService.Height * 12];
+            _ledRecorder = new MatroxRecoreder<byte>();
+            _ledRecorder.Intialize(grabService.Width, grabService.Height, 3);
+
+            _mergedRecorder = new MatroxRecoreder<byte>();
+            _mergedRecorder.Intialize(grabService.Width, grabService.Height, 3);
+
+            _recoderDictionary = new Dictionary<ELazer, IRecorder<byte>>();
+            foreach (var pair in _systemConfig.UseDictionary)
+            {
+                if (pair.Value)
+                {
+                    _recoderDictionary[pair.Key] = new MatroxRecoreder<byte>();
+                    _recoderDictionary[pair.Key].Intialize(grabService.Width, grabService.Height, 1);
+                }
+            }
+
+            _bufferDictionary = new Dictionary<ELazer, byte[]>();
         }
 
         public void Start(double frameRate)
@@ -70,43 +74,60 @@ namespace FIAT_Project.Core.Service
                 if (Directory.Exists(directory) == false)
                     Directory.CreateDirectory(directory);
 
-                Array.Clear(_buffer, 0, _buffer.Length);
-                _recorder.Start(Path.Combine(directory, "Total.avi"));
-                for (int i = 0; i < 4;  i++)
+                _ledRecorder.Start(Path.Combine(directory, "Color.avi"));
+                _mergedRecorder.Start(Path.Combine(directory, "Merged.avi"));
+
+                foreach (var pair in _recoderDictionary)
                 {
-                    switch (i)
+                    switch (pair.Key)
                     {
-                        case 0:
-                            _recorders[i].Start(Path.Combine(directory, "Color.avi"));
+                        case ELazer.L660:
+                            pair.Value.Start(Path.Combine(directory, "Ch1.avi"));
                             break;
-                        case 1:
-                            _recorders[i].Start(Path.Combine(directory, "Ch1.avi"));
+                        case ELazer.L760:
+                            pair.Value.Start(Path.Combine(directory, "Ch2.avi"));
                             break;
-                        case 2:
-                            _recorders[i].Start(Path.Combine(directory, "Ch2.avi"));
-                            break;
-                        case 3:
-                            _recorders[i].Start(Path.Combine(directory, "Merged.avi"));
-                            break;
-                    }   
+                    }
                 }
-                    
+
+                _timer = new Timer(new TimerCallback((obj) =>
+                {
+                    lock (this)
+                    {
+                        if (_ledBuffer == null || _mergedBuffer == null)
+                            return;
+
+                        _ledRecorder.Enqueue(_ledBuffer);
+                        _mergedRecorder.Enqueue(_mergedBuffer);
+                        foreach (var pair in _recoderDictionary)
+                            pair.Value.Enqueue(_bufferDictionary[pair.Key]);
+
+                        _ledBuffer = null;
+                        _mergedBuffer = null;
+
+                        _bufferDictionary.Clear();
+                    }
+                }), null, (int)Math.Round(1000.0 / _frameRate), (int)Math.Round(1000.0 / _frameRate));
 
                 _processService.Processed += Processed;
-
                 RecordingStarted?.Invoke(true);
             }
         }
 
-        private void Processed(int width, int height, byte[][] datas)
+        private void Processed(int width, int height, byte[] ledData, byte[] mergedData, Dictionary<ELazer, byte[]> dataDictionary)
         {
             lock (this)
             {
-                _drawingService.Drawing(width, height, datas, _buffer);
-                _recorder.Enqueue(_buffer);
+                _ledBuffer = ledData;
+                _mergedBuffer = mergedData;
+                
+                foreach (var pair in dataDictionary)
+                    _bufferDictionary[pair.Key] = pair.Value;
 
-                for (int i = 0; i < 4; i++)
-                    _recorders[i].Enqueue(datas[i]);
+                //_ledRecorder.Enqueue(ledData);
+                //_mergedRecorder.Enqueue(mergedData);
+                //foreach (var pair in _recoderDictionary)
+                //    pair.Value.Enqueue(dataDictionary[pair.Key]);
             }
         }
 
@@ -114,11 +135,14 @@ namespace FIAT_Project.Core.Service
         {
             lock (this)
             {
-                _processService.Processed -= Processed;
-                
-                _recorder.Stop(_frameRate);
+                _timer.Dispose();
 
-                foreach (var recorder in _recorders)
+                _processService.Processed -= Processed;
+
+                _ledRecorder.Stop(_frameRate);
+                _mergedRecorder.Stop(_frameRate);
+
+                foreach (var recorder in _recoderDictionary.Values)
                     recorder.Stop(_frameRate);
 
                 RecordingStarted?.Invoke(false);

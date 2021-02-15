@@ -16,7 +16,7 @@ namespace FIAT_Project.Core.Service
 {
     public class GrabService
     {
-        public event Action<int, int, byte[][]> Grabbed;
+        public event Action<int, int, byte[], Dictionary<ELazer, byte[]>> Grabbed;
         private MatroxSystemGateway _gateway;
 
         //private Queue<ImageData<byte>> _queue;
@@ -29,12 +29,16 @@ namespace FIAT_Project.Core.Service
         public int Height => _imageDevice.Height;
         public int Channels => _imageDevice.Channels;
 
-        public Action<bool> GrabbingStarted;
+        public byte[] _ledData;
+        public Dictionary<ELazer, byte[]> _dataDictionary { get; set; }
 
-        private byte[][] _buffers;
+        public Action<bool> GrabbingStarted;
+        
         private SystemConfig _systemConfig;
         public GrabService(SystemConfig systemConfig)
         {
+            _dataDictionary = new Dictionary<ELazer, byte[]>();
+
             _systemConfig = systemConfig;
 
             MatroxApplicationHelper.Initilize();
@@ -57,11 +61,22 @@ namespace FIAT_Project.Core.Service
             _imageDevice = _gateway.ImageDevices.First();
             _imageDevice.DeviceGrabbed += DeviceImageGrabbed;
 
-            _buffers = new byte[_imageDevice.Channels][];
-            for (int i = 0; i < _imageDevice.Channels; i++)
+
+            _ledData = new byte[_imageDevice.Width * _imageDevice.Height];
+            foreach (var pair in _systemConfig.UseDictionary)
             {
-                _buffers[i] = new byte[_imageDevice.Width * _imageDevice.Height];
+                if (pair.Value)
+                    _dataDictionary[pair.Key] = new byte[_imageDevice.Width * _imageDevice.Height];
             }
+        }
+
+        public void Release()
+        {
+            foreach (var device in _gateway.ImageDevices)
+                device.Dispose();
+
+            foreach (var grabber in _gateway.ImageGrabbers)
+                grabber.Dispose();
         }
 
         private void DeviceImageGrabbed(IImageData obj)
@@ -69,10 +84,22 @@ namespace FIAT_Project.Core.Service
             var imageData = obj as ImageData<byte>;
 
             int size = imageData.Width * imageData.Height;
-            for (int i = 0; i < _imageDevice.Channels; i++)
-                Buffer.BlockCopy(imageData.Data, i * size, _buffers[i], 0, size);
 
-            Grabbed?.Invoke(imageData.Width, imageData.Height, _buffers.Reverse().ToArray());
+            int index = 2;
+            Buffer.BlockCopy(imageData.Data, index * size, _ledData, 0, size);
+            index--;
+
+            if (_dataDictionary.ContainsKey(ELazer.L660))
+                Buffer.BlockCopy(imageData.Data, index * size, _dataDictionary[ELazer.L660], 0, size);
+
+            index--;
+
+            if (_dataDictionary.ContainsKey(ELazer.L760))
+                Buffer.BlockCopy(imageData.Data, index * size, _dataDictionary[ELazer.L760], 0, size);
+
+            index--;
+
+            Grabbed?.Invoke(imageData.Width, imageData.Height, _ledData, _dataDictionary);
         }
         
         public void Start()

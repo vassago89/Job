@@ -34,8 +34,8 @@
                     <TextBox Text="{Binding SystemConfig.RecordPath}"/>
                     <TextBlock Text="Recording Frame"/>
                     <TextBox Text="{Binding SystemConfig.RecodingFrame}"/>
-                    <!--<TextBlock Text="Frame Ratio"/>
-                    <TextBox Text="{Binding SystemConfig.FrameRatio}"/>-->
+                    <TextBlock Text="Capture Count"/>
+                    <TextBox Text="{Binding SystemConfig.CaptureCount}"/>
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">
@@ -57,14 +57,13 @@
                     </Button.CommandParameter>
                     ACCEPT
                 </Button>-->
-                <Button IsCancel="True" Margin="0 8 0 0" Style="{DynamicResource MaterialDesignFlatButton}"
-                        Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
-                    <Button.CommandParameter>
-                        <system:Boolean>True</system:Boolean>
-                    </Button.CommandParameter>
+                <!--<Button IsCancel="True" Margin="0 8 0 0" Style="{DynamicResource MaterialDesignFlatButton}"
+                        Command="{x:Static wpf:DialogHost.CloseDialogCommand}">-->
+                <Button Margin="0 8 0 0"
+                        Command="{Binding RestartCommand}">
                     <Button.Content>
                         <StackPanel>
-                            <TextBlock Text="Close"/>
+                            <TextBlock Text="Restart"/>
                         </StackPanel>
                     </Button.Content>
                 </Button>

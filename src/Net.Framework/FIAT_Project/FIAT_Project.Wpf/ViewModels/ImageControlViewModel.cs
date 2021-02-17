@@ -354,7 +354,7 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var curPos = e.GetPosition(_presentor);
+            var curPos = e.GetPosition(sender as IInputElement);
             _isPanning = true;
             
             _panningStartPos = new Point(curPos.X, curPos.Y);
@@ -415,10 +415,9 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
-            var curPos = e.GetPosition(_presentor);
-
             if (_isPanning)
             {
+                var curPos = e.GetPosition(sender as IInputElement);
                 ZoomService.TranslateX += curPos.X - _panningStartPos.X;
                 ZoomService.TranslateY += curPos.Y - _panningStartPos.Y;
 
@@ -427,6 +426,8 @@ namespace FIAT_Project.Wpf.ViewModels
             }
             else if (_isSetROI)
             {
+                var curPos = e.GetPosition(_presentor);
+
                 if (ZoomService.Scale == 0)
                     return;
 

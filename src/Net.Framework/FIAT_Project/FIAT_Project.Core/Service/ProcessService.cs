@@ -62,7 +62,7 @@ namespace FIAT_Project.Core.Service
             _mergeMultiplyProcesser =
                 new MatroxMultiplyProcesser(
                     grabService.Width,
-                    grabService.Height, 0, 2);
+                    grabService.Height, 0, 1);
         }
 
         public void SetCoefficient(float red, float green, float blue)
@@ -164,7 +164,7 @@ namespace FIAT_Project.Core.Service
             var histo = _autoThresholder.GetHistogram(data);
 
             data = Threshold(lazer, data, width, height, histo);
-            Merge(lazer, data, merged, width * height, lazer == ELazer.L660 ? 0 : 2);
+            Merge(lazer, data, merged, width * height, lazer == ELazer.L660 ? 0 : 1);
 
             return data;
         }

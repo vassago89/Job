@@ -33,28 +33,28 @@ namespace FIAT_Project.Wpf
             var systemConfig = Container.Resolve<SystemConfig>();
             var protocolService = Container.Resolve<ProtocolService>();
 
-            protocolService.SetLed(systemConfig.ValueLed * 1000.0);
-            protocolService.SetGain(systemConfig.GainLed, ELazer.L660, true);
-            protocolService.SetExposure(systemConfig.ExposureLed, ELazer.L660, true);
-            if (systemConfig.UseDictionary[ELazer.L660])
-            {
-                protocolService.Set660(systemConfig.ValueDictionary[ELazer.L660] * 1000.0);
-                protocolService.SetGain(systemConfig.GainDictionary[ELazer.L660], ELazer.L660);
-                protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L660], ELazer.L660);
-            }
+            //protocolService.SetLed(systemConfig.ValueLed * 1000.0);
+            //protocolService.SetGain(systemConfig.GainLed, ELazer.L660, true);
+            //protocolService.SetExposure(systemConfig.ExposureLed, ELazer.L660, true);
+            //if (systemConfig.UseDictionary[ELazer.L660])
+            //{
+            //    protocolService.Set660(systemConfig.ValueDictionary[ELazer.L660] * 1000.0);
+            //    protocolService.SetGain(systemConfig.GainDictionary[ELazer.L660], ELazer.L660);
+            //    protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L660], ELazer.L660);
+            //}
 
-            if (systemConfig.UseDictionary[ELazer.L760])
-            {
-                protocolService.Set760(systemConfig.ValueDictionary[ELazer.L760] * 1000.0);
-                protocolService.SetGain(systemConfig.GainDictionary[ELazer.L760], ELazer.L760);
-                protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L760], ELazer.L760);
-            }
+            //if (systemConfig.UseDictionary[ELazer.L760])
+            //{
+            //    protocolService.Set760(systemConfig.ValueDictionary[ELazer.L760] * 1000.0);
+            //    protocolService.SetGain(systemConfig.GainDictionary[ELazer.L760], ELazer.L760);
+            //    protocolService.SetExposure(systemConfig.ExposureDictionary[ELazer.L760], ELazer.L760);
+            //}
 
-            var maxExp = Math.Max(systemConfig.ExposureLed,
-                Math.Max(systemConfig.ExposureDictionary[ELazer.L660],
-                systemConfig.ExposureDictionary[ELazer.L760]));
+            //var maxExp = Math.Max(systemConfig.ExposureLed,
+            //    Math.Max(systemConfig.ExposureDictionary[ELazer.L660],
+            //    systemConfig.ExposureDictionary[ELazer.L760]));
 
-            protocolService.SetFrameRate(1000.0 / maxExp);
+            //protocolService.SetFrameRate(1000.0 / maxExp);
         }
         
         protected override Window CreateShell()

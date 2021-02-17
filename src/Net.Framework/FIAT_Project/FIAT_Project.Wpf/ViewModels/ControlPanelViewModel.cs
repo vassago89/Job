@@ -660,9 +660,13 @@ namespace FIAT_Project.Wpf.ViewModels
 
             _protocolService.SetFrameRate(frameRate);
 
+            _protocolService.SetExposure(ExposureLed, ELazer.L660, true);
+            _protocolService.SetExposure(ExposureLed, ELazer.L660, true);
+            _protocolService.SetExposure(Exposure660, ELazer.L660);
+            _protocolService.SetExposure(Exposure760, ELazer.L760);
+
             if (isColor)
             {
-                _protocolService.SetExposure(ExposureLed, ELazer.L660, true);
                 SystemConfig.ExposureLed = ExposureLed;
                 return;
             }
@@ -670,11 +674,9 @@ namespace FIAT_Project.Wpf.ViewModels
             switch (lazer)
             {
                 case ELazer.L660:
-                    _protocolService.SetExposure(Exposure660, ELazer.L660);
                     SystemConfig.ExposureDictionary[ELazer.L660] = Exposure660;
                     break;
                 case ELazer.L760:
-                    _protocolService.SetExposure(Exposure760, ELazer.L760);
                     SystemConfig.ExposureDictionary[ELazer.L760] = Exposure760;
                     break;
             }

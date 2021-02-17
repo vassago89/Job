@@ -56,6 +56,23 @@ namespace FIAT_Project.Core.Service
             _grabberDevice.Close();
         }
 
+        private byte[] GetBuffer()
+        {
+            var buffer = new byte[8];
+            buffer[0] = 0x55;
+            buffer[1] = 0xAA;
+            buffer[2] = 0x05;
+
+            return buffer;
+        }
+
+
+        private void Send(byte[] buffer)
+        {
+            buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
+            _lazerDevice?.Write(buffer, 8);
+        }
+
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             var port = sender as SerialPort;
@@ -65,47 +82,58 @@ namespace FIAT_Project.Core.Service
 
         public void SetLed(double value)
         {
-            var buffer = new byte[8];
+            var buffer = GetBuffer();
 
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x02;
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    buffer[3] = 0x01;
+                    break;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x02;
+                    break;
+            }
+
             buffer[4] = (byte)(value / 256);
             buffer[5] = (byte)(value % 256);
-            buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
 
-            _lazerDevice?.Write(buffer, 8);
+            Send(buffer);
         }
 
         public void OnLed()
         {
-            var buffer = new byte[8];
+            var buffer = GetBuffer();
             
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x06;
-            buffer[4] = 0x00;
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    buffer[3] = 0x05;
+                    break;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x06;
+                    break;
+            }
+
             buffer[5] = 0x01;
-            buffer[6] = 0x0C;
-            
-            _lazerDevice?.Write(buffer, 8);
+
+            Send(buffer);
         }
 
         public void OffLed()
         {
-            var buffer = new byte[8];
+            var buffer = GetBuffer();
             
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x06;
-            buffer[4] = 0x00;
-            buffer[5] = 0x00;
-            buffer[6] = 0x0B;
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    buffer[3] = 0x05;
+                    break;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x06;
+                    break;
+            }
 
-            _lazerDevice?.Write(buffer, 8);
+            Send(buffer);
         }
 
         public void Set660(double value)
@@ -113,17 +141,21 @@ namespace FIAT_Project.Core.Service
             if (_systemConfig.UseDictionary[ELazer.L660] == false)
                 return;
 
-            var buffer = new byte[8];
-            
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x00;
+            var buffer = GetBuffer();
+
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    return;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x00;
+                    break;
+            }
+
             buffer[4] = (byte)(value / 256);
             buffer[5] = (byte)(value % 256);
-            buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
 
-            _lazerDevice?.Write(buffer, 8);
+            Send(buffer);
         }
 
         public void On660()
@@ -131,17 +163,20 @@ namespace FIAT_Project.Core.Service
             if (_systemConfig.UseDictionary[ELazer.L660] == false)
                 return;
 
-            var buffer = new byte[8];
+            var buffer = GetBuffer();
             
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x04;
-            buffer[4] = 0x00;
-            buffer[5] = 0x01;
-            buffer[6] = 0x0A;
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    return;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x04;
+                    break;
+            }
 
-            _lazerDevice?.Write(buffer, 8);
+            buffer[5] = 0x01;
+
+            Send(buffer);
         }
 
         public void Off660()
@@ -149,17 +184,18 @@ namespace FIAT_Project.Core.Service
             if (_systemConfig.UseDictionary[ELazer.L660] == false)
                 return;
 
-            var buffer = new byte[8];
-            
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x04;
-            buffer[4] = 0x00;
-            buffer[5] = 0x00;
-            buffer[6] = 0x09;
+            var buffer = GetBuffer();
 
-            _lazerDevice?.Write(buffer, 8);
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    return;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x04;
+                    break;
+            }
+
+            Send(buffer);
         }
 
         public void Set760(double value)
@@ -167,35 +203,44 @@ namespace FIAT_Project.Core.Service
             if (_systemConfig.UseDictionary[ELazer.L760] == false)
                 return;
 
-            var buffer = new byte[8];
+            var buffer = GetBuffer();
 
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x01;
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    buffer[3] = 0x00;
+                    break;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x01;
+                    break;
+            }
+            
             buffer[4] = (byte)(value / 256);
             buffer[5] = (byte)(value % 256);
-            buffer[6] = (byte)((buffer[2] + buffer[3] + buffer[4] + buffer[5]) & 0xFF);
 
-            _lazerDevice?.Write(buffer, 8);
+            Send(buffer);
         }
 
         public void On760()
         {
             if (_systemConfig.UseDictionary[ELazer.L760] == false)
                 return;
-
-            var buffer = new byte[8];
             
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x05;
-            buffer[4] = 0x00;
-            buffer[5] = 0x01;
-            buffer[6] = 0x0B;
+            var buffer = GetBuffer();
 
-            _lazerDevice?.Write(buffer, 8);
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    buffer[3] = 0x04;
+                    break;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x05;
+                    break;
+            }
+
+            buffer[5] = 0x01;
+
+            Send(buffer);
         }
 
         public void Off760()
@@ -203,25 +248,23 @@ namespace FIAT_Project.Core.Service
             if (_systemConfig.UseDictionary[ELazer.L760] == false)
                 return;
 
-            var buffer = new byte[8];
-            
-            buffer[0] = 0x55;
-            buffer[1] = 0xAA;
-            buffer[2] = 0x05;
-            buffer[3] = 0x05;
-            buffer[4] = 0x00;
-            buffer[5] = 0x00;
-            buffer[6] = 0x0A;
+            var buffer = GetBuffer();
 
-            _lazerDevice?.Write(buffer, 8);
+            switch (_systemConfig.ProtocolType)
+            {
+                case EProtocolType.Channel2:
+                    buffer[3] = 0x04;
+                    break;
+                case EProtocolType.Channel3:
+                    buffer[3] = 0x05;
+                    break;
+            }
+
+            Send(buffer);
         }
 
         public void SetExposure(int value, ELazer lazer, bool isLed = false)
         {
-            //SetFrameRate(1000.0 / value);
-
-            //Thread.Sleep(10);
-
             var chennel = isLed ? 'b' : lazer == ELazer.L660 ? 'g' : 'r';
 
             var buffer = Encoding.UTF8.GetBytes($"exp {chennel} {value * 1000}\r");

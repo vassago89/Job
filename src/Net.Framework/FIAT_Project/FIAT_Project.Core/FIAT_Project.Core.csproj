@@ -68,8 +68,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\EChannel.cs" />
     <Compile Include="Enums\ELazer.cs" />
     <Compile Include="Enums\ELazerType.cs" />
+    <Compile Include="Enums\EProtocolType.cs" />
     <Compile Include="Enums\ESensitivity.cs" />
     <Compile Include="Enums\EThresholdMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

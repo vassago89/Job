@@ -43,6 +43,21 @@ namespace FIAT_Project.Wpf.ViewModels
         public SettingStore SettingStore { get; }
         public DelegateCommand RestartCommand { get; }
 
+        public IEnumerable<EProtocolType> ProtocolTypes => Enum.GetValues(typeof(EProtocolType)) as IEnumerable<EProtocolType>;
+        public IEnumerable<EChannel> Channels => Enum.GetValues(typeof(EChannel)) as IEnumerable<EChannel>;
+        
+        public EChannel Channel660
+        {
+            get => SystemConfig.ChennelDictionary[ELazer.L660];
+            set => SystemConfig.ChennelDictionary[ELazer.L660] = value;
+        }
+
+        public EChannel Channel760
+        {
+            get => SystemConfig.ChennelDictionary[ELazer.L760];
+            set => SystemConfig.ChennelDictionary[ELazer.L760] = value;
+        }
+
         public SettingDialogViewModel(SettingStore settingStore, SystemConfig systemConfig)
         {
             try

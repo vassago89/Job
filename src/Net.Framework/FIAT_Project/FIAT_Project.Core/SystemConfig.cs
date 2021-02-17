@@ -18,7 +18,9 @@ namespace FIAT_Project.Core
         public Dictionary<ELazer, bool> OnROIChangedDictionary { get; set; }
 
         public bool OnAutoBayer { get; set; }
-        
+
+        public EProtocolType ProtocolType { get; set; }
+
         public string LazerProtocolPort { get; set; }
         public string GrabberProtocolPort { get; set; }
         public string DcfPath { get; set; }
@@ -58,6 +60,7 @@ namespace FIAT_Project.Core
 
         public Dictionary<ELazer, bool> IsAutoScaleDictionary { get; set; }
         public Dictionary<ELazer, bool> IsLogScaleDictionary { get; set; }
+        public Dictionary<ELazer, EChannel> ChennelDictionary { get; set; }
 
         public Dictionary<ESensitivity, int> LedPresetDictionary { get; set; }
         public Dictionary<ELazer, Dictionary<ESensitivity, int>> LazerPresetDictionary { get; set; }
@@ -80,7 +83,9 @@ namespace FIAT_Project.Core
             RecordPath = "..\\Record";
             ValueLed = MaxLed = 1.000;
             CaptureCount = 5;
-            
+
+            ProtocolType = EProtocolType.Channel2;
+
             OnAutoBayer = false;
             CoefficientValues = new float[3];
             for (int i = 0; i < 3; i++)
@@ -181,6 +186,10 @@ namespace FIAT_Project.Core
             RatioColor = 1;
             Ratio660 = 1;
             Ratio760 = 1;
+
+            ChennelDictionary = new Dictionary<ELazer, EChannel>();
+            ChennelDictionary[ELazer.L660] = EChannel.Red;
+            ChennelDictionary[ELazer.L760] = EChannel.Green;
         }
     }
 }

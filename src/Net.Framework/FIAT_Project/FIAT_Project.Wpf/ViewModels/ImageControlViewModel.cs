@@ -331,10 +331,10 @@ namespace FIAT_Project.Wpf.ViewModels
         
         public void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (OnROI == false)
+            if (OnROI == false || ZoomService.Scale == 0)
                 return;
 
-            var curPos = e.GetPosition(sender as IInputElement);
+            var curPos = e.GetPosition(_presentor);
                 
             switch (SystemConfig.ROIShapeDictionary[Lazer])
             {
@@ -354,7 +354,7 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var curPos = e.GetPosition(sender as IInputElement);
+            var curPos = e.GetPosition(_presentor);
             _isPanning = true;
             
             _panningStartPos = new Point(curPos.X, curPos.Y);
@@ -384,7 +384,7 @@ namespace FIAT_Project.Wpf.ViewModels
                     var a = Keyboard.GetKeyStates(Key.LeftShift);
                     if (Keyboard.IsKeyDown(Key.LeftShift))
                     {
-                        var curPos = e.GetPosition(sender as IInputElement);
+                        var curPos = e.GetPosition(_presentor);
                         _tempPolygonROI.Add(curPos);
                     }
                     else
@@ -415,7 +415,7 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
-            var curPos = e.GetPosition(sender as IInputElement);
+            var curPos = e.GetPosition(_presentor);
 
             if (_isPanning)
             {
@@ -430,7 +430,7 @@ namespace FIAT_Project.Wpf.ViewModels
                 if (ZoomService.Scale == 0)
                     return;
 
-                curPos = new Point(curPos.X / ZoomService.Scale, curPos.Y / ZoomService.Scale);
+                //curPos = new Point(curPos.X / ZoomService.Scale, curPos.Y / ZoomService.Scale);
                 switch (SystemConfig.ROIShapeDictionary[Lazer])
                 {
                     case EShape.Rectangle:

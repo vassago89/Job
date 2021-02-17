@@ -62,7 +62,7 @@ namespace FIAT_Project.Core.Service
             _mergeMultiplyProcesser =
                 new MatroxMultiplyProcesser(
                     grabService.Width,
-                    grabService.Height, 0, 1);
+                    grabService.Height);
         }
 
         public void SetCoefficient(float red, float green, float blue)
@@ -108,7 +108,12 @@ namespace FIAT_Project.Core.Service
                 case EThresholdMode.GrayMode:
                     if (processedDictionary.Count == 2)
                     {
-                        var buffer = _mergeMultiplyProcesser.Multiply(ledData, processedDictionary[ELazer.L660], processedDictionary[ELazer.L760], _systemConfig.RatioColor, _systemConfig.Ratio660, _systemConfig.Ratio760);
+                        var buffer = _mergeMultiplyProcesser.Multiply(
+                            ledData, processedDictionary[ELazer.L760], 
+                            processedDictionary[ELazer.L660], 
+                            _systemConfig.RatioColor, _systemConfig.Ratio760, _systemConfig.Ratio660,
+                            (int)_systemConfig.ChennelDictionary[ELazer.L660],
+                            (int)_systemConfig.ChennelDictionary[ELazer.L760]);
                         Array.Copy(buffer, mergedBuffer, mergedBuffer.Length);
                     }
                     else if (processedDictionary.Count == 1)
@@ -118,10 +123,10 @@ namespace FIAT_Project.Core.Service
                         switch (lazer)
                         {
                             case ELazer.L660:
-                                buffer = _mergeMultiplyProcesser.Multiply(ledData, processedDictionary[lazer], _systemConfig.RatioColor, _systemConfig.Ratio660);
+                                buffer = _mergeMultiplyProcesser.Multiply(ledData, processedDictionary[lazer], _systemConfig.RatioColor, _systemConfig.Ratio660, (int)_systemConfig.ChennelDictionary[ELazer.L660]);
                                 break;
                             case ELazer.L760:
-                                buffer = _mergeMultiplyProcesser.Multiply(ledData, processedDictionary[lazer], _systemConfig.RatioColor, _systemConfig.Ratio760);
+                                buffer = _mergeMultiplyProcesser.Multiply(ledData, processedDictionary[lazer], _systemConfig.RatioColor, _systemConfig.Ratio760, (int)_systemConfig.ChennelDictionary[ELazer.L760]);
                                 break;
                         }
                         
@@ -164,7 +169,7 @@ namespace FIAT_Project.Core.Service
             var histo = _autoThresholder.GetHistogram(data);
 
             data = Threshold(lazer, data, width, height, histo);
-            Merge(lazer, data, merged, width * height, lazer == ELazer.L660 ? 0 : 1);
+            Merge(lazer, data, merged, width * height, (int)_systemConfig.ChennelDictionary[lazer]);
 
             return data;
         }

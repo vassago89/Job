@@ -25,9 +25,6 @@
         <Grid ClipToBounds="True" Margin="0 0 0 12">
             <Border Background="Black" BorderThickness="0">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Loaded">
-                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnLoaded"/>
-                    </i:EventTrigger>
                     <i:EventTrigger EventName="PreviewMouseWheel">
                         <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnMouseWheel"/>
                     </i:EventTrigger>
@@ -51,6 +48,11 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <Canvas>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Loaded">
+                            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnLoaded"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <Canvas.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="{Binding ZoomService.Scale}" ScaleY="{Binding ZoomService.Scale}"/>

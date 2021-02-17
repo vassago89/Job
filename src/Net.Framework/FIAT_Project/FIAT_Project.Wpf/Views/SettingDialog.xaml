@@ -18,6 +18,8 @@
             <TextBlock Text="Setting" Margin="8"/>
             <GroupBox Header="Common" Grid.Row="1">
                 <UniformGrid Columns="2">
+                    <TextBlock Text="Type"/>
+                    <ComboBox ItemsSource="{Binding ProtocolTypes}" SelectedValue="{Binding SystemConfig.ProtocolType}"/>
                     <TextBlock Text="Use 660"/>
                     <CheckBox IsChecked="{Binding SettingStore.Use660}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBlock Text="Use 760"/>
@@ -36,6 +38,10 @@
                     <TextBox Text="{Binding SystemConfig.RecodingFrame}"/>
                     <TextBlock Text="Capture Count"/>
                     <TextBox Text="{Binding SystemConfig.CaptureCount}"/>
+                    <TextBlock Text="660 Color"/>
+                    <ComboBox SelectedValue="{Binding Channel660}" ItemsSource="{Binding Channels}"/>
+                    <TextBlock Text="760 Color"/>
+                    <ComboBox SelectedValue="{Binding Channel760}" ItemsSource="{Binding Channels}"/>
                 </UniformGrid>
             </GroupBox>
             <GroupBox Header="Auto Threshold Method" Grid.Row="2">

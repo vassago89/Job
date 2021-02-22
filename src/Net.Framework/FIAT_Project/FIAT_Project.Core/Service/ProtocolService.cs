@@ -48,6 +48,11 @@ namespace FIAT_Project.Core.Service
             _grabberDevice.Initialize(grabberDeviceInfo);
             _grabberDevice.SerialPort.DataReceived += SerialPort_DataReceived;
             _grabberDevice.Open();
+
+            var buffer = Encoding.UTF8.GetBytes($"trgmode 1\r");
+            _grabberDevice?.Write(buffer, buffer.Length);
+
+            Thread.Sleep(10);
         }
 
         public void Release()
@@ -262,7 +267,7 @@ namespace FIAT_Project.Core.Service
 
             Send(buffer);
         }
-
+        
         public void SetExposure(int value, ELazer lazer, bool isLed = false)
         {
             var chennel = isLed ? 'b' : lazer == ELazer.L660 ? 'g' : 'r';

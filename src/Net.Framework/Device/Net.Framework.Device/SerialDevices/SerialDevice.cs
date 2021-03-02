@@ -55,7 +55,7 @@ namespace Net.Framework.Device.SerialDevices
             }
             catch (Exception e)
             {
-                throw e;
+                
             }
 
             return false;
@@ -70,7 +70,7 @@ namespace Net.Framework.Device.SerialDevices
             }
             catch (Exception e)
             {
-                throw e;
+                
             }
 
             return false;
@@ -85,7 +85,7 @@ namespace Net.Framework.Device.SerialDevices
             }
             catch (Exception e)
             {
-                throw e;
+
             }
 
             return false;

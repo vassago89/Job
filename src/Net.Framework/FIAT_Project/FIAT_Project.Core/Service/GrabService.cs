@@ -37,36 +37,43 @@ namespace FIAT_Project.Core.Service
         private SystemConfig _systemConfig;
         public GrabService(SystemConfig systemConfig)
         {
-            _dataDictionary = new Dictionary<ELazer, byte[]>();
-
-            _systemConfig = systemConfig;
-
-            MatroxApplicationHelper.Initilize();
-            _gateway = new MatroxSystemGateway();
-            _gateway.ImageGrabberInfos.Add(new MatroxImageGrabberInfo()
+            try
             {
-                SystemNo = 0,
-                Type = MatroxImageGrabberType.SOLIOS
-            });
+                _dataDictionary = new Dictionary<ELazer, byte[]>();
 
-            _gateway.ImageDeviceInfos.Add(new MatroxImageDeviceInfo()
+                _systemConfig = systemConfig;
+
+                MatroxApplicationHelper.Initilize();
+                _gateway = new MatroxSystemGateway();
+                _gateway.ImageGrabberInfos.Add(new MatroxImageGrabberInfo()
+                {
+                    SystemNo = 0,
+                    Type = MatroxImageGrabberType.DEFAULT
+                });
+
+                _gateway.ImageDeviceInfos.Add(new MatroxImageDeviceInfo()
+                {
+                    BufferSize = 5,
+                    DcfPath = systemConfig.DcfPath,
+                    DigitizerNo = 0
+                });
+
+                _gateway.Initialize();
+
+                _imageDevice = _gateway.ImageDevices.First();
+                _imageDevice.DeviceGrabbed += DeviceImageGrabbed;
+
+
+                _ledData = new byte[_imageDevice.Width * _imageDevice.Height];
+                foreach (var pair in _systemConfig.UseDictionary)
+                {
+                    if (pair.Value)
+                        _dataDictionary[pair.Key] = new byte[_imageDevice.Width * _imageDevice.Height];
+                }
+            }
+            catch (Exception e)
             {
-                BufferSize = 5,
-                DcfPath = systemConfig.DcfPath,
-                DigitizerNo = 0
-            });
-
-            _gateway.Initialize();
-
-            _imageDevice = _gateway.ImageDevices.First();
-            _imageDevice.DeviceGrabbed += DeviceImageGrabbed;
-
-
-            _ledData = new byte[_imageDevice.Width * _imageDevice.Height];
-            foreach (var pair in _systemConfig.UseDictionary)
-            {
-                if (pair.Value)
-                    _dataDictionary[pair.Key] = new byte[_imageDevice.Width * _imageDevice.Height];
+                throw e;
             }
         }
 

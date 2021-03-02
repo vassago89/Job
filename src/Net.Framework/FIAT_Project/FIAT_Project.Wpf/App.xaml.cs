@@ -71,7 +71,6 @@ namespace FIAT_Project.Wpf
                 .RegisterSingleton<ProtocolService>()
                 .RegisterSingleton<SettingStore>()
                 .RegisterInstance(SystemConfig.Load(Environment.CurrentDirectory));
-            //throw new NotImplementedException();
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -101,9 +100,13 @@ namespace FIAT_Project.Wpf
 
         private void PrismApplication_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(e.Exception.Message);
-            e.Handled = true;
-            return;
+            var last = e.Exception;
+            while (last.InnerException != null)
+                last = last.InnerException;
+
+            MessageBox.Show(last.Message);
+
+            throw e.Exception;
         }
     }
 }

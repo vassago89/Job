@@ -78,7 +78,7 @@ namespace FIAT_Project.Core
         {
             LazerProtocolPort = "COM6";
             GrabberProtocolPort = "COM3";
-            DcfPath = "MIL10_SOL_BV-C8300NV_re2.dcf";
+            DcfPath = "DCF/PatternGenerator_Bayer_HD.sdcf";
             CapturePath = "..\\Capture";
             RecordPath = "..\\Record";
             ValueLed = MaxLed = 1.000;

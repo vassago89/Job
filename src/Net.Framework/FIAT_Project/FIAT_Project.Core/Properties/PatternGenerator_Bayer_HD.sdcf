@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SDCF Version="3" Revision="10.40.0640" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SDCFv3.xsd">
+  <Options FrameRate="60.0"/>
+  <Format SizeBand="3" SizeX="1280" SizeY="720" Type="8"/>
+  <Sources>
+    <Simulator Style="Matrox2D" LogoSize="80" LogoStep="2" Bayer="GB"/>
+  </Sources>
+</SDCF>

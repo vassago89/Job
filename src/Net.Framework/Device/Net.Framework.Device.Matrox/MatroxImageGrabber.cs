@@ -11,7 +11,7 @@ namespace Net.Framework.Device.Matrox
 {
     public enum MatroxImageGrabberType
     {
-        SOLIOS
+        DEFAULT, SOLIOS
     }
     
     public class MatroxImageGrabberInfo : IImageGrabberInfo
@@ -32,6 +32,8 @@ namespace Net.Framework.Device.Matrox
         {
             switch (_info.Type)
             {
+                case MatroxImageGrabberType.DEFAULT:
+                    return MIL.M_SYSTEM_DEFAULT;
                 case MatroxImageGrabberType.SOLIOS:
                     return MIL.M_SYSTEM_SOLIOS;
                 default:

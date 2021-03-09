@@ -6,34 +6,37 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              prism:ViewModelLocator.AutoWireViewModel="True"
-             Width="500">
+             Width="1000">
     <materialDesign:DialogHost>
         <Grid Margin="16">
+            <Grid.Resources>
+                <Style TargetType="TextBlock" x:Key="IconTextBlock">
+                    <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Setting" Margin="8"/>
-            <GroupBox Header="Common" Grid.Row="1">
+            <GroupBox Header="Common" Grid.Row="2">
                 <UniformGrid Columns="2">
                     <TextBlock Text="Type"/>
-                    <ComboBox ItemsSource="{Binding ProtocolTypes}" SelectedValue="{Binding SystemConfig.ProtocolType}"/>
-                    <TextBlock Text="Use 660"/>
+                    <ComboBox ItemsSource="{Binding ProtocolTypes}" SelectedValue="{Binding SettingStore.ProtocolType}"/>
+                    <!--<TextBlock Text="Use 660"/>
                     <CheckBox IsChecked="{Binding SettingStore.Use660}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBlock Text="Use 760"/>
-                    <CheckBox IsChecked="{Binding SettingStore.Use760}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <CheckBox IsChecked="{Binding SettingStore.Use760}" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
                     <TextBlock Text="Lazer Port"/>
                     <ComboBox SelectedItem="{Binding SystemConfig.LazerProtocolPort}" ItemsSource="{Binding Ports}"/>
                     <TextBlock Text="Grabber Port"/>
                     <ComboBox SelectedItem="{Binding SystemConfig.GrabberProtocolPort}" ItemsSource="{Binding Ports}"/>
-                    <TextBlock Text="Dcf Path"/>
-                    <TextBox Text="{Binding SystemConfig.DcfPath}"/>
-                    <TextBlock Text="Capture Path"/>
-                    <TextBox Text="{Binding SystemConfig.CapturePath}"/>
-                    <TextBlock Text="Record Path"/>
-                    <TextBox Text="{Binding SystemConfig.RecordPath}"/>
                     <TextBlock Text="Recording Frame"/>
                     <TextBox Text="{Binding SystemConfig.RecodingFrame}"/>
                     <TextBlock Text="Capture Count"/>
@@ -44,7 +47,38 @@
                     <ComboBox SelectedValue="{Binding Channel760}" ItemsSource="{Binding Channels}"/>
                 </UniformGrid>
             </GroupBox>
-            <GroupBox Header="Auto Threshold Method" Grid.Row="2">
+            <GroupBox Header="Path" Grid.Row="3">
+                <UniformGrid Columns="3">
+                    <TextBlock Text="Dcf Path"/>
+                    <TextBlock Text="{Binding DcfPath}" TextWrapping="Wrap"/>
+                    <Button Command="{Binding DcfCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <!--<TextBlock Text="Open Folder"/>-->
+                            <TextBlock Text="&#xE838;" Style="{DynamicResource IconTextBlock}"/>
+                            <TextBlock Text="Open" Margin="4 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Text="Capture Path"/>
+                    <TextBlock Text="{Binding CapturePath}" TextWrapping="Wrap"/>
+                    <Button Command="{Binding CaptureCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <!--<TextBlock Text="Open Folder"/>-->
+                            <TextBlock Text="&#xE838;" Style="{DynamicResource IconTextBlock}"/>
+                            <TextBlock Text="Open" Margin="4 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Text="Record Path"/>
+                    <TextBlock Text="{Binding RecordPath}" TextWrapping="Wrap"/>
+                    <Button Command="{Binding RecordCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <!--<TextBlock Text="Open Folder"/>-->
+                            <TextBlock Text="&#xE838;" Style="{DynamicResource IconTextBlock}"/>
+                            <TextBlock Text="Open" Margin="4 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                </UniformGrid>
+            </GroupBox>
+            <GroupBox Header="Auto Threshold Method" Grid.Row="4">
                 <UniformGrid Columns="2">
                     <TextBlock Text="Fluorescence ch1."/>
                     <ComboBox SelectedItem="{Binding Method660}" ItemsSource="{Binding Methods}"/>
@@ -53,7 +87,7 @@
                 </UniformGrid>
             </GroupBox>
             <StackPanel Orientation="Horizontal" 
-                        Grid.Row="3"
+                        Grid.Row="1"
                         HorizontalAlignment="Right"
                         Margin="0 16 0 0">
                 <!--<Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"

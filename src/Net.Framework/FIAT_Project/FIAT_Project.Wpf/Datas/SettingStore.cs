@@ -41,6 +41,28 @@ namespace FIAT_Project.Wpf.Datas
             set => SetProperty(ref _onGrab, value);
         }
 
+        private EProtocolType _protocolType;
+        public EProtocolType ProtocolType
+        {
+            get => _systemConfig.ProtocolType;
+            set
+            {
+                _systemConfig.ProtocolType = value;
+                SetProperty(ref _protocolType, value);
+                switch (_protocolType)
+                {
+                    case EProtocolType.Channel2:
+                        _systemConfig.UseDictionary[ELazer.L660] = false;
+                        _systemConfig.UseDictionary[ELazer.L760] = true;
+                        break;
+                    case EProtocolType.Channel3:
+                        _systemConfig.UseDictionary[ELazer.L660] = true;
+                        _systemConfig.UseDictionary[ELazer.L760] = true;
+                        break;
+                }
+            }
+        }
+
         public SettingStore(SystemConfig systemConfig)
         {
             _systemConfig = systemConfig;

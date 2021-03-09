@@ -106,7 +106,7 @@ namespace FIAT_Project.Wpf
 
             MessageBox.Show(last.Message);
 
-            throw e.Exception;
+            //throw e.Exception;
         }
     }
 }

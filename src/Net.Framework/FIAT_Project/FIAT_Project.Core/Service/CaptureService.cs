@@ -32,26 +32,37 @@ namespace FIAT_Project.Core.Service
 
         public CaptureService(GrabService grabService, ProcessService processService, DrawingService drawingService, SystemConfig systemConfig)
         {
-            _systemConfig = systemConfig;
-            
-            _grabService = grabService;
-            _processService = processService;
-
-            _ledCapturer = new MatroxCapturer<byte>();
-            _ledCapturer.Intialize(grabService.Width, grabService.Height, 3);
-
-            _mergedCapturer = new MatroxCapturer<byte>();
-            _mergedCapturer.Intialize(grabService.Width, grabService.Height, 3);
-
-            _capturerDictionary = new Dictionary<ELazer, ICapturer<byte>>();
-
-            foreach (var pair in _systemConfig.UseDictionary)
+            try
             {
-                if (pair.Value)
+                var captureDirectory = Path.Combine(Environment.CurrentDirectory, systemConfig.CapturePath);
+                if (Directory.Exists(captureDirectory) == false)
+                    Directory.CreateDirectory(captureDirectory);
+
+                _systemConfig = systemConfig;
+
+                _grabService = grabService;
+                _processService = processService;
+
+                _ledCapturer = new MatroxCapturer<byte>();
+                _ledCapturer.Intialize(grabService.Width, grabService.Height, 3);
+
+                _mergedCapturer = new MatroxCapturer<byte>();
+                _mergedCapturer.Intialize(grabService.Width, grabService.Height, 3);
+
+                _capturerDictionary = new Dictionary<ELazer, ICapturer<byte>>();
+
+                foreach (var pair in _systemConfig.UseDictionary)
                 {
-                    _capturerDictionary[pair.Key] = new MatroxCapturer<byte>();
-                    _capturerDictionary[pair.Key].Intialize(grabService.Width, grabService.Height, 1);
+                    if (pair.Value)
+                    {
+                        _capturerDictionary[pair.Key] = new MatroxCapturer<byte>();
+                        _capturerDictionary[pair.Key].Intialize(grabService.Width, grabService.Height, 1);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                //throw e;
             }
         }
 

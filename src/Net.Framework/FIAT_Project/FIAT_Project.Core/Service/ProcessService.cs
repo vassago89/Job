@@ -30,39 +30,46 @@ namespace FIAT_Project.Core.Service
 
         public ProcessService(GrabService grabService, SystemConfig systemConfig)
         {
-            _systemConfig = systemConfig;
-            _grabService = grabService;
-
-            grabService.Grabbed += ServiceGrabbed;
-
-            _bayerProcessor = new MatroxBayerProcessor(grabService.Width, grabService.Height);
-            _autoThresholder = new AutoThresholder();
-            _shapeDrawer = new ShapeDrawer(grabService.Width, grabService.Height, 1);
-
-            _maskDictionary = new Dictionary<ELazer, byte[]>();
-            _bufferDictionary = new Dictionary<ELazer, byte[]>();
-            
-            foreach (var pair in systemConfig.UseDictionary)
+            try
             {
-                if (pair.Value)
+                _systemConfig = systemConfig;
+                _grabService = grabService;
+
+                grabService.Grabbed += ServiceGrabbed;
+
+                _bayerProcessor = new MatroxBayerProcessor(grabService.Width, grabService.Height);
+                _autoThresholder = new AutoThresholder();
+                _shapeDrawer = new ShapeDrawer(grabService.Width, grabService.Height, 1);
+
+                _maskDictionary = new Dictionary<ELazer, byte[]>();
+                _bufferDictionary = new Dictionary<ELazer, byte[]>();
+
+                foreach (var pair in systemConfig.UseDictionary)
                 {
-                    _maskDictionary[pair.Key] = new byte[grabService.Width * grabService.Height];
-                    _bufferDictionary[pair.Key] = new byte[grabService.Width * grabService.Height];
+                    if (pair.Value)
+                    {
+                        _maskDictionary[pair.Key] = new byte[grabService.Width * grabService.Height];
+                        _bufferDictionary[pair.Key] = new byte[grabService.Width * grabService.Height];
+                    }
                 }
+
+                //_mergedBuffer = new byte[grabService.Width * grabService.Height * 3];
+
+                //_multiplyProcesserDictionary = new Dictionary<ELazer, MatroxMultiplyProcesser>();
+                //_multiplyProcesserDictionary[ELazer.L660] = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, 1, 1, 2, 2, 2);
+                //_multiplyProcesserDictionary[ELazer.L760] = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, 1, 1, 2, 2, 2);
+
+                //_mergeMultiplyProcesser = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, )
+
+                _mergeMultiplyProcesser =
+                    new MatroxMultiplyProcesser(
+                        grabService.Width,
+                        grabService.Height);
             }
-
-            //_mergedBuffer = new byte[grabService.Width * grabService.Height * 3];
-
-            //_multiplyProcesserDictionary = new Dictionary<ELazer, MatroxMultiplyProcesser>();
-            //_multiplyProcesserDictionary[ELazer.L660] = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, 1, 1, 2, 2, 2);
-            //_multiplyProcesserDictionary[ELazer.L760] = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, 1, 1, 2, 2, 2);
-
-            //_mergeMultiplyProcesser = new MatroxMultiplyProcesser(grabService.Width, grabService.Height, 3, )
-
-            _mergeMultiplyProcesser =
-                new MatroxMultiplyProcesser(
-                    grabService.Width,
-                    grabService.Height);
+            catch (Exception e)
+            {
+                //throw e;
+            }
         }
 
         public void SetCoefficient(float red, float green, float blue)

@@ -73,7 +73,7 @@ namespace FIAT_Project.Core.Service
             }
             catch (Exception e)
             {
-                throw e;
+                //throw e;
             }
         }
 

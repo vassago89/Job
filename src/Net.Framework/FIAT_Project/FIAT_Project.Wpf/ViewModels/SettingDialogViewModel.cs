@@ -4,15 +4,18 @@ using FIAT_Project.Core.Service;
 using FIAT_Project.Wpf.Datas;
 using FIAT_Project.Wpf.Views;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
 using Net.Framework.Algorithm.Enums;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace FIAT_Project.Wpf.ViewModels
 {
@@ -42,6 +45,9 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public SettingStore SettingStore { get; }
         public DelegateCommand RestartCommand { get; }
+        public DelegateCommand DcfCommand { get; }
+        public DelegateCommand CaptureCommand { get; }
+        public DelegateCommand RecordCommand { get; }
 
         public IEnumerable<EProtocolType> ProtocolTypes => Enum.GetValues(typeof(EProtocolType)) as IEnumerable<EProtocolType>;
         public IEnumerable<EChannel> Channels => Enum.GetValues(typeof(EChannel)) as IEnumerable<EChannel>;
@@ -58,12 +64,50 @@ namespace FIAT_Project.Wpf.ViewModels
             set => SystemConfig.ChennelDictionary[ELazer.L760] = value;
         }
 
+        private string _dcfPath;
+        public string DcfPath
+        {
+            get => _dcfPath;
+            set
+            {
+                SetProperty(ref _dcfPath, value);
+                SystemConfig.DcfPath = _dcfPath;
+            }
+        }
+
+        private string _capturePath;
+        public string CapturePath
+        {
+            get => _capturePath;
+            set
+            {
+                SetProperty(ref _capturePath, value);
+                SystemConfig.CapturePath = _capturePath;
+            }
+        }
+
+        private string _recordPath;
+        public string RecordPath
+        {
+            get => _recordPath;
+            set
+            {
+                SetProperty(ref _recordPath, value);
+                SystemConfig.RecordPath = _recordPath;
+            }
+        }
+
         public SettingDialogViewModel(SettingStore settingStore, SystemConfig systemConfig)
         {
             try
             {
                 SettingStore = settingStore;
                 SystemConfig = systemConfig;
+
+                DcfPath = systemConfig.DcfPath;
+                RecordPath = systemConfig.RecordPath;
+                CapturePath = systemConfig.CapturePath;
+
                 Ports = SerialPort.GetPortNames();
 
                 Methods = typeof(EThresholdMethod).GetEnumValues().Cast<EThresholdMethod>();
@@ -72,6 +116,35 @@ namespace FIAT_Project.Wpf.ViewModels
                 {
                     systemConfig.Save(Environment.CurrentDirectory);
                     Application.Current.Shutdown(1000);
+                });
+
+                DcfCommand = new DelegateCommand(() =>
+                {
+                    var dialog = new OpenFileDialog();
+
+                    dialog.InitialDirectory = Path.Combine(Environment.CurrentDirectory, "DCF123");
+                    if (dialog.ShowDialog() == true)
+                        DcfPath = dialog.FileName;
+                });
+
+                CaptureCommand = new DelegateCommand(() =>
+                {
+                    var dialog = new CommonOpenFileDialog();
+                    dialog.IsFolderPicker = true;
+                    dialog.DefaultDirectory = systemConfig.CapturePath;// Path.Combine(Environment.CurrentDirectory, "../Capture");
+                    dialog.InitialDirectory = systemConfig.CapturePath;
+                    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                        CapturePath = dialog.FileName;
+                });
+
+                RecordCommand = new DelegateCommand(() =>
+                {
+                    var dialog = new CommonOpenFileDialog();
+                    dialog.IsFolderPicker = true;
+                    dialog.DefaultDirectory = systemConfig.RecordPath;//Path.Combine(Environment.CurrentDirectory, );
+                    dialog.InitialDirectory = systemConfig.RecordPath;
+                    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                        RecordPath = dialog.FileName;
                 });
             }
             catch (Exception e)

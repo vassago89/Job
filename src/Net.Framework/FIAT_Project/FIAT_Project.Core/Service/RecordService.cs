@@ -36,28 +36,39 @@ namespace FIAT_Project.Core.Service
         
         public RecordService(GrabService grabService, ProcessService processService, SystemConfig systemConfig)
         {
-            _grabService = grabService;
-            _processService = processService;
-            
-            _systemConfig = systemConfig;
-
-            _ledRecorder = new MatroxRecoreder<byte>();
-            _ledRecorder.Intialize(grabService.Width, grabService.Height, 3);
-
-            _mergedRecorder = new MatroxRecoreder<byte>();
-            _mergedRecorder.Intialize(grabService.Width, grabService.Height, 3);
-
-            _recoderDictionary = new Dictionary<ELazer, IRecorder<byte>>();
-            foreach (var pair in _systemConfig.UseDictionary)
+            try
             {
-                if (pair.Value)
-                {
-                    _recoderDictionary[pair.Key] = new MatroxRecoreder<byte>();
-                    _recoderDictionary[pair.Key].Intialize(grabService.Width, grabService.Height, 1);
-                }
-            }
+                var recordDirectory = Path.Combine(Environment.CurrentDirectory, systemConfig.RecordPath);
+                if (Directory.Exists(recordDirectory) == false)
+                    Directory.CreateDirectory(recordDirectory);
 
-            _bufferDictionary = new Dictionary<ELazer, byte[]>();
+                _grabService = grabService;
+                _processService = processService;
+
+                _systemConfig = systemConfig;
+
+                _ledRecorder = new MatroxRecoreder<byte>();
+                _ledRecorder.Intialize(grabService.Width, grabService.Height, 3);
+
+                _mergedRecorder = new MatroxRecoreder<byte>();
+                _mergedRecorder.Intialize(grabService.Width, grabService.Height, 3);
+
+                _recoderDictionary = new Dictionary<ELazer, IRecorder<byte>>();
+                foreach (var pair in _systemConfig.UseDictionary)
+                {
+                    if (pair.Value)
+                    {
+                        _recoderDictionary[pair.Key] = new MatroxRecoreder<byte>();
+                        _recoderDictionary[pair.Key].Intialize(grabService.Width, grabService.Height, 1);
+                    }
+                }
+
+                _bufferDictionary = new Dictionary<ELazer, byte[]>();
+            }
+            catch (Exception e)
+            {
+                //throw e;
+            }
         }
 
         public void Start(double frameRate)

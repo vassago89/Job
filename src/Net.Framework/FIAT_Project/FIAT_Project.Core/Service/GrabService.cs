@@ -79,6 +79,9 @@ namespace FIAT_Project.Core.Service
 
         public void Release()
         {
+            if (_gateway == null)
+                return;
+
             foreach (var device in _gateway.ImageDevices)
                 device.Dispose();
 
@@ -109,20 +112,30 @@ namespace FIAT_Project.Core.Service
             Grabbed?.Invoke(imageData.Width, imageData.Height, _ledData, _dataDictionary);
         }
         
-        public void Start()
+        public bool Start()
         {
+            if (_gateway == null)
+                return false;
+
             foreach (var imageDevice in _gateway.ImageDevices)
                 imageDevice.ContinuousGrab();
 
             GrabbingStarted?.Invoke(true);
+
+            return true;
         }
 
-        public void Stop()
+        public bool Stop()
         {
+            if (_gateway == null)
+                return false;
+
             foreach (var imageDevice in _gateway.ImageDevices)
                 imageDevice.Stop();
 
             GrabbingStarted?.Invoke(false);
+
+            return true;
         }
     }
 }

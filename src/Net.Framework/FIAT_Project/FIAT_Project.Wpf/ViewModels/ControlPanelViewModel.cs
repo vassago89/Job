@@ -487,16 +487,27 @@ namespace FIAT_Project.Wpf.ViewModels
                     await DialogHost.Show(new MessageDialog("Saving settings succeeded.", false), "RootDialog");
                 });
 
-                GrabCommand = new DelegateCommand(() =>
+                GrabCommand = new DelegateCommand(async () =>
                 {
-                    grabService.Start();
+                    if (grabService.Start() == false)
+                    {
+                        await DialogHost.Show(new MessageDialog("Plase check device.", false), "RootDialog");
+                        return;
+                    }
+                        
+
                     OnGrab = true;
                     OffGrab = false;
                 });
 
-                StopCommand = new DelegateCommand(() =>
+                StopCommand = new DelegateCommand(async  () =>
                 {
-                    grabService.Stop();
+                    if (grabService.Stop() == false)
+                    {
+                        await DialogHost.Show(new MessageDialog("Plase check device.", false), "RootDialog");
+                        return;
+                    }
+
                     OnGrab = false;
                     OffGrab = true;
                 });

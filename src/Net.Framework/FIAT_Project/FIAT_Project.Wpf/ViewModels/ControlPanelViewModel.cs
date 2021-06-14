@@ -2,6 +2,7 @@
 using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
 using FIAT_Project.Wpf.Datas;
+using FIAT_Project.Wpf.Stores;
 using FIAT_Project.Wpf.Views;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
@@ -14,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace FIAT_Project.Wpf.ViewModels
 {
@@ -156,6 +158,7 @@ namespace FIAT_Project.Wpf.ViewModels
         public DelegateCommand RecordStopCommand { get; }
 
         public DelegateCommand CaptureCommand { get; }
+        public DelegateCommand AnalyzeCommand { get; }
 
         public DelegateCommand OnLedCommand { get; }
         public DelegateCommand OffLedCommand { get; }
@@ -420,6 +423,8 @@ namespace FIAT_Project.Wpf.ViewModels
 
         public DelegateCommand CaptureOpenCommand { get; }
         public DelegateCommand RecordOpenCommand { get; }
+        public DelegateCommand AnalyzeOpenCommand { get; }
+        private ROIStore _roiStore;
 
         public ControlPanelViewModel(
             GrabService grabService,
@@ -428,10 +433,12 @@ namespace FIAT_Project.Wpf.ViewModels
             RecordService recordService,
             CaptureService captureService,
             SettingStore settingStore,
+            ROIStore roiStore,
             SystemConfig systemConfig)
         {
             try
             {
+                _roiStore = roiStore;
                 SettingStore = settingStore;
 
                 _grabService = grabService;
@@ -642,6 +649,22 @@ namespace FIAT_Project.Wpf.ViewModels
                     System.Diagnostics.Process.Start(SystemConfig.RecordPath);
                 });
 
+                AnalyzeOpenCommand = new DelegateCommand(() =>
+                {
+                    System.Diagnostics.Process.Start(SystemConfig.AnalyzePath);
+                });
+
+                AnalyzeCommand = new DelegateCommand(() =>
+                {
+                    var directoryPath = Path.Combine(systemConfig.AnalyzePath, DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+                    if (Directory.Exists(directoryPath) == false)
+                        Directory.CreateDirectory(directoryPath);
+
+
+                    CreateBitmapFromVisual(Path.Combine(directoryPath, "ScreenShot"));
+                    SaveAnalyzeRresult(directoryPath);
+                });
+
                 processService.Processed += Processed;
             }
             catch (Exception e)
@@ -776,6 +799,83 @@ namespace FIAT_Project.Wpf.ViewModels
                         break;
                 }
             }
+        }
+
+        public void CreateBitmapFromVisual(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return;
+
+            Rect bounds = VisualTreeHelper.GetDescendantBounds(App.Current.MainWindow);
+
+            var renderTarget = new RenderTargetBitmap((Int32)bounds.Width, (Int32)bounds.Height, 96, 96, PixelFormats.Pbgra32);
+
+            var visual = new DrawingVisual();
+
+            using (DrawingContext context = visual.RenderOpen())
+            {
+                var visualBrush = new VisualBrush(App.Current.MainWindow);
+                context.DrawRectangle(visualBrush, null, new Rect(new Point(), bounds.Size));
+            }
+
+            renderTarget.Render(visual);
+            var bitmapEncoder = new PngBitmapEncoder();
+            bitmapEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
+            using (var stream = File.Create($"{fileName}.png"))
+                bitmapEncoder.Save(stream);
+        }
+
+        public void SaveAnalyzeRresult(string folderPath)
+        {
+            var statisticsString = "Name,Avg,Min,Max,Std";
+            
+            foreach (var lazer in Enum.GetValues(typeof(ELazer)))
+            {
+                var source = _roiStore.GetImage((ELazer)lazer);
+                if (source == null)
+                    continue;
+
+                var sourceEncoder = new PngBitmapEncoder();
+                sourceEncoder.Frames.Add(BitmapFrame.Create((BitmapSource)source));
+                using (var stream = File.Create(Path.Combine(folderPath, $"{lazer}.png")))
+                    sourceEncoder.Save(stream);
+
+                var stat = _roiStore.GetStatistics((ELazer)lazer);
+
+                statisticsString += "\n";
+
+                switch ((ELazer)lazer)
+                {
+                    case ELazer.L660:
+                        statisticsString += $"Ch1,{stat.Item1},{stat.Item2},{stat.Item3},{stat.Item4}";
+                        break;
+                    case ELazer.L760:
+                        statisticsString += $"Ch2,{stat.Item1},{stat.Item2},{stat.Item3},{stat.Item4}";
+                        break;
+                }
+
+                var roi = _roiStore.GetROI((ELazer)lazer);
+                var totalRect = new System.Drawing.Rectangle(0, 0, (int)source.Width, (int)source.Height);
+                roi.Intersect(totalRect);
+
+                if (roi.Width == 0 || roi.Height == 0)
+                    continue;
+
+                var cropped = new CroppedBitmap();
+                cropped.BeginInit();
+                cropped.SourceRect = new Int32Rect(roi.X, roi.Y, roi.Width, roi.Height);
+                cropped.Source = (BitmapSource)source;
+                cropped.EndInit();
+                
+                var roiEncoder = new PngBitmapEncoder();
+                roiEncoder.Frames.Clear();
+                roiEncoder.Frames.Add(BitmapFrame.Create(cropped));
+                using (var stream = File.Create(Path.Combine(folderPath, $"{lazer} ROI.png")))
+                    roiEncoder.Save(stream);
+            }
+
+            using (var file = new StreamWriter(Path.Combine(folderPath, "Statistics.csv")))
+                file.Write(statisticsString);
         }
     }
 }

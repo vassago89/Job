@@ -110,6 +110,20 @@
                                             <TextBlock Text="Open" Margin="4 0 0 0"/>
                                         </StackPanel>
                                     </Button>
+                                    <Button Command="{Binding AnalyzeCommand}"
+                                            ToolTip="Analyze">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xF8A5;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Analyze" Margin="4 0 0 0"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding AnalyzeOpenCommand}" ToolTip="Open Folder">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--<TextBlock Text="Open Folder"/>-->
+                                            <TextBlock Text="&#xE838;" Style="{DynamicResource IconTextBlock}"/>
+                                            <TextBlock Text="Open" Margin="4 0 0 0"/>
+                                        </StackPanel>
+                                    </Button>
                                 </UniformGrid>
                             </StackPanel>
                         </GroupBox>

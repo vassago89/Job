@@ -1,6 +1,7 @@
 ﻿using FIAT_Project.Core;
 using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
+using FIAT_Project.Wpf.Stores;
 using LiveCharts;
 using LiveCharts.Wpf;
 using Prism.Mvvm;
@@ -107,9 +108,10 @@ namespace FIAT_Project.Wpf.ViewModels
         }
 
         private SystemConfig _systemConfig;
-
-        public StatisticsPanelViewModel(ProcessService processService, SystemConfig systemConfig)
+        private ROIStore _roiStore;
+        public StatisticsPanelViewModel(ProcessService processService, ROIStore roiStore, SystemConfig systemConfig)
         {
+            _roiStore = roiStore;
             _systemConfig = systemConfig;
 
             IsAutoScale = true;
@@ -186,6 +188,8 @@ namespace FIAT_Project.Wpf.ViewModels
             AvgValue = sum / count;
             
             StdDevValue = Math.Sqrt((sumOfDev / count) - (AvgValue * AvgValue));
+
+            _roiStore.SetStatistics(Lazer, (Math.Round(_avgValue, 3), _minValue, _maxValue, Math.Round(_stdDevValue, 3)));
         }
     }
 }

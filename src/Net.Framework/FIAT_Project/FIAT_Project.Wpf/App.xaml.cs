@@ -2,6 +2,7 @@
 using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
 using FIAT_Project.Wpf.Datas;
+using FIAT_Project.Wpf.Stores;
 using FIAT_Project.Wpf.Views;
 using Net.Framework.Device.Matrox;
 using Net.Framework.Matrox;
@@ -70,6 +71,7 @@ namespace FIAT_Project.Wpf
                 .RegisterSingleton<RecordService>()
                 .RegisterSingleton<ProtocolService>()
                 .RegisterSingleton<SettingStore>()
+                .RegisterSingleton<ROIStore>()
                 .RegisterInstance(SystemConfig.Load(Environment.CurrentDirectory));
         }
 

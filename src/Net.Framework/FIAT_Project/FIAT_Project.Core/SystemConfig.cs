@@ -25,6 +25,7 @@ namespace FIAT_Project.Core
         public string GrabberProtocolPort { get; set; }
         public string DcfPath { get; set; }
         public string CapturePath { get; set; }
+        public string AnalyzePath { get; set; }
         public string RecordPath { get; set; }
 
         public double MaxLed { get; set; }
@@ -81,6 +82,7 @@ namespace FIAT_Project.Core
             DcfPath = "DCF/PatternGenerator_Bayer_HD.sdcf";
             CapturePath = "..\\Capture";
             RecordPath = "..\\Record";
+            AnalyzePath = "..\\Analyze";
             ValueLed = MaxLed = 1.000;
             CaptureCount = 5;
 

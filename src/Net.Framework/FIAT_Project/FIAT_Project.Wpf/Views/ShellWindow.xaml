@@ -29,7 +29,7 @@
             <DockPanel
                 Grid.Row="1">
                 <views:ControlPanel DockPanel.Dock="Left"
-                                    Width="350"/>
+                                    Width="375"/>
                 <UniformGrid DockPanel.Dock="Bottom" Rows="1" Height="200">
                     <GroupBox Header="Fluorescence ch1. Statistics" Visibility="{Binding SettingStore.Use660, Converter={StaticResource BoolToVisibleConverter}}">
                         <views:StatisticsPanel Lazer="{x:Static local:ShellWindow.Lazer660}"/>

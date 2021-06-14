@@ -48,7 +48,7 @@ namespace FIAT_Project.Wpf.ViewModels
         public DelegateCommand DcfCommand { get; }
         public DelegateCommand CaptureCommand { get; }
         public DelegateCommand RecordCommand { get; }
-
+        public DelegateCommand AnalyzeCommand { get; }
         public IEnumerable<EProtocolType> ProtocolTypes => Enum.GetValues(typeof(EProtocolType)) as IEnumerable<EProtocolType>;
         public IEnumerable<EChannel> Channels => Enum.GetValues(typeof(EChannel)) as IEnumerable<EChannel>;
         
@@ -97,6 +97,17 @@ namespace FIAT_Project.Wpf.ViewModels
             }
         }
 
+        private string _analyzePath;
+        public string AnalyzePath
+        {
+            get => _analyzePath;
+            set
+            {
+                SetProperty(ref _analyzePath, value);
+                SystemConfig.AnalyzePath = _analyzePath;
+            }
+        }
+
         public SettingDialogViewModel(SettingStore settingStore, SystemConfig systemConfig)
         {
             try
@@ -107,6 +118,7 @@ namespace FIAT_Project.Wpf.ViewModels
                 DcfPath = systemConfig.DcfPath;
                 RecordPath = systemConfig.RecordPath;
                 CapturePath = systemConfig.CapturePath;
+                AnalyzePath = systemConfig.AnalyzePath;
 
                 Ports = SerialPort.GetPortNames();
 
@@ -145,6 +157,16 @@ namespace FIAT_Project.Wpf.ViewModels
                     dialog.InitialDirectory = systemConfig.RecordPath;
                     if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                         RecordPath = dialog.FileName;
+                });
+
+                AnalyzeCommand = new DelegateCommand(() =>
+                {
+                    var dialog = new CommonOpenFileDialog();
+                    dialog.IsFolderPicker = true;
+                    dialog.DefaultDirectory = systemConfig.AnalyzePath;//Path.Combine(Environment.CurrentDirectory, );
+                    dialog.InitialDirectory = systemConfig.AnalyzePath;
+                    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                        AnalyzePath = dialog.FileName;
                 });
             }
             catch (Exception e)

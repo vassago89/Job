@@ -1,6 +1,7 @@
 ﻿using FIAT_Project.Core;
 using FIAT_Project.Core.Enums;
 using FIAT_Project.Core.Service;
+using FIAT_Project.Wpf.Stores;
 using Net.Framework.Algorithm.Enums;
 using Net.Framework.Data.ImageDatas;
 using Net.Framework.Device.Matrox;
@@ -83,7 +84,7 @@ namespace FIAT_Project.Wpf.ViewModels
             set
             {
                 lazer = value;
-                switch (SystemConfig.ROIShapeDictionary[Lazer])
+                switch (SystemConfig.ROIShapeDictionary[lazer])
                 {
                     case EShape.Rectangle:
                         IsRectangle = true;
@@ -96,11 +97,27 @@ namespace FIAT_Project.Wpf.ViewModels
                         break;
                 }
 
-                OnROI = SystemConfig.OnROIDictionary[Lazer];
+                RectangleROI = SystemConfig.ROIRectangleDictionary[lazer];
+                EllipseROI = SystemConfig.ROIEllipseDictionary[lazer];
+                PolygonROI = new PointCollection(SystemConfig.ROIPointDictionary[lazer].ToList().ConvertAll(p => new Point(p.X, p.Y)));
 
-                RectangleROI = SystemConfig.ROIRectangleDictionary[Lazer];
-                EllipseROI = SystemConfig.ROIEllipseDictionary[Lazer];
-                PolygonROI = new PointCollection(SystemConfig.ROIPointDictionary[Lazer].ToList().ConvertAll(p => new Point(p.X, p.Y)));
+                OnROI = SystemConfig.OnROIDictionary[lazer];
+
+                if (OnROI)
+                {
+                    switch (SystemConfig.ROIShapeDictionary[lazer])
+                    {
+                        case EShape.Rectangle:
+                            RectangleROI = SystemConfig.ROIRectangleDictionary[lazer];
+                            break;
+                        case EShape.Ellipse:
+                            EllipseROI = SystemConfig.ROIEllipseDictionary[lazer];
+                            break;
+                        case EShape.Polygon:
+                            PolygonROI = new PointCollection(SystemConfig.ROIPointDictionary[lazer].ToList().ConvertAll(p => new Point(p.X, p.Y)));
+                            break;
+                    }
+                }
             }
         }
 
@@ -149,7 +166,10 @@ namespace FIAT_Project.Wpf.ViewModels
             set
             {
                 SystemConfig.OnROIDictionary[Lazer] = value;
-                SetProperty(ref _onROI, value);                
+                SetProperty(ref _onROI, value);
+
+                if (_onROI == false)
+                    _roiStore.SetROI(Lazer, Rectangle.Empty);
             }
         }
 
@@ -161,6 +181,7 @@ namespace FIAT_Project.Wpf.ViewModels
             {
                 SetProperty(ref _rectangleROI, value);
                 SystemConfig.ROIRectangleDictionary[Lazer] = _rectangleROI;
+                _roiStore.SetROI(Lazer, _rectangleROI);
             }
         }
 
@@ -172,6 +193,7 @@ namespace FIAT_Project.Wpf.ViewModels
             {
                 SetProperty(ref _ellipseROI, value);
                 SystemConfig.ROIEllipseDictionary[Lazer] = _ellipseROI;
+                _roiStore.SetROI(Lazer, _ellipseROI);
             }
         }
 
@@ -183,6 +205,20 @@ namespace FIAT_Project.Wpf.ViewModels
             {
                 SetProperty(ref _polygonROI, value);
                 SystemConfig.ROIPointDictionary[Lazer] = _polygonROI.ToList().ConvertAll(p => new System.Drawing.Point((int)p.X, (int)p.Y)).ToArray();
+
+                if (_polygonROI.Count == 0)
+                    return;
+
+                var xOrdered = _polygonROI.OrderBy(p => p.X);
+                var yOrdered = _polygonROI.OrderBy(p => p.Y);
+                var rect = new Rectangle(
+                    (int)Math.Round(xOrdered.First().X),
+                    (int)Math.Round(yOrdered.First().Y),
+                    (int)Math.Round(xOrdered.Last().X - xOrdered.First().X),
+                    (int)Math.Round(yOrdered.Last().Y - yOrdered.First().Y));
+
+
+                _roiStore.SetROI(Lazer, rect);
             }
         }
 
@@ -214,13 +250,16 @@ namespace FIAT_Project.Wpf.ViewModels
         private byte[] _buffer;
         private PipeLine<(int width, int height, byte[] data)> _pipeLine;
 
-        public ImageControlViewModel(ProcessService processService, SystemConfig systemConfig)
+        private ROIStore _roiStore;
+
+        public ImageControlViewModel(ProcessService processService, ROIStore roiStore, SystemConfig systemConfig)
         {
             try
             {
                 SetPolygonROI = new PointCollection();
                 _tempPolygonROI = new PointCollection();
 
+                _roiStore = roiStore;
                 SystemConfig = systemConfig;
                 ZoomService = new ZoomService();
 
@@ -307,7 +346,10 @@ namespace FIAT_Project.Wpf.ViewModels
             }
             
             if (dataDictionary.ContainsKey(Lazer))
+            {
                 _pipeLine.Enqueue((width, height, dataDictionary[Lazer]));
+                _roiStore.SetImage(Lazer, Source);
+            }
         }
 
         private void ZoomFit()
@@ -381,7 +423,6 @@ namespace FIAT_Project.Wpf.ViewModels
                     EllipseROI = SetRectROI;
                     break;
                 case EShape.Polygon:
-                    var a = Keyboard.GetKeyStates(Key.LeftShift);
                     if (Keyboard.IsKeyDown(Key.LeftShift))
                     {
                         var curPos = e.GetPosition(_presentor);

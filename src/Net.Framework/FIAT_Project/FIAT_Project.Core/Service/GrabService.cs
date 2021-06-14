@@ -24,10 +24,10 @@ namespace FIAT_Project.Core.Service
 
         private IImageDevice _imageDevice;
 
-        public double FrameRate => _imageDevice.FrameRate;
-        public int Width => _imageDevice.Width;
-        public int Height => _imageDevice.Height;
-        public int Channels => _imageDevice.Channels;
+        public double FrameRate => _imageDevice == null ? 0 : _imageDevice.FrameRate;
+        public int Width => _imageDevice == null ? 0 : _imageDevice.Width;
+        public int Height => _imageDevice == null ? 0 : _imageDevice.Height;
+        public int Channels => _imageDevice == null ? 0 : _imageDevice.Channels;
 
         public byte[] _ledData;
         public Dictionary<ELazer, byte[]> _dataDictionary { get; set; }
